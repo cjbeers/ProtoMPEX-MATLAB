@@ -13,6 +13,3 @@ BIN=0.874;
 
 TiArray(i,1)=FIT_EXAMPLE(DATA,BIN);
 end
-
-%%
-
