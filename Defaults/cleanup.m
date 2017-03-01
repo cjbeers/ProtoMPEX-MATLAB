@@ -1,3 +1,5 @@
 
 fclose all
-ccc
+close all
+clear all
+clc
