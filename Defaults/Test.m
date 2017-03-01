@@ -15,4 +15,4 @@ TiArray(i,1)=FIT_EXAMPLE(DATA,BIN);
 end
 
 %%
-SUM(Fiber3(27,
+
