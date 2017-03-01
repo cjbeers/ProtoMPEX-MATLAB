@@ -1,0 +1,45 @@
+clear all
+clc
+
+%{
+%plasma pressure = ne*Te/k*R *7.5 mTorr/Pa (mTorr for Te in eV, ne in m-3
+lp_pe1=lp_ne1*lp_Te1/8.617e-5*8.31/6.02e23*7.5  )
+mi= 2.*931.5e6/2.998e8^2 %  ion mass for deuterium = 2.*931.5 MeV/c2 (eV)
+cs1=sqrt(lp_te1/mi)  %sound speed for Ti=0 (m/s)
+gamma1=lp_ne1*cs1  %particle flux (m-2 s-1)
+q1=5.*gamma1*lp_te1*1.602e-19  %heat flux  (W/m2)
+B1=1.5  %full field
+pb1=B1^2/(2.*4.*3.14159e-7)*7.5  %magnetic pressure 
+%(mTorr for B in T) normal to B axis
+beta1=lp_pe1/pb1
+%}
+
+i=1;
+excel=xlsread('RadialProfile_SP9_5');
+%Get Te data from Nischal
+ez=size(excel);
+z=ez(1,1);
+Table=zeros(z+1,2);
+for i=1:z
+Te=excel(i,3)*11604.3; %K ,11604.3K/ev
+%Te=5*11604.3;
+n_e=excel(i,4); %Bulk flux 
+%n_e=1.3E19;
+k_b=8.6173324E-5; %eV/K
+m_i=2*((931.5E6)/(2.998E8)^2); %eV/c^2
+Ti=0.5*11604.3; %K
+y=3; %3 for 1D adiabatic flow, 1 for isothermal flow
+corfactor=1.602E-19; %Joule/eV
+
+Gamma_se=0.5*n_e*(((k_b)*(Te+y*Ti))/(m_i))^0.5; %(1/(m^2*s^1))
+
+%Table{1,1}='Position';
+Table(i,1)=excel(i,2);
+%Table{1,2}='Gamma_se'; 
+Table(i,2)=Gamma_se; 
+HeatFlux=((5.5*Gamma_se*(Te/11604.3)+1.5*Gamma_se*(Ti/11604.3))*corfactor)/1E6; %(MW/m^2)
+%Table{1,3}='HeatFlux'; 
+Table(i,3)=HeatFlux;
+end
+
+plot(Table(1,:),Table(2,(1)));
