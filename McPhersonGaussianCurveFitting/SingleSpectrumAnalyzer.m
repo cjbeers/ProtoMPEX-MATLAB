@@ -12,24 +12,24 @@
 %code is ran
 
 %% Start Code
-ccc
+
 
 PLOTPIXELS=0;
 PLOTWAVELENGTH=1;
 PLOTINTENSITY=0;
-FINDFWHM=1;
+FINDFWHM=0;
 
 % Read in interested raw data file and background file
 %Match raw with background, example, _1820_ matched to _1820_bg
 Grating=1800;
 
-Wavelength=7067; %USER changes to match file wavelength location on McPherson
-[Raw_data,exposure]= readSPE('Z:\McPherson\calibration\cal_2016_12_02\Ar_7067_30um_F5.SPE');...
+Wavelength=7298; %USER changes to match file wavelength location on McPherson
+[Raw_data,exposure]= readSPE('Z:\McPherson\calibration\cal_2017_03_06\Bkgtest_7298_30um_12.SPE');...
     %USER Specifiy Location
 
 length = size(Raw_data);
 %Raw_data_bg = readSPE('Z:\McPherson\calibration\cal_2016_08_04\ROIs\abs_calib_20um_1s_bg_1.SPE');...
-Raw_data_bg = readSPE('Z:\McPherson\calibration\cal_2016_11_09\Ar_dark_15um_fall_1.SPE');...
+Raw_data_bg = readSPE('Z:\McPherson\calibration\cal_2017_03_03\Bkgtest_7298_30um_1.SPE');...
     %USER Specify Location
 
 if Grating == 300

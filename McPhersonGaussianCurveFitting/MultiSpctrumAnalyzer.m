@@ -32,8 +32,8 @@ FINDIONTEMP=0;
 %Grating = input(prompt);
 Grating = 1800; %USER chooses which Grating was used
 
-Wavelength=(7217); %USER changes to match file wavelength location on McPherson
-[Raw_data,exposure] = readSPE('Z:\McPherson\2017_01_06\D2Ar_7217_30um_12505.SPE');...
+Wavelength=(7220); %USER changes to match file wavelength location on McPherson
+[Raw_data,exposure] = readSPE('Z:\McPherson\2017_01_06\D2Ar_7220_30um_12489.SPE');...
     %USER Specifiy Location
 length = size(Raw_data);
 Raw_data_bg = readSPE('Z:\McPherson\calibration\cal_2016_08_04\ROIs\abs_calib_20um_1s_bg_1.SPE');...
@@ -51,7 +51,7 @@ if Grating == 300
 %P_o = 180; %USER put peaklocation here!!! peak location can change it is not the same each time
 P_o = 210; %For 300nm Grating, 132 for 1800nm Grating
 elseif Grating == 1800
-    P_o= 232;
+    P_o= 261;
 end
 
 %USE ONLY IF YOU HAVE A 5 X 512 X 50 matrix!!!!!!!!!!!!!
@@ -583,11 +583,11 @@ end
 end
 %% For testing a single frame for Ti
 
-%{
-DATA.I=Fiber4(8,:);
+%
+DATA.I=Fiber2(8,:);
 DATA.X=flip(lambdaplot);
 BIN=0.874;
 
-FIT_EXAMPLE(DATA,BIN)
-%}
+[KTN, CHI] = FIT_EXAMPLE(DATA,BIN);
+%
 toc

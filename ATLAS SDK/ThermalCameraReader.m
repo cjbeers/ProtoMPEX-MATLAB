@@ -9,13 +9,16 @@
  
  
 %% Start Code
-ccc
+clear all
+close all
+clc
+
 tic
 %##### Load image #####
 %[FILENAME, PATHNAME, FILTERINDEX] = uigetfile('*.jpg;*.seq', 'Choose IR file (jpg) or radiometric sequence (seq)');
-Shots=9976; %USER defines the shot number, if not found change the PATHNAME to the correct day/file location
+Shots=12411; %USER defines the shot number, if not found change the PATHNAME to the correct day/file location
 FILENAME = ['shot ' ,num2str(Shots),'.seq'];
-PATHNAME = 'Z:\IR_Camera\2016_08_18\';
+PATHNAME = 'Z:\IR_Camera\2017_01_05\2017_01_05\';
 FILTERINDEX = 1;
 
 videoFileName=[PATHNAME FILENAME];

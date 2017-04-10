@@ -2,9 +2,9 @@ clear all
 close all
 clc
 
-NE=30;
-NR=0.03;
-SI=500;
+NE=75;
+NR=0.1;
+SI=35000;
 
 CON_PLOT=1;
 
@@ -12,7 +12,7 @@ ERROR='FILL';
 
 TEXT_BOX='on';
 
-XLIMITS=[4860.3 4862.5];
+XLIMITS=[4805 4807];
 
 %//////////////////////////////////////////////////////////////////////////
 %|||||||||||||||||||| DEFINE DOPPLER BROADENING OPTIONS |||||||||||||||||||
@@ -30,7 +30,7 @@ SPEC.GAU.NF=1;
 SPEC.GAU.I=1;                
 SPEC.GAU.X=0*1e-10;               
 SPEC.GAU.SIG=0.12*1e-10;         
-SPEC.GAU.NX_SIG=30;                    
+SPEC.GAU.NX_SIG=3000;                    
 SPEC.GAU.NSIG=5; 
 %||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -41,7 +41,7 @@ SPEC.LOR.NF=0;
 SPEC.LOR.I=1;                          
 SPEC.LOR.X=0;                          
 SPEC.LOR.GAM=.014*1e-10;                  
-SPEC.LOR.NX_GAM=30;                    
+SPEC.LOR.NX_GAM=3000;                    
 SPEC.LOR.NGAM=15; 
 %||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -52,7 +52,7 @@ SPEC.NORM=1;
 
 PLOT.SPEC.LOGIC=0;
 
-PLOT.GEO.LOGIC=1;
+PLOT.GEO.LOGIC=0;
 PLOT.GEO.TEXT_BOX='on';
 PLOT.GEO.FIG_VIEW=[0,0];
 %||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -67,14 +67,15 @@ SOLVER.NDT=30;
 %//////////////////////////////////////////////////////////////////////////
 %||||||||||||||||||||| DEFINE FIELD AND ATOM OPTIONS ||||||||||||||||||||||
 %\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-VAR.VIEW=[pi/3.36 0];
-VAR.POL=[0 0];
-VAR.B_MAG=3.5;
+VAR.VIEW=[pi/2 0];
+VAR.POL=[1 0];
+VAR.B_MAG=0.874;
 VAR.EDC_MAG=[0 0 0]*1e5;
 VAR.NU=1;
-VAR.ERF_MAG=[1 1 0]*1e5;
+VAR.ERF_MAG=[0 0 0]*1e5;
 VAR.ERF_ANG=[0 0 0];
-VAR.LINE={2  'D'  .5  [2 4]};
+VAR.LINE.ATOM='ArII';
+VAR.LINE.WAVE='4806A';
 %||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 %*******************************************
@@ -133,100 +134,87 @@ NG=AXIS.NG;
 XL=AXIS.XL;
 XU=AXIS.XU;
 
-for ii=1:NG
-    %***********
-    %Axis limits
-    %***********
-    AL1=XL(ii)*1e10;
-    AL2=XU(ii)*1e10;     
+AL1=XLIMITS(1);
+AL2=XLIMITS(2);
 
-    if isempty(XLIMITS)==0
-        AL1=XLIMITS(1);
-        AL2=XLIMITS(2);
-    end
-    
-    AM=[AL1,AL2,0,1.05];
+AM=[AL1,AL2,0,1.3];
 
-    %******************
-    %Normalize the data 
-    %******************
-    IND=X_C>=AL1&X_C<=AL2;
-    I_C=I_C/max(I_C(IND));
-    
-    %***********************************
-    %Calc. the cell edge wavelength grid 
-    %***********************************
-    XEC=linspace(AL1,AL2,NE+1);
-     
-    %*****************
-    %Pixelate the data
-    %*****************
-    [~,IE,XE]=Pixelate_Data(XEC,I_C,X_C);
-    
-    %***************
-    %Calc. the noise
-    %***************
-    IEE=(NR+(IE/SI).^5)/2;
-    
-    %*****************************
-    %Add the noise to the spectrum
-    %*****************************
-    IE=IE+NR*(rand(1,NE)-1/2)+(IE/SI).^5.*(rand(1,NE)-1/2);  
-    
-    if CON_PLOT==1
-        %**********************
-        %Broadened line profile
-        %********************** 
-        figure
-        hold on
-        plot(X_C,I_C,'k','LineWidth',4.5);
-        plot(XE,IE,'rd','MarkerFaceColor','r','MarkerSize',13);
-        if strcmpi(ERROR,'BAR')==1
-            for jj=1:NE
-                plot([XE(jj) XE(jj)],[-IEE(jj) IEE(jj)]+IE(jj),'-r','LineWidth',4)
-            end
-        elseif strcmpi(ERROR,'FILL')==1
-            XE_FILL=[XE fliplr(XE)];
-            IEE_FILL=[IEE -fliplr(IEE)]+[IE fliplr(IE)];
+%******************
+%Normalize the data 
+%******************
+IND=X_C>=AL1&X_C<=AL2;
+I_C=I_C/max(I_C(IND));
 
-            fill(XE_FILL,IEE_FILL,'r','EdgeColor','none','FaceAlpha',.3)
-        end
-        hold off
-        if strcmpi(TEXT_BOX,'on')==1
-            annotation('textbox',[0.135 0.71 0.25 0.2],'LineStyle','none','FontSize',30, 'Interpreter', 'latex','string',TEXT);
-        end
-        legend({'Continuous','Pixelated'},'Location','NorthEast','Box','off')
-        xlabel(['Wavelength (' char(197) ')'],'FontSize',38)
-        ylabel('Intensity (a.u.)','FontSize',38)
-        set(gca,'FontSize',38)
-        axis(AM)
-        grid on
-    end
+%***********************************
+%Calc. the cell edge wavelength grid 
+%***********************************
+XEC=linspace(AL1,AL2,NE+1);
 
+%*****************
+%Pixelate the data
+%*****************
+[~,IE,XE]=Pixelate_Data(XEC,I_C,X_C);
+
+%***************
+%Calc. the noise
+%***************
+IEE=(NR+(IE/SI).^.5)/2;
+
+%*****************************
+%Add the noise to the spectrum
+%*****************************
+IE=IE+NR*(rand(1,NE)-1/2)+(IE/SI).^.5.*(rand(1,NE)-1/2);  
+
+if CON_PLOT==1
     %**********************
-    %Prompt user for action
-    %**********************
-    if NG>1
-        IN=input('Save Data? Y/N [N]: ','s');
-    else
-        IN='Y';
-    end
-    
-    if strcmpi(IN,'Y')==1
-        %*************************************
-        %Assign data sturcture for SPECTRA FIT
-        %*************************************
-        EXP.NE=NE;
-        EXP.XE=XE;
-        EXP.IE=IE;
-        EXP.IEE=IEE;
+    %Broadened line profile
+    %********************** 
+    figure
+    hold on
+    plot(X_C,I_C,'k','LineWidth',4.5);
+    plot(XE,IE,'rd','MarkerFaceColor','r','MarkerSize',13);
+    if strcmpi(ERROR,'BAR')==1
+        for jj=1:NE
+            plot([XE(jj) XE(jj)],[-IEE(jj) IEE(jj)]+IE(jj),'-r','LineWidth',4)
+        end
+    elseif strcmpi(ERROR,'FILL')==1
+        XE_FILL=[XE fliplr(XE)];
+        IEE_FILL=[IEE -fliplr(IEE)]+[IE fliplr(IE)];
 
-        %*******************
-        %Save data structure
-        %*******************
-        save('FIT_DATA.mat','EXP')
+        fill(XE_FILL,IEE_FILL,'r','EdgeColor','none','FaceAlpha',.3)
     end
+    hold off
+    if strcmpi(TEXT_BOX,'on')==1
+        annotation('textbox',[0.135 0.71 0.25 0.2],'LineStyle','none','FontSize',30, 'Interpreter', 'latex','string',TEXT);
+    end
+    legend({'Continuous','Pixelated'},'Location','NorthEast','Box','off')
+    xlabel(['Wavelength (' char(197) ')'],'FontSize',38)
+    ylabel('Intensity (a.u.)','FontSize',38)
+    set(gca,'FontSize',38)
+    axis(AM)
+    grid on
 end
+
+% %**********************
+% %Prompt user for action
+% %**********************
+% IN=input('Save Data? Y/N [N]: ','s');
+% 
+% if strcmpi(IN,'Y')==1
+%     %*************************************
+%     %Assign data sturcture for SPECTRA FIT
+%     %*************************************
+%     EXP.NE=NE;
+%     EXP.XE=XE;
+%     EXP.IE=IE;
+%     EXP.IEE=IEE;
+% 
+%     %*******************
+%     %Save data structure
+%     %*******************
+%     save('FIT_DATA.mat','EXP')
+% end
+
 
 %***********
 %Remove path

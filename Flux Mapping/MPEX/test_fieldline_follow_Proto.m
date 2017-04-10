@@ -1,14 +1,15 @@
 % function test_fieldline_follow_Proto
-clearvars;
+clear all
+clc
 tic;
 
-verbose = 0;
+verbose = 1;
 
 if 1
-    helicon_current = 440;
-    current_A = 6400;
-    current_B = 6400;
-    current_C = [];
+    helicon_current = 160;
+    current_A = 4000;
+    current_B = 4000;
+    current_C = 600;
     config = 'flat';
     skimmer = 1;
     shot = 0;

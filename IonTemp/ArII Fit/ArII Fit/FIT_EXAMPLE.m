@@ -21,7 +21,7 @@ I=DATA.I;
 %******************************************
 %Data range of interest (based on raw data)
 %******************************************
-BD_X=[4802.0 4802.6];
+BD_X=[4805.5 4806.5];
 
 %************************************************
 %Background range of interest (based on raw data)
@@ -91,7 +91,7 @@ INS{4}=0.16;      %Array - SIG of Guassian Functions
 
 
 if PLOTIONFIT==1;
-    
+ 
 figure
 hold on
 plot(RESULTS.XG,RESULTS.IG,'-k','LineWidth',5)

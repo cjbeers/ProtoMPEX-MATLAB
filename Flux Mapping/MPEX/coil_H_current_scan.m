@@ -10,9 +10,9 @@ geo = get_Proto_geometry(debug_plots,debug_plots,skimmer);
 
 config = 'flat';
 % helicon_current = 0;
-current_A = 3300; 
-current_B = 0;
-current_C = 0;
+current_A = 6400; 
+current_B = 6400;
+current_C = 600;
 
 verbose = 1;
 

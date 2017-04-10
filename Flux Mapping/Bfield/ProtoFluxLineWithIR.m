@@ -1,15 +1,15 @@
 % function test_fieldline_follow_Proto
-clearvars;
+cleanup
 x0_guess = []; y0_guess = []; force_guess = 0;
 verbose = 0;
-manual = 1;     %MS -edit - adding manual entry vs. not .
+manual = 0;     %MS -edit - adding manual entry vs. not .
 shot = 7333;    % MS edit - move up the entry for the shot number to be found or conditions simulated 
-if manual == 0
+if manual == 1
     
-    helicon_current = 260;
-    current_A = 6400;
+    helicon_current = 220;
+    current_A = 4000;
     current_B = 6400;
-    current_C = 0;
+    current_C = 600;
     config = 'flat';
     skimmer = 1;
     shot = 0;

@@ -1,4 +1,4 @@
-ccc
+cleanup
 % Defaults for this blog post
 width = 3;     % Width in inches
 height = 3;    % Height in inches

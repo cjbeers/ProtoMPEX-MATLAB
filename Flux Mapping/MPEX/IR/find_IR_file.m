@@ -1,6 +1,6 @@
 function fname = find_IR_file(shot)
 % Search data path for file names including string of shot number
-data_path = 'C:\Work\MPEX\Camera\';
+data_path = 'C:\\Users\cxe\Documents\GitHub\ProtoMPEX-MATLAB\Flux Mapping\MPEX\';
 files = dir(data_path);
 icount = 0;
 for i = 3:length(files)

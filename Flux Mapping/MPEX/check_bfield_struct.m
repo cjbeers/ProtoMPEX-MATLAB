@@ -2,6 +2,7 @@ function ierr = check_bfield_struct(bfield)
 % checks the fields in bfield structure
 ierr = 0;
 errstr = 'Error from check_bfield_struct: ';
+%
 if ~isstruct(bfield)
     fprintf([errstr,'bfield must be a structure.\n'])
     ierr = 1;
@@ -17,12 +18,13 @@ if ~ischar(bfield.type)
     ierr = 1;
     return;
 end
+%{
 if ~isfield(bfield,'nsym')
     fprintf([errstr,'nsym required for all bfield structures\n'])
     ierr = 1;
     return;
 end
-
+%}
 switch bfield.type
     case 'gfile'
         if ~isfield(bfield,'g')

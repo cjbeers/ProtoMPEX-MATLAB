@@ -15,7 +15,7 @@ switch shot
     case 7400
         helicon_current = 30; current_A = 6368; current_B = 0; config = 'flat'; skimmer = 0;
     case 7333
-        helicon_current = 400; current_A = 6700; current_B = 6700; config = 'flat'; skimmer = 0; %MS-EDIT added
+        helicon_current = 260; current_A = 6400; current_B = 6400; current_C = 600; config = 'flat'; skimmer = 1; %MS-EDIT added
     case 7403
         helicon_current = 60; current_A = 6368; current_B = 0; config = 'flat'; skimmer = 0;
     case 7404

@@ -21,7 +21,7 @@ else
     
 %     shot = 7418;  mytitle = 'I_A = 6368 A, no skimmer';  x0_guess = -.5512;y0_guess = -2.533; force_guess = 1; %shots = 7400 + [0,3:6,8,10,12:13,16,17,18];
 %      shot = 7477; mytitle = 'I_A = 3300 A, with skimmer';x0_guess = -.5877;y0_guess = -2.8914; force_guess = 1; % shots = 7400 + [77,87,88,92:98,100,101,103];
-    %shot = 7333;  mytitle = 'I_A = 3300 A, no skimmer';  x0_guess = -0.604712; y0_guess = -3.026471; force_guess = 0; %shots = 7400 + [0,3:6,8,10,12:13,16,17,18];
+    shot = 7333;  mytitle = 'I_A = 3300 A, no skimmer';  x0_guess = -0.604712; y0_guess = -3.026471; force_guess = 0; %shots = 7400 + [0,3:6,8,10,12:13,16,17,18];
 %     shot = 7278;  mytitle = 'I_A = 3300 A, no skimmer';  x0_guess = -0.604712; y0_guess = -3.026471; force_guess = 0; %shots = 7400 + [0,3:6,8,10,12:13,16,17,18];
 %     shot = 7674;  mytitle = 'I_A = 3300 A, no skimmer';  x0_guess = -0.591378; y0_guess = -2.477497; force_guess = 0; %shots = 7400 + [0,3:6,8,10,12:13,16,17,18];
     
