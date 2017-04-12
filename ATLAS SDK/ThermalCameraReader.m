@@ -79,7 +79,7 @@ if(seq.Count > 1)
         %get the temperature for a position 
         temp = seq.ThermalImage.GetValueFromSignal(im(286,364));
          
-        Temperature(:,:,i)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.33,images),images(190:370,280:425,i));
+        Temperature(:,:,i)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.33,images),images(120:325,275:475,i));
         DeltaTMatrix(:,:,i)=Temperature(:,:,i)-Temperature(:,:,1);
         %{
         %40sec per j and k loop
@@ -111,7 +111,7 @@ if(seq.Count > 1)
         %Creates figure to be used in movie
         fig=figure(3);
         imagesc(Temperature(:,:,i), 'CDataMapping','scaled')
-        %caxis([30, 40])
+        caxis([0, 150])
         colormap jet
         c=colorbar;
         ylabel(c, 'Temperature [C]')

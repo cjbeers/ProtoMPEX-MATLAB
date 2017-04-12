@@ -6,8 +6,8 @@
 ccc
 %##### Load image #####
 %[FILENAME, PATHNAME, FILTERINDEX] = uigetfile('*.jpg;*.seq', 'Choose IR file (jpg) or radiometric sequence (seq)');
-FILENAME = 'shot 9238.seq';
-PATHNAME = 'Z:\IR_Camera\2016_07_01\';
+FILENAME = 'shot 12411.seq';
+PATHNAME = 'Z:\IR_Camera\2017_01_05\2017_01_05\';
 FILTERINDEX = 1;
 
 videoFileName=[PATHNAME FILENAME];
@@ -96,7 +96,7 @@ if(seq.Count > 1)
         %Creates figure to be used in movie
         fig=figure(3);
         imagesc(im, 'CDataMapping','scaled')
-        %caxis([23.8578,26.7185])
+        caxis([0,150])
         colormap jet
         colorbar('Ticks',colorticks, 'TickLabels',colorlabels)
         
@@ -135,7 +135,7 @@ PixelArea=(((1.375/sqrt(2))/(80))*2.54)^2; %cm2
 Density=7.6; %g/cm3
 thickness= 1.0625*2.54; %inches to cm
 Delta_T=(((max-min)*459.67)*(5/9)); 
-Delta_t=
+Delta_t= 
 
 Q=(Cp*Delta_T*thickness*Density)/Delta_t; %Cp*DeltaT*mass = J
 %% View Single Frame
