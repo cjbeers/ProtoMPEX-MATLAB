@@ -5,7 +5,7 @@ function [KTN, CHI] = FIT_EXAMPLE(DATA,BIN)
 %Start Code
 %**************************************************************************
  
-PLOTIONFIT=0;
+PLOTIONFIT=1;
 
 %*****************************************
 %Theortical center wavelength of transtion

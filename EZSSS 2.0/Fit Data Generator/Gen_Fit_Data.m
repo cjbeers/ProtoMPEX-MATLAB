@@ -1,5 +1,4 @@
 clear all
-close all
 clc
 
 NE=75;
@@ -12,7 +11,7 @@ ERROR='FILL';
 
 TEXT_BOX='on';
 
-XLIMITS=[4805 4807];
+XLIMITS=[4805.8 4806.2];
 
 %//////////////////////////////////////////////////////////////////////////
 %|||||||||||||||||||| DEFINE DOPPLER BROADENING OPTIONS |||||||||||||||||||
@@ -30,7 +29,7 @@ SPEC.GAU.NF=1;
 SPEC.GAU.I=1;                
 SPEC.GAU.X=0*1e-10;               
 SPEC.GAU.SIG=0.12*1e-10;         
-SPEC.GAU.NX_SIG=3000;                    
+SPEC.GAU.NX_SIG=300;                    
 SPEC.GAU.NSIG=5; 
 %||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
