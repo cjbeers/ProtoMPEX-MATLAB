@@ -33,7 +33,7 @@ FINDIONTEMP=0;
 Grating = 1800; %USER chooses which Grating was used
 
 Wavelength=(7220); %USER changes to match file wavelength location on McPherson
-[Raw_data,exposure] = readSPE('Z:\McPherson\2017_01_06\D2Ar_7220_30um_12489.SPE');...
+[Raw_data,exposure] = readSPE('Z:\McPherson\2017_01_05\D2Ar_7220_30um_12451.SPE');...
     %USER Specifiy Location
 length = size(Raw_data);
 Raw_data_bg = readSPE('Z:\McPherson\calibration\cal_2016_08_04\ROIs\abs_calib_20um_1s_bg_1.SPE');...
@@ -583,11 +583,11 @@ end
 end
 %% For testing a single frame for Ti
 
-%
-DATA.I=Fiber2(8,:);
+%{
+DATA.I=Fiber3(8,:);
 DATA.X=flip(lambdaplot);
 BIN=0.874;
 
 [KTN, CHI] = FIT_EXAMPLE(DATA,BIN);
-%
+%}
 toc

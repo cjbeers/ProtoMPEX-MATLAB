@@ -187,7 +187,7 @@ end
 
 for s = 1:sizeshotlist(1,2)
     % Temperature
-    x1 = Te{s}(30:39);
+    x1 = Te{s}(20:39);
     % Mean temperature for the most stable Te region for a given shot
     Te1(s) = mean(x1);
     Std_Te = std(x1);     %Standard deviaton
@@ -203,10 +203,6 @@ formatPrint='Te = %1.4g\n';
 fprintf(formatPrint, Te1(s))
 formatPrint='Std_Te = %1.4g\n';
 fprintf(formatPrint, Std_Te)
-formatPrint='Ni = %1.4e\n';
-fprintf(formatPrint, Ne1(s))
-formatPrint='Std_Ni = %1.4e\n';
-fprintf(formatPrint, Std_Ne)
 formatPrint='Ni = %1.4e\n';
 fprintf(formatPrint, Ne1(s))
 formatPrint='Std_Ni = %1.4e\n';

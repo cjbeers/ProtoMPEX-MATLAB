@@ -21,7 +21,7 @@ I=DATA.I;
 %******************************************
 %Data range of interest (based on raw data)
 %******************************************
-BD_X=[4805.5 4806.5];
+BD_X=[4805.8 4806.2];
 
 %************************************************
 %Background range of interest (based on raw data)

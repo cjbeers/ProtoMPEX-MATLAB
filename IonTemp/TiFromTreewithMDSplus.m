@@ -16,8 +16,8 @@
 
 cleanup
 
-shotlist = [13723]; %USER defines the shot number
-DLPType='10'; %USER needs to review shot notes to figure out which probe...
+shotlist = [12451]; %USER defines the shot number
+DLPType='9'; %USER needs to review shot notes to figure out which probe...
 %was used or find out from Nishal for accuracy
 %}
 PlotFlux=0;
