@@ -1,107 +1,120 @@
-
-function [KTN, CHI] = FIT_EXAMPLE(DATA,BIN)
-
-%**************************************************************************
-%Start Code
-%**************************************************************************
- 
-PLOTIONFIT=1;
-
-%*****************************************
-%Theortical center wavelength of transtion
-%*****************************************
-CW=4806.02;
-
-%***********
-%Assign data
-%***********
-X=DATA.X*10;
-I=DATA.I;
-
-%******************************************
-%Data range of interest (based on raw data)
-%******************************************
-BD_X=[4805.8 4806.2];
-
-%************************************************
-%Background range of interest (based on raw data)
-%************************************************
-BD_BK=[4808 4809];
-
-%***************
-%Remove baseline
-%***************
-LOG=X>=BD_BK(1)&X<=BD_BK(2);
-I=I-sum(I(LOG))/sum(LOG);
-
-%************************
-%Remove non-relevant data
-%************************
-LOG=X>=BD_X(1)&X<=BD_X(2);
-N=sum(LOG);
-X=X(LOG);
-I=I(LOG);
-
-%*******************************************************
-%Shift the data to be center about theortical wavelength
-%*******************************************************
-[~,IND]=max(I);
-X=X+(CW-X(IND));
-
-%*******************
-%Normalize intensity
-%*******************
-I=I/max(I);
-
-%************************************************************************
-%Assign intensity error ~ example, calculate from noise and possion stat.
-%************************************************************************
-IE(1:N)=0.05;
-
-%************************************
-%Assign the data to the EXP structure
-%************************************
-EXP.NE=N;
-EXP.XE=X;
-EXP.IE=I;
-EXP.IEE=IE;
+function [MAT_P,MAT_0,MAT_M]=E_DIPOLE_MAT(PARA,UNIV)
 
 %**************************************************************************
+%This function calculates the relative intensity of all transitions induced
+%by an ELECTRIC DIPOLE from intitial state with radial quantum number n(1)
+%to final state with radial quantum number n(2) FOR HYDROGEN.
+
 %**************************************************************************
-
-%--------------------------------------------------------------------------
-%NOTE this parameter (SIG) is defined as f(x)=I*exp(-(x-LAM)^2/SIG^2), the
-%nominal Gaussian function is f(x)=I*exp(-(x-LAM)^2/(2*SIG_NOMINAL^2))
-%--------------------------------------------------------------------------
-
-%******************************
-%Assign the insturment function 
-%******************************
-INS{1}=1;         %Scalar - Number of Gaussian functions
-INS{2}=1;         %Array - I of Guassian Functions
-INS{3}=0;         %Array - LAM of Guassian Functions
-INS{4}=0.16;      %Array - SIG of Guassian Functions
-
-
+%Calculating the matrix elements associated with the coupled basis set for 
+%the electric dipole operator
+%**************************************************************************
+%                           <phi(ii)|eps*r|phi(jj)> 
+%                       
+%                         ii=[1:NS(1)] and jj=[1:NS(2)]
+%**************************************************************************
 
 %************
-%Fit the data
+%Assign input
 %************
-[B,KTN,CHI,RESULTS]=FIT_DATA(EXP,INS,BIN);
+NS=PARA.NS;
+QN=PARA.QN;
+WF=PARA.WF;
 
+%***************
+%Allocate memory
+%***************
+MAT_M(1:NS(1),1:NS(2))=0;
+MAT_0(1:NS(1),1:NS(2))=0;
+MAT_P(1:NS(1),1:NS(2))=0;
 
-if PLOTIONFIT==1;
- 
-figure
-hold on
-plot(RESULTS.XG,RESULTS.IG,'-k','LineWidth',5)
-plot(EXP.XE,EXP.IE,'sk','MarkerFaceColor','r','MarkerEdgeColor','r','MarkerSize',18)
-hold off
-xlabel(['Wavelength (' char(197) ')'],'FontSize',40) 
-ylabel('Intensity (a.u.)','FontSize',40)
-title(['\chi= ' num2str(CHI) ' and KT=' num2str(KTN) ' eV' ' and B=' num2str(B) ' T'],'FontSize',40,'FontWeight','Normal')
-grid on
-set(gca,'FontSize',40)
-axis tight
+%//////////////////////////////////////////////////////////////////////////
+%||||||||||||||||| CALC ELECTRIC DIPOLE MATRIX ELEMENTS |||||||||||||||||||
+%\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+for ii=1:NS(1)
+    for jj=1:NS(2)
+        if QN{1,ii}(2)==QN{2,jj}(2)       
+            if QN{1,ii}(3)==QN{2,jj}(3)+1 || QN{1,ii}(3)==QN{2,jj}(3)-1 || (WF==0 && QN{1,ii}(3)~=0 && QN{1,ii}(3)==QN{2,jj}(3))
+                if (QN{1,ii}(4)==QN{2,jj}(4) && QN{1,ii}(4)~=0) || QN{1,ii}(4)==QN{2,jj}(4)+1 || QN{1,ii}(4)==QN{2,jj}(4)-1
+                    %**********************
+                    %Assign quantum numbers
+                    %**********************
+                    n_1=QN{1,ii}(1);
+                    n_2=QN{2,jj}(1);
+                    s=QN{1,ii}(2);
+                    l_1=QN{1,ii}(3);
+                    l_2=QN{2,jj}(3);
+                    j_1=QN{1,ii}(4);
+                    j_2=QN{2,jj}(4);
+                    mj_1=QN{1,ii}(5);
+                    mj_2=QN{2,jj}(5);      
+                    
+                    if QN{1,ii}(5)==QN{2,jj}(5)-1
+                        
+                        %//////////////////////////////////////////////////
+                        %|||||||||||||||        r(3)       ||||||||||||||||
+                        %\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                        
+                        %********************************
+                        %Calc. the reduced matrix element
+                        %********************************
+                        if WF==1
+                            MAT_RED=REDUCED_MAT(n_1,l_1,n_2,l_2,UNIV);
+                        else
+                            MAT_RED=1;
+                        end
+                        
+                        %********************
+                        %Calc. matrix element
+                        %********************
+                        MAT_M(ii,jj)=MAT_RED*((2*j_1+1)*(2*j_2+1))^0.5*(-1)^(2*j_1+1+s+l_2-mj_1)*THREE_J_NUM(j_1,1,j_2,-mj_1,-1,mj_2)*SIX_J_NUM(l_1,j_1,s,j_2,l_2,1);
+                        
+                    elseif QN{1,ii}(5)==QN{2,jj}(5)
+                        
+                        %//////////////////////////////////////////////////
+                        %|||||||||||||||     eps(2)r(2)    ||||||||||||||||
+                        %\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                        
+                        %********************************
+                        %Calc. the reduced matrix element
+                        %********************************
+                        if WF==1
+                            MAT_RED=REDUCED_MAT(n_1,l_1,n_2,l_2,UNIV);
+                        else
+                            MAT_RED=1;
+                        end
+
+                        %********************
+                        %Calc. matrix element
+                        %********************
+                        MAT_0(ii,jj)=MAT_RED*((2*j_1+1)*(2*j_2+1))^0.5*(-1)^(2*j_1+1+s+l_2-mj_1)*THREE_J_NUM(j_1,1,j_2,-mj_1,0,mj_2)*SIX_J_NUM(l_1,j_1,s,j_2,l_2,1);
+                        
+                    elseif QN{1,ii}(5)==QN{2,jj}(5)+1
+                        
+                        %//////////////////////////////////////////////////
+                        %|||||||||||||||    -eps(3)r(1)    ||||||||||||||||
+                        %\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                        
+                        %********************************
+                        %Calc. the reduced matrix element
+                        %********************************
+                        if WF==1
+                            MAT_RED=REDUCED_MAT(n_1,l_1,n_2,l_2,UNIV);
+                        else
+                            MAT_RED=1;
+                        end
+                        
+                        %********************
+                        %Calc. matrix element
+                        %********************
+                        MAT_P(ii,jj)=MAT_RED*((2*j_1+1)*(2*j_2+1))^0.5*(-1)^(2*j_1+1+s+l_2-mj_1)*THREE_J_NUM(j_1,1,j_2,-mj_1,1,mj_2)*SIX_J_NUM(l_1,j_1,s,j_2,l_2,1);
+
+                    end
+                end
+            end
+        end
+    end
 end
+
 end
