@@ -2,11 +2,11 @@ clear all
 close all
 clc
 
-WINDOW=[4805.8 4806.2];
+WINDOW=[4805. 4807];
 
-NE=8;
+NE=50;
 NR=0.1;
-SI=35000;
+SI=500;
 
 PLOT_LOGIC=1;
 ERROR='FILL';
@@ -68,7 +68,7 @@ SPEC.SUM.LOGIC=0;
 PLOT.SPEC.LOGIC=0;
 PLOT.HAM.LOGIC=0;  
 PLOT.QS.LOGIC=0; 
-PLOT.GEO.LOGIC=0;
+PLOT.GEO.LOGIC=1;
 %||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 %//////////////////////////////////////////////////////////////////////////
@@ -286,7 +286,7 @@ if SAVE_LOGIC==1
     %*******************
     %Save data structure
     %*******************
-    %save('FIT_DATA.mat','EXP')
+    save('FIT_DATA.mat','EXP')
 end
 
 %***********

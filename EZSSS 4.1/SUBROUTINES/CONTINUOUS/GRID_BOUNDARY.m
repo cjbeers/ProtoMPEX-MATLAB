@@ -64,7 +64,7 @@ end
 %*****************************
 %Calc. max Gaussian broadening
 %*****************************
-MAX_SIG=(MAX_GAU.^2+MAX_DOP.^2).^0.5;
+MAX_SIG=(MAX_GAU^2+MAX_DOP^2)^0.5;
 
 %***********************************
 %Max Lorentzian broadening parameter
