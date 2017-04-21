@@ -2,11 +2,11 @@ clear all
 close all
 clc
 
-WINDOW=[4805. 4807];
+WINDOW=[4805.8 4806.2];
 
-NE=50;
+NE=8;
 NR=0.1;
-SI=500;
+SI=35000;
 
 PLOT_LOGIC=1;
 ERROR='FILL';
@@ -68,7 +68,7 @@ SPEC.SUM.LOGIC=0;
 PLOT.SPEC.LOGIC=0;
 PLOT.HAM.LOGIC=0;  
 PLOT.QS.LOGIC=0; 
-PLOT.GEO.LOGIC=1;
+PLOT.GEO.LOGIC=0;
 %||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 %//////////////////////////////////////////////////////////////////////////
