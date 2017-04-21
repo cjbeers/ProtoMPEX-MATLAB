@@ -583,11 +583,11 @@ end
 end
 %% For testing a single frame for Ti
 
-%{
+%
 DATA.I=Fiber3(8,:);
 DATA.X=flip(lambdaplot);
 BIN=0.874;
 
 [KTN, CHI] = FIT_EXAMPLE(DATA,BIN);
-%}
+%
 toc
