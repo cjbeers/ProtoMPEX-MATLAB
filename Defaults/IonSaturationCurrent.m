@@ -1,0 +1,18 @@
+
+ne=6E19; %m^-3
+Te=2; % eV
+e=1.602E-19; %C/electron
+r=1/2; %mm
+y=1; %Gamma value
+Z=1; %Charge on ions
+mu=2; %average mass of particles
+M=3.34E-27; %kg
+rprobe=r/1000; %m
+Aprobe=pi*rprobe^2; %m^2
+
+cs1=((9.79E5*(y*Z*Te/mu)^(1/2)))/100; %m/s
+lsat=0.61*ne*e*Aprobe*cs1*1000; %mA
+
+
+cs2=((1.602E-19*Te)/M)^(1/2) %m/s
+I_B=0.61*ne*e*Aprobe*cs2*1000 %mA 
