@@ -1,5 +1,5 @@
 
-%shotlist = [12618];
+%shotlist = [14340:14347];
 %DLPType='9';
 
 sizeshotlist=size(shotlist);
@@ -121,7 +121,7 @@ for s = 1:sizeshotlist(1,2)
     h(s) = plot(time{s},Te{s},C{s},'lineWidth',2);
     L{s} = [num2str(shotlist(s)),' ,t=',num2str(t{s}(10:14))];
     hold on
-    plot(t_28{s},EBW{s})
+    %plot(t_28{s},EBW{s})
     set(gca,'Fontsize',20,'FontWeight','Bold')
 end
 legend(h,L,'location','NorthWest')
@@ -187,26 +187,43 @@ end
 
 for s = 1:sizeshotlist(1,2)
     % Temperature
-    x1 = Te{s}(20:39);
+    x1 = Te{s}(10:18);
+    x11 = Te{s}(22:39);
     % Mean temperature for the most stable Te region for a given shot
     Te1(s) = mean(x1);
-    Std_Te = std(x1);     %Standard deviaton
+    Te11(s) = mean(x11);
+    %Standard deviaton
+    Std_Te1 = std(x1);
+    Std_Te=Std_Te1;
+    Std_Te11 = std(x11);
     %Density
-    x2 = Ni{s}(30:39);
+    x2= Ni{s}(10:18);
+    x21 = Ni{s}(22:39);
     % Mean density for the most stable Ne region for a given shot% Standard Error
     Ne1(s)= mean(x2);
-    Std_Ne = std(x2);
+    Ne11(s)= mean(x21);
+    Std_Ne1 = std(x2);
+    Std_Ne =Std_Ne1;
+    Std_Ne11 = std(x21);
     PlasmaPressure=mean(Pressure(30:39));
     
     %Prints values
-formatPrint='Te = %1.4g\n';
+formatPrint='Te1 = %1.4g\n';
 fprintf(formatPrint, Te1(s))
-formatPrint='Std_Te = %1.4g\n';
-fprintf(formatPrint, Std_Te)
-formatPrint='Ni = %1.4e\n';
+formatPrint='Te2 = %1.4g\n';
+fprintf(formatPrint, Te11(s))
+formatPrint='Std_Te1 = %1.4g\n';
+fprintf(formatPrint, Std_Te1)
+formatPrint='Std_Te2 = %1.4g\n';
+fprintf(formatPrint, Std_Te11)
+formatPrint='Ni1 = %1.4e\n';
 fprintf(formatPrint, Ne1(s))
-formatPrint='Std_Ni = %1.4e\n';
-fprintf(formatPrint, Std_Ne)
+formatPrint='Ni2 = %1.4e\n';
+fprintf(formatPrint, Ne11(s))
+formatPrint='Std_Ni1 = %1.4e\n';
+fprintf(formatPrint, Std_Ne1)
+formatPrint='Std_Ni2 = %1.4e\n';
+fprintf(formatPrint, Std_Ne11)
 formatPrint='Pa = %1.4g\n';
 fprintf(formatPrint, PlasmaPressure)
 end

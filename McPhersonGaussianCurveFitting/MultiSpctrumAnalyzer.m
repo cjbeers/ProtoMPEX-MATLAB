@@ -11,7 +11,8 @@
 %code is ran
 
 %% Start Code
-clearvars('-except', 'Fiberall', 'Fiberall2', 'lambdaplot')
+clear all
+%clearvars('-except', 'Fiberall', 'Fiberall2', 'IDK')
 format shortG; 
 format compact;
 tic
@@ -32,8 +33,8 @@ FINDIONTEMP=0;
 %Grating = input(prompt);
 Grating = 1800; %USER chooses which Grating was used
 
-Wavelength=(7220); %USER changes to match file wavelength location on McPherson
-[Raw_data,exposure] = readSPE('Z:\McPherson\2017_01_05\D2Ar_7220_30um_12451.SPE');...
+Wavelength=(7217); %USER changes to match file wavelength location on McPherson
+[Raw_data,exposure] = readSPE('Z:\McPherson\2017_01_09\D2Ar_7217_30um_12620.SPE');...
     %USER Specifiy Location
 length = size(Raw_data);
 Raw_data_bg = readSPE('Z:\McPherson\calibration\cal_2016_08_04\ROIs\abs_calib_20um_1s_bg_1.SPE');...
@@ -583,11 +584,17 @@ end
 end
 %% For testing a single frame for Ti
 
+
+for ii=1:1
 %
-DATA.I=Fiber3(8,:);
+%ii=1;
+DATA.I=Fiber4(8,:);
 DATA.X=flip(lambdaplot);
 BIN=0.874;
 
-[KTN, CHI] = FIT_EXAMPLE(DATA,BIN);
+[MYDATA.KTN(ii), MYDATA.CHI(ii)] = FIT_EXAMPLE(DATA,BIN);
 %
+end
+
+%%
 toc
