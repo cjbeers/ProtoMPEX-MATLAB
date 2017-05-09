@@ -6,7 +6,7 @@ function [KTN, CHI] = FIT_EXAMPLE(DATA,BIN)
 %**************************************************************************
  
 PLOTIONFIT=0;
-FINDERROR=1;
+FINDERROR=0;
 PLOTERROR=0;
 
 %*****************************************

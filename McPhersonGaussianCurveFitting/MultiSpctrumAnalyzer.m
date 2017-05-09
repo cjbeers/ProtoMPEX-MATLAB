@@ -139,7 +139,6 @@ cor_f3 = Fiber3 - Fiber3bg;
 cor_f4 = Fiber4 - Fiber4bg;
 cor_f5 = Fiber5 - Fiber5bg;
 
-
 %Background self corrected in corall, not sure what cor1-5 really is
 corall=zeros(length(1,3),512,5);
 corall(:,:,1)=Fiberall(:,:,1)-Fiberallbg(:,1,1);
@@ -221,7 +220,6 @@ hold off;
 
 pixels_c(1:P_o,:) = (P_o-1:-1:0)'; %From 1 to Peak of Interest 
 pixels_c(P_o+1:length(1,2),:) = (1:1:(length(1,2)-P_o))'; %From Peak of Interest to 512
-
 
 for i=1:512
       if Grating ==300
@@ -312,7 +310,7 @@ for i=1:512
    end 
 end
 
-%% Ipeak Plotting Tool
+% Ipeak Plotting Tool
 
 %For ipeak %Not used atm, but good for visualising data the first time
 PeakD=(0.3/18);

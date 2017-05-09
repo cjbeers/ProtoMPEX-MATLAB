@@ -12,9 +12,9 @@ clc
 tic
 %##### Load image #####
 %[FILENAME, PATHNAME, FILTERINDEX] = uigetfile('*.jpg;*.seq', 'Choose IR file (jpg) or radiometric sequence (seq)');
-Shots=12411; %USER defines shot number, if not found change the PATHNAME to the correct day/file location
+Shots=14402; %USER defines shot number, if not found change the PATHNAME to the correct day/file location
 FILENAME = ['Shot ' ,num2str(Shots),'.seq'];
-PATHNAME = 'Z:\IR_Camera\2017_01_05\2017_01_05\';
+PATHNAME = 'Z:\IR_Camera\2017_05_05\';
 FILTERINDEX = 1;
 
 videoFileName=[PATHNAME FILENAME];
@@ -47,9 +47,9 @@ max = seq.ThermalImage.GetValueFromSignal(Maximum);
 %USER can change min "images(Max,Max,1)" to whatever their starting frame needs to be
 min=seq.ThermalImage.GetValueFromSignal((images(MaxIndex(1,1),MaxIndex(1,2),1)));
 %
-Temperature(:,:,1)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(120:325,275:475,1));
-Temperature(:,:,2)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(120:325,275:475,30));
-Temperature(:,:,3)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(120:325,275:475,36));
+Temperature(:,:,1)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(120:325,275:475,20));
+Temperature(:,:,2)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(120:325,275:475,38));
+Temperature(:,:,3)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(120:325,275:475,46));
 
 %{
 Temperature(:,:,1)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.33, images),images(1:450,1:630,1));
