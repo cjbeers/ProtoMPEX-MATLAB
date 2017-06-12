@@ -13,13 +13,13 @@
 %% Start Code
 
 clear all
-close all
+%close all
 format shortG; 
 format compact;
 tic %starts timing the code
 %Turns on=1/off=0 program sections
 
-PLOTPIXELS=1; %plots counts vs. pixel number
+PLOTPIXELS=0; %plots counts vs. pixel number
 PLOTWAVELENGTH=1; %plots counts vs. wavelength
 PLOTINTENSITY=0; %plots the absolute intensity vs. wavelength
 USEIPEAKS=0; %uses program ipeaks to find wavelength peaks
@@ -33,10 +33,10 @@ IONTEMPSINGLEFRAME=0; %looks at single frame to fit ion temp
 
 %prompt = 'Grating used (300 or 1800) nm? '; %Two gratings can be used
 %Grating = input(prompt);
-Spectra.Grating = 1800;  %USER chooses which Grating was used
+Spectra.Grating = 300;  %USER chooses which Grating was used
 
-Spectra.Wavelength=(7217); %USER changes to match file wavelength location on McPherson
-[Spectra.RawDATA,Spectra.ExposureTime] = readSPE('Z:\McPherson\2017_01_09\D2Ar_7217_30um_12620.SPE');...
+Spectra.Wavelength=(1330); %USER changes to match file wavelength location on McPherson
+[Spectra.RawDATA,Spectra.ExposureTime] = readSPE('Z:\McPherson\2017_06_08\D2_1330_30um_14765.SPE');...
     %USER Specifiy Location
 Spectra.Length = size(Spectra.RawDATA);
 Spectra.RawBGDATA = readSPE('Z:\McPherson\calibration\cal_2016_08_04\ROIs\abs_calib_20um_1s_bg_1.SPE');...
@@ -57,12 +57,14 @@ end
 if Spectra.Grating == 300
 Spectra.Lambda0 = (Spectra.Wavelength*.4); %What you tunned the Mcpherson to in nanometers!
 elseif Spectra.Grating == 1800
-%Spectra.Lambda0 = (Spectra.Wavelength/15); %USER adjusts if centering the McPher, meaning the peak is not the gear position on McPher
-Spectra.Lambda0=480.6; %For looking at the Ar II line for ion temperatures
+%Spectra.Lambda0 = (Spectra.Wavelength/15); %USER uses this one if not
+%centering the McPherson
+Spectra.Lambda0=480.6; %For looking at the Ar II line for ion temperatures 
+%or when centering the McPherson peak of interest
 end
 
 if Spectra.Grating == 300
-%P_o = 180; %USER put peaklocation here!!! peak location can change it is not the same each time
+%Spectra.P0 = 180; %USER put peaklocation here!!! peak location can change it is not the same each time
 Spectra.P0 = 210; % 210 for 300nm Grating, 132 for 1800nm Grating, ~260 when centering McPher
 elseif Spectra.Grating == 1800
     Spectra.P0= 261; %USER can look at the ipeaks to find the location of their peak of interest
@@ -391,8 +393,8 @@ end
 if IONTEMPSINGLEFRAME==1
     
 BIN=0.874;
-for ii=1:1
-DATA.I=Spectra.SelfBGSub4(Spectra.FrameOfInterest,:); %USER changes to fiber of interest
+for ii=1:100
+DATA.I=Spectra.SelfBGSub2(Spectra.FrameOfInterest,:); %USER changes to fiber of interest
 DATA.X=flip(Spectra.LambdaPlot);
 [KTNarray(ii), CHIarray(ii)] = FIT_EXAMPLE(DATA,BIN); %Calls Elijah's code to do the ion temp fitting, 
 %USER must edit this code to work with backround location, and peak of interest
