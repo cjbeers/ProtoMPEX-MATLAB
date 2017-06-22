@@ -1,13 +1,13 @@
 %YOU MUST HAVE ATLAS SDK FROM FLIR DOWNLOADED TO USE THIS PROGRAM
 
-%Josh Beers
+%Written by Josh Beers
 %ORNL/UTK
 
 cleanup
 %##### Load image #####
 %[FILENAME, PATHNAME, FILTERINDEX] = uigetfile('*.jpg;*.seq', 'Choose IR file (jpg) or radiometric sequence (seq)');
-FILENAME = 'Shot-014797.seq';
-PATHNAME = 'Z:\IR_Camera\2017_06_09\';
+FILENAME = 'Shot 15010.seq';
+PATHNAME = 'Z:\IR_Camera\2017_06_15\';
 FILTERINDEX = 1;
 
 videoFileName=[PATHNAME FILENAME];
@@ -25,7 +25,7 @@ im = double(img);
 Counts=seq.ThermalImage.Count;
 
 %Creates array of tick marks to be used in colorbar
-        colorticks=1.2E4:1E2:1.7E4;
+        colorticks=1.2E5:1E2:3E5;
         colorsize=size(colorticks);
         
           j=1;
@@ -46,7 +46,7 @@ figure(2)
     %[a,b]=ind2sub(size(seq.ThermalImage.MaxSingalValue),find(seq.ThermalImage.MaxSignalValue==max));
     
     min=seq.ThermalImage.GetValueFromSignal(seq.ThermalImage.MinSignalValue);
-    axis([0 (double(seq.Count)/double(seq.FrameRate)) (min-2) (max+2)])
+    axis([0 (double(seq.Count)/double(seq.FrameRate)) (min-2) (max+50)])
     xline = linspace(0,(double(seq.Count)/double(seq.FrameRate)),seq.Count);
     title('Temp at position 240,320') 
     ylabel('Degree C')
@@ -74,11 +74,11 @@ if(seq.Count > 1)
             for j=1:480
                 for k=1:640
         
-        %temperature(j,k,i) = seq.ThermalImage.GetValueFromSignal(images(j,k));
+        temperature(j,k,i) = seq.ThermalImage.GetValueFromSignal(images(j,k));
         %Delta_T=
                 end
             end
-        elseif i>=252
+        elseif i>=275
             disp('Error, too many frames, adjust number')
         end
                
@@ -89,14 +89,12 @@ if(seq.Count > 1)
         figure(1)
         [X, cmap]=gray2ind(im);
         imshow(im,[]);
-        set (gcf, 'WindowButtonMotionFcn', @mouseMove);
-        
-        
-        
+        %set (gcf, 'WindowButtonMotionFcn', @mouseMove);
+                        
         %Creates figure to be used in movie
         fig=figure(3);
         imagesc(im, 'CDataMapping','scaled')
-        caxis([0,200])
+        caxis([10400,30000])
         colormap jet
         colorbar('Ticks',colorticks, 'TickLabels',colorlabels)
         
@@ -108,7 +106,7 @@ if(seq.Count > 1)
         xlabel('Pixels','FontSize',20);
         ylabel('Pixels','FontSize',20);
         F(i)=getframe(fig);
-        set (gcf, 'WindowButtonMotionFcn', @mouseMove);
+        %set (gcf, 'WindowButtonMotionFcn', @mouseMove);
         
         drawnow;
         i=i+1;
@@ -119,13 +117,19 @@ toc
 %Creates movie from figures
 figure(4)
 movie(gcf, F,2,10)
-set (gcf, 'WindowButtonMotionFcn', @mouseMove);
+%set (gcf, 'WindowButtonMotionFcn', @mouseMove);
 
+% for j=1:20
+%     [X,map] = frame2im(F(j));
+%     figure(2);clf;
+%     image(X);
+%     pause; 
+% end
 %% Gets Maximum value and index as Maximum and MaxIndex
 
 [Maximum, MaxIndex]=Max3d(images);
 max = seq.ThermalImage.GetValueFromSignal(Maximum);
-min=seq.ThermalImage.GetValueFromSingal(images(MaxIndex(1,1),MaxIndex(1,2),20));
+min = seq.ThermalImage.GetValueFromSignal((images(MaxIndex(1,1),MaxIndex(1,2),20)));
 
 %% Heat Flux Measurement
 %Caclulates the heat flux of a single frame 
@@ -135,22 +139,24 @@ PixelArea=(((1.375/sqrt(2))/(80))*2.54)^2; %cm2
 Density=7.6; %g/cm3
 thickness= 1.0625*2.54; %inches to cm
 Delta_T=(((max-min)*459.67)*(5/9)); 
-%Delta_t= 
+Delta_t=0.02; %second
 
 Q=(Cp*Delta_T*thickness*Density)/Delta_t; %Cp*DeltaT*mass = J
 %% View Single Frame
-%
+
+%{
 %View B/W image
 figure()
 imshow(images(:,:,MaxIndex(1,3)),[])
 set (gcf, 'WindowButtonMotionFcn', @mouseMove);
+%}
 
 %View Single Color Image with Colorbar
 figure()
-imagesc(images(:,:,1), 'CDataMapping','scaled')
-%caxis([23.8578,26.7185])
+imagesc(images(:,:,20), 'CDataMapping','scaled')
 colormap jet
 colorbar('Ticks',colorticks, 'TickLabels',colorlabels)
+%caxis([0 200])
 ax.FontSize = 20;
 title('Temperature vs. Camera Pixels','FontSize',20);
 xlabel('Pixels','FontSize',20);

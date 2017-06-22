@@ -5,8 +5,8 @@ function [KTN, CHI] = FIT_EXAMPLE(DATA,BIN)
 %Start Code
 %**************************************************************************
  
-PLOTIONFIT=0;
-FINDERROR=1;
+PLOTIONFIT=1;
+FINDERROR=0;
 PLOTERROR=0;
 
 %*****************************************

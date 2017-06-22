@@ -2,7 +2,7 @@
 clearvars;
 x0_guess = []; y0_guess = []; force_guess = 0;
 verbose = 0;
-shot = 14817;
+shot =15100;
 if verbose == 1     %MS edit, 4/18/17
     
     helicon_current = 160;

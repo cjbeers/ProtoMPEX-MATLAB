@@ -35,8 +35,8 @@ IONTEMPSINGLEFRAME=0; %looks at single frame to fit ion temp
 %Grating = input(prompt);
 Spectra.Grating = 300;  %USER chooses which Grating was used
 
-Spectra.Wavelength=(1330); %USER changes to match file wavelength location on McPherson
-[Spectra.RawDATA,Spectra.ExposureTime] = readSPE('Z:\McPherson\2017_06_08\D2_1330_30um_14765.SPE');...
+Spectra.Wavelength=(1215); %USER changes to match file wavelength location on McPherson
+[Spectra.RawDATA,Spectra.ExposureTime] = readSPE('Z:\McPherson\2017_06_14\D2_1215_30um_14887.SPE');...
     %USER Specifiy Location
 Spectra.Length = size(Spectra.RawDATA);
 Spectra.RawBGDATA = readSPE('Z:\McPherson\calibration\cal_2016_08_04\ROIs\abs_calib_20um_1s_bg_1.SPE');...

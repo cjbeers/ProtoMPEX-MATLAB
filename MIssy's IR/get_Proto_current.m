@@ -89,7 +89,7 @@ switch shot
     case 14159
     helicon_current = 160; current_A = 4000; current_B = 4000; current_C = 600; config = 'flat'; skimmer = 1;  %MS edit, 4/24/17
     % Half field, no skimmer, helicon current scan
-    case num2cell(14700:14900)
+    case num2cell(14700:15900)
     helicon_current = 160; current_A = 4000; current_B = 4000; current_C = 600; config = 'newstandard'; skimmer = 1;  %MS edit, 4/24/17
        case 7674
         helicon_current = 400; current_A = 6400; current_B = 0; config = 'flat'; skimmer = 1;

@@ -12,9 +12,9 @@ clc
 tic
 %##### Load image #####
 %[FILENAME, PATHNAME, FILTERINDEX] = uigetfile('*.jpg;*.seq', 'Choose IR file (jpg) or radiometric sequence (seq)');
-Shots=14817; %USER defines shot number, if not found change the PATHNAME to the correct day/file location
+Shots=15010; %USER defines shot number, if not found change the PATHNAME to the correct day/file location
 FILENAME = ['Shot ' ,num2str(Shots),'.seq'];
-PATHNAME = 'Z:\IR_Camera\2017_06_09\';
+PATHNAME = 'Z:\IR_Camera\2017_06_15\';
 FILTERINDEX = 1;
 
 videoFileName=[PATHNAME FILENAME];
@@ -47,9 +47,9 @@ max = seq.ThermalImage.GetValueFromSignal(Maximum);
 %USER can change min "images(Max,Max,1)" to whatever their starting frame needs to be
 min=seq.ThermalImage.GetValueFromSignal((images(MaxIndex(1,1),MaxIndex(1,2),1)));
 %
-Temperature(:,:,1)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(120:325,275:475,12));
-Temperature(:,:,2)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(120:325,275:475,20));
-Temperature(:,:,3)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(120:325,275:475,24));
+Temperature(:,:,1)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(120:325,275:475,17));
+Temperature(:,:,2)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(120:325,275:475,38));
+Temperature(:,:,3)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(120:325,275:475,43));
 
 %{
 Temperature(:,:,1)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.33, images),images(1:450,1:630,1));
@@ -72,7 +72,7 @@ colormap jet
 c=colorbar;
 ylabel(c, 'Delta T [°C]', 'FontSize', 13);
 ax.FontSize = 13;
-title(['Shot Number ', num2str(Shots), ' After ECH'],'FontSize',13);
+title(['Shot Number ', num2str(Shots), ' Add. Heat'],'FontSize',13);
 xlabel(' Direction to Pit-->>','FontSize',13);
 xlim([0 kk]);
 ylim([0 jj]);
@@ -84,7 +84,7 @@ colormap jet
 c=colorbar;
 ylabel(c, 'Delta T [°C]', 'FontSize', 13);
 ax.FontSize = 13;
-title(['Shot Number ', num2str(Shots), ' Before ECH'],'FontSize',13);
+title(['Shot Number ', num2str(Shots), ' B4 Add. Heat'],'FontSize',13);
 xlabel(' Direction to Pit-->>','FontSize',13);
 xlim([0 kk]);
 ylim([0 jj]);
