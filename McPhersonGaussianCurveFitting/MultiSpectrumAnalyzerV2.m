@@ -20,27 +20,31 @@ tic %starts timing the code
 %Turns on=1/off=0 program sections
 
 PLOTPIXELS=0; %plots counts vs. pixel number
-PLOTWAVELENGTH=1; %plots counts vs. wavelength
+PLOTWAVELENGTH=0; %plots counts vs. wavelength
 PLOTINTENSITY=0; %plots the absolute intensity vs. wavelength
 USEIPEAKS=0; %uses program ipeaks to find wavelength peaks
 USEIPEAKSFORINTENSITYPEAKS=0; %uses ipeaks to find the intensity peaks
 FINDFWHM=0; %not really needed anymore because ion temp can be found
 FINDFLOW=0; % used when looking up and down stream, FINDFWHM must also = 1
-FINDIONTEMP=0; %uses Elijah's code to calculate ion temperature
+FINDIONTEMP=1; %uses Elijah's code to calculate ion temperature
 IONTEMPSINGLEFRAME=0; %looks at single frame to fit ion temp
 
 %% Read in file of interest
 
 %prompt = 'Grating used (300 or 1800) nm? '; %Two gratings can be used
 %Grating = input(prompt);
-Spectra.Grating = 300;  %USER chooses which Grating was used
+Spectra.Grating = 1800;  %USER chooses which Grating was used
 
-Spectra.Wavelength=(1215); %USER changes to match file wavelength location on McPherson
-[Spectra.RawDATA,Spectra.ExposureTime] = readSPE('Z:\McPherson\2017_06_14\D2_1215_30um_14887.SPE');...
+Spectra.Wavelength=(7065); %USER changes to match file wavelength location on McPherson
+[Spectra.RawDATA,Spectra.ExposureTime] = readSPE('Z:\McPherson\2017_01_09\D2Ar_7217_30um_12620.SPE');...
     %USER Specifiy Location
 Spectra.Length = size(Spectra.RawDATA);
 Spectra.RawBGDATA = readSPE('Z:\McPherson\calibration\cal_2016_08_04\ROIs\abs_calib_20um_1s_bg_1.SPE');...
     %USER Specify Location OR use the same BG spectrum each time
+
+if length(Spectra.Length)==2
+    Spectra.Length(1,3)=1;
+end
 
 if Spectra.Length(1,3) == 1
     Spectra.FrameOfInterest=1;
@@ -312,34 +316,34 @@ if IntensityPeak(1,2)==0
 end
 end
 
-%% Guassian Fitting, finds the FWHM of the peaks
+%% Gaussian Fitting, finds the FWHM of the peaks
 
 if FINDFWHM==1
 
-Guassian.FWHMarray=zeros(Spectra.Length(1,1),1,Spectra.Length(1,3));
-Guassian.Residuals=zeros(Spectra.Length(1,1),1,Spectra.Length(1,3));
-Guassian.GuassCenter=zeros(Spectra.Length(1,1),1,Spectra.Length(1,3));
+Gaussian.FWHMarray=zeros(Spectra.Length(1,1),1,Spectra.Length(1,3));
+Gaussian.Residuals=zeros(Spectra.Length(1,1),1,Spectra.Length(1,3));
+Gaussian.GuassCenter=zeros(Spectra.Length(1,1),1,Spectra.Length(1,3));
 
 DATA.X=flip(Spectra.LambdaPlot);
 
 for aa=1:Spectra.Length(1,3)
-for bb=1:Spectra.Length(1,1)
+for bb=1:Spectra.Length(1,1) %5:5
 
 DATA.I=Spectra.RawDATA(bb,:,aa);
 
-%Calls ElijahsGuassianFit to find FWHM and center wavelength
+%Calls ElijahsGaussianFit to find FWHM and center wavelength
 try
-[Guassian.FWHMcurrent,Guassian.residuals,Guassian.Center] = ElijahGaussianFit(DATA,Spectra.Lambda0, Spectra.LambdaPlot);
+[Gaussian.FWHMcurrent,Gaussian.residuals,Gaussian.Center] = ElijahGaussianFit(DATA,Spectra.Lambda0, Spectra.LambdaPlot);
 if FWHMcurrent{1} >= 6
     FWHMcurrent{1}=0;
-    CenterOfInterest=4806; %[Angstroms]
+    CenterOfInterest=480.6; %[Angstroms]
     Center=CenterOfInterest;
 end
 end
-Guassian.FWHMarray(bb,1,aa)=Guassian.FWHMcurrent{1}; % Angstroms
+Gaussian.FWHMarray(bb,1,aa)=Gaussian.FWHMcurrent{1}; % Angstroms
 format longg
-Guassian.Residuals(bb,1,aa)=mean(Guassian.residuals);
-Guassian.GuassCenter(bb,1,aa)=Center; % Angstroms
+Gaussian.Residuals(bb,1,aa)=mean(Gaussian.residuals);
+Gaussian.GuassCenter(bb,1,aa)=Gaussian.Center; % Angstroms
 end
 end
 end
@@ -351,7 +355,7 @@ v_c=299790458; %m/s
 
 theta=10; %In degrees
 
-    Guassian.DeltaLambda(:,:,:)=Guassian.GuassCenter(:,:,:)-CenterOfInterest;
+    Gaussian.DeltaLambda(:,:,:)=Gaussian.GuassCenter(:,:,:)-CenterOfInterest;
     velocity=(Spectra.DeltaLambda/CenterOfInterest)*v_c; %m/s
     %V_flow=velocity*sind(theta); %uses angle of puck as theta, do in excel
   
@@ -362,6 +366,8 @@ end
 
 if FINDIONTEMP==1
     
+    Spectra.RawDATA=double(Spectra.RawDATA);
+    
     CHIarray=zeros(Spectra.Length(1,1) - Spectra.Length(1,3));
     KTNarray=zeros(Spectra.Length(1,1) - Spectra.Length(1,3));
      
@@ -371,14 +377,14 @@ if FINDIONTEMP==1
 for aa=1:5 %USER changes Fibers to view
 for bb=8:8 % USER changes Frames to view
 
-DATA.I=Spectra.RawDATA(bb,:,aa);
+DATA.I=Spectra.RawDATA(aa,:,bb);
 
 %Calls FIT_EXAMPLE to find ion tempeartures and their reduced chi values
 %(not chi squared values?)
 
 [KTN, CHI] = FIT_EXAMPLE(DATA,BIN); %USER must use correct values within this code
 
-if KTN >= 30 || KTN <=1E-5
+if KTN >= 40 || KTN <=1E-5
     KTN = 0;
     CHI = 0;
 end
@@ -393,7 +399,7 @@ end
 if IONTEMPSINGLEFRAME==1
     
 BIN=0.874;
-for ii=1:100
+for ii=1:1
 DATA.I=Spectra.SelfBGSub2(Spectra.FrameOfInterest,:); %USER changes to fiber of interest
 DATA.X=flip(Spectra.LambdaPlot);
 [KTNarray(ii), CHIarray(ii)] = FIT_EXAMPLE(DATA,BIN); %Calls Elijah's code to do the ion temp fitting, 

@@ -1,6 +1,6 @@
 
-DATA.I=IE;
-DATA.X=XE/10;
-BIN=0.874;
+Counterplots(1,:)=CounterValues(1,2:end)
+Counterplots(2,:)=CounterValues(2,2:end)
+plot(Counterplots(1,:),Counterplots(2,:))
 
-[KTN, CHI] = FIT_EXAMPLE(DATA,BIN);
+ylim([0 0.4])

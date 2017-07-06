@@ -20,11 +20,11 @@ MAKEDeltaTMovie=1;
 
 %Loads IR .seq file
 %[FILENAME, PATHNAME, FILTERINDEX] = uigetfile('*.jpg;*.seq', 'Choose IR file (jpg) or radiometric sequence (seq)');
-Shots=15010; %USER defines shot number, if not found change the PATHNAME to the correct day/file location
-IR.FrameStart=10;
-IR.FrameEnd=50;
+Shots=15375; %USER defines shot number, if not found change the PATHNAME to the correct day/file location
+IR.FrameStart=1;
+IR.FrameEnd=60;
 IR.FILENAME = ['Shot ' ,num2str(Shots),'.seq'];
-IR.PATHNAME = 'Z:\IR_Camera\2017_06_15\';
+IR.PATHNAME = 'Z:\IR_Camera\2017_06_28\';
 FILTERINDEX = 1;
 
 IR.videoFileName=[IR.PATHNAME IR.FILENAME];
@@ -70,7 +70,7 @@ if MAKEAbUnitsMovie==1
     for ii=IR.FrameStart:IR.FrameEnd
         IR.fig=figure(1);
         imagesc(images(:,:,ii), 'CDataMapping','scaled')
-        caxis([10400 30000]);
+        caxis([10400 50000]);
         colormap jet;
         colorbar('Ticks',IR.colorticks, 'TickLabels',IR.colorlabels);
         c=colorbar;
@@ -83,7 +83,7 @@ if MAKEAbUnitsMovie==1
         
     end
     close figure 1
-    IR.Movie1=implay(IR.Frames(10:100),10); %Creates Movie at 10 fps
+    IR.Movie1=implay(IR.Frames,10); %Creates Movie at 10 fps
     
 end
 
@@ -93,14 +93,14 @@ if MAKETemperatureMovie==1
  
     for ii=IR.FrameStart:IR.FrameEnd
         
-        IR.Temperature(:,:,ii)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(120:325,260:460,ii));
+        IR.Temperature(:,:,ii)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(100:300,260:460,ii));
     end
         
     for ii=IR.FrameStart:IR.FrameEnd
         
         IR.fig2=figure(2);
         imagesc(IR.Temperature(:,:,ii), 'CDataMapping','scaled')
-        caxis([0 200])
+        caxis([0 250])
         colormap jet
         c=colorbar;
         ylabel(c, 'T [°C]', 'FontSize', 13);
@@ -112,7 +112,7 @@ if MAKETemperatureMovie==1
         
     end
     close figure 2
-    IR.Movie2=implay(IR.TemperatureFrames(10:50),10); %Creates Movie at 10 fps
+    IR.Movie2=implay(IR.TemperatureFrames(IR.FrameStart:IR.FrameEnd),10); %Creates Movie at 10 fps
 
 end
 
@@ -124,7 +124,7 @@ if MAKETemperatureMovie==0
     
     for ii=IR.FrameStart:IR.FrameEnd
         
-    IR.Temperature(:,:,ii+1)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(120:325,260:460,ii));
+    IR.Temperature(:,:,ii+1)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(100:300,260:460,ii));
        
     end
 end
@@ -151,7 +151,7 @@ end
         
     end
     close figure 3
-    IR.Movie3=implay(IR.DeltaTFrames(10:50),10); %Creates Movie at 10 fps
+    IR.Movie3=implay(IR.DeltaTFrames(IR.FrameStart:IR.FrameEnd),10); %Creates Movie at 10 fps
 
 end
 toc/60
