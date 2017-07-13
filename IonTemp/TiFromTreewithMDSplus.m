@@ -16,7 +16,7 @@
 
 cleanup
 
-shotlist = [14311 14355]; %USER defines the shot number
+shotlist = [14311]; %USER defines the shot number
 DLPType='9'; %USER needs to review shot notes to figure out which probe...
 %was used or find out from Nishal for accuracy
 %}

@@ -1,6 +1,7 @@
 
 shotlist = [14340];
-DLPType='9';
+DLPnum=1;
+DLPProbe=1;
 
 sizeshotlist=size(shotlist);
 
@@ -23,53 +24,45 @@ DataAddress{3} = [RootAddress, 'PWR_28GHZ'];
 % ----------
 
 
-switch DLPType
-    case '4'
-        DLP = 4.5;
-        AddressType  = 'n';    
-        CalType = 'iso';
-        Config.L_tip = 1.2/1000;
-        Config.D_tip = 0.508/1000; % [m]
-    case '6'
-        DLP = 6.5;
-        AddressType  = 's';
-        CalType = 'niso';
-        Config.L_tip = 1.03/1000;
-        Config.D_tip = 0.254/1000; % [m]
-    case '9'
-        DLP = 9.5;
-        AddressType  = 's';
-        CalType = 'niso';
-        Config.L_tip = 1.1/1000;  % 1.1 mm after 11/21 probe change
-        Config.D_tip = 0.254/1000; % [m]
-    case '10'
-        DLP = 10.5;
-        AddressType  = 's';
-        CalType = 'niso';  
-        Config.L_tip = 1.2/1000;
-        Config.D_tip = 0.254/1000; % [m]
+switch DLPnum
+    case 1
+        DLP = 11.51;
+        Config.L_tip = 0/1000;
+        Config.D_tip = 0.8/1000; % [m]
+    case 2
+        DLP = 11.52;
+        Config.L_tip = 0/1000;
+        Config.D_tip = 0.83/1000; % [m]
+    case 3
+        DLP = 11.53;
+        Config.L_tip = 0/1000;  
+        Config.D_tip = 0.77/1000; % [m]
+    case 4
+        DLP = 11.54;
+        Config.L_tip = 0/1000;
+        Config.D_tip = 0.86/1000; % [m]
+    otherwise
+        disp('Error in DLPnum')
 end
 
-switch AddressType
-    case 's'
+if DLPProbe == 1
+    
 DataAddress{1} = [RootAddress,'LP_V_RAMP']; % V
 DataAddress{2} = [RootAddress,'TARGET_LP']; % I
 Config.V_Att = 2;  % Output voltage of DLP box (Voltage) = V_Att*Digitized data 
 Config.I_Att = 5;  % Output voltage of DLP box (Current) = I_att*Digitized data
-    case 'n'
+Config.V_cal = [(0.46e-3)^-1,0]; % Voltage output of DLP = V_cal(1)*Output voltage of DLP box + V_cal(2) %  2.1739e+03
+Config.I_cal = [-1,0]; % Current output of DLP = (I_cal(2) + Output voltage of DLP box)/Ical(1)
+
+elseif DLPProbe == 2
+    
 DataAddress{1} = [RootAddress,'INT_4MM_1']; % V
 DataAddress{2} = [RootAddress,'INT_4MM_2']; % I
 Config.V_Att = 1;  % Output voltage of DLP box (Voltage) = V_Att*Digitized data 
 Config.I_Att = 1;  % Output voltage of DLP box (Current) = I_att*Digitized data
-end
-
-switch CalType 
-    case 'iso'
 Config.V_cal = [(0.46e-3)^-1,0]; % Voltage output of DLP = V_cal(1)*Output voltage of DLP box + V_cal(2) %  2.1739e+03
 Config.I_cal = [-1,0]; % Current output of DLP = (I_cal(2) + Output voltage of DLP box)/Ical(1)
-    case 'niso'
-Config.V_cal = [12.05,0.205];   % Voltage output of DLP = V_cal(1)*Output voltage of DLP box + V_cal(2)
-Config.I_cal = [-142.5, 0.015]; % Current output of DLP = (I_cal(2) + Output voltage of DLP box)/Ical(1)
+
 end
 
 Config.FilterDataInput = 1; % Filter input data with savitsky Golay filter order 3 frame size 7
@@ -155,7 +148,7 @@ end
 
 if 0  
     figure;
-    for c = 1:25;
+    for c = 1:25
         subplot(5,5,c); hold on
         plot(Vsweep{s}{c},Isweep{s}{c}*1e3,'k')
         plot(Vsweep{s}{c},Ifit{s}{c}*1e3,'r')
@@ -164,7 +157,7 @@ if 0
     end
     
     figure;
-        for c = 26:50;
+        for c = 26:50
         subplot(5,5,c-25); hold on
         plot(Vsweep{s}{c},Isweep{s}{c}*1e3,'k')
         plot(Vsweep{s}{c},Ifit{s}{c}*1e3,'r')
@@ -173,7 +166,7 @@ if 0
         end
         
     figure;
-        for c = 51:75;
+        for c = 51:75
         subplot(5,5,c-50); hold on
         plot(Vsweep{s}{c},Isweep{s}{c}*1e3,'k')
         plot(Vsweep{s}{c},Ifit{s}{c}*1e3,'r')

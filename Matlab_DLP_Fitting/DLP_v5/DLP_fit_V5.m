@@ -118,8 +118,8 @@ end
 % Import and analyse data
 % #########################################################################
 mdsconnect('mpexserver') 
-[D_Vd,t_v] = my_mdsvalue_v2(shotlist,DataAddress(1));
-[D_Id,~] = my_mdsvalue_v2(shotlist,DataAddress(2));
+[D_Vd,t_v] = my_mdsvalue_v3(shotlist,DataAddress(1));
+[D_Id,~] = my_mdsvalue_v3(shotlist,DataAddress(2));
 % D_Vd and D_Id represent the digitized Data for the voltage (V) and current (I) respectively
 % The letter "d" in D_Vd and D_Id stands for "digitized".
 
