@@ -1,7 +1,7 @@
 
 shotlist = [14340];
-DLPnum=1;
-DLPProbe=1;
+DLPnum=3; %1 for top, 2 for above center, 3 for below center, 4 for bottom
+DLPProbe=1; %1 for channel 1, 2 for channel 2
 
 sizeshotlist=size(shotlist);
 
@@ -16,33 +16,31 @@ RootAddress = [Stem,Branch];
 DataAddress{3} = [RootAddress, 'PWR_28GHZ'];
 [EBW,t_28]= my_mdsvalue_v3(shotlist,DataAddress(3));
 
-
-
 % AddressType='s'; % s for standard
 % CalType='niso'; % niso for not isolated- "Standard DLP circuit box", 
 % CalType = 'iso' for isolated - "Transformer box"
 % ----------
 
-
 switch DLPnum
     case 1
-        DLP = 11.51;
+        DLP = '11.5 Top';
         Config.L_tip = 0/1000;
         Config.D_tip = 0.8/1000; % [m]
     case 2
-        DLP = 11.52;
+        DLP = '11.5 AC';
         Config.L_tip = 0/1000;
         Config.D_tip = 0.83/1000; % [m]
     case 3
-        DLP = 11.53;
+        DLP = '11.5 BC';
         Config.L_tip = 0/1000;  
         Config.D_tip = 0.77/1000; % [m]
     case 4
-        DLP = 11.54;
+        DLP = '11.5 Bot';
         Config.L_tip = 0/1000;
         Config.D_tip = 0.86/1000; % [m]
     otherwise
         disp('Error in DLPnum')
+        return
 end
 
 if DLPProbe == 1
@@ -51,8 +49,8 @@ DataAddress{1} = [RootAddress,'LP_V_RAMP']; % V
 DataAddress{2} = [RootAddress,'TARGET_LP']; % I
 Config.V_Att = 2;  % Output voltage of DLP box (Voltage) = V_Att*Digitized data 
 Config.I_Att = 5;  % Output voltage of DLP box (Current) = I_att*Digitized data
-Config.V_cal = [(0.46e-3)^-1,0]; % Voltage output of DLP = V_cal(1)*Output voltage of DLP box + V_cal(2) %  2.1739e+03
-Config.I_cal = [-1,0]; % Current output of DLP = (I_cal(2) + Output voltage of DLP box)/Ical(1)
+Config.V_cal = [18.67, 2.774];   % Voltage output of DLP = V_cal(1)*Output voltage of DLP box + V_cal(2)
+Config.I_cal = [-148.40, 0.0185]; % Current output of DLP = (I_cal(2) + Output voltage of DLP box)/Ical(1)
 
 elseif DLPProbe == 2
     
@@ -60,9 +58,12 @@ DataAddress{1} = [RootAddress,'INT_4MM_1']; % V
 DataAddress{2} = [RootAddress,'INT_4MM_2']; % I
 Config.V_Att = 1;  % Output voltage of DLP box (Voltage) = V_Att*Digitized data 
 Config.I_Att = 1;  % Output voltage of DLP box (Current) = I_att*Digitized data
-Config.V_cal = [(0.46e-3)^-1,0]; % Voltage output of DLP = V_cal(1)*Output voltage of DLP box + V_cal(2) %  2.1739e+03
-Config.I_cal = [-1,0]; % Current output of DLP = (I_cal(2) + Output voltage of DLP box)/Ical(1)
+Config.V_cal = [18.71, 2.787];   % Voltage output of DLP = V_cal(1)*Output voltage of DLP box + V_cal(2)
+Config.I_cal = [-149.92, 0.0185]; % Current output of DLP = (I_cal(2) + Output voltage of DLP box)/Ical(1)
 
+else 
+    disp('Error in DLPProbe')
+    return
 end
 
 Config.FilterDataInput = 1; % Filter input data with savitsky Golay filter order 3 frame size 7

@@ -1,6 +1,6 @@
 
-shotlist = [14340];
-DLPType='9';
+shotlist = [14573];
+DLPType='10';
 
 sizeshotlist=size(shotlist);
 
