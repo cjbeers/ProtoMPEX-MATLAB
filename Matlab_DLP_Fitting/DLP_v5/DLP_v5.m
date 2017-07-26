@@ -1,12 +1,13 @@
 
-shotlist = [14573];
+cleanup
+shotlist = [15807];
 DLPType='10';
 
 sizeshotlist=size(shotlist);
 
 % -------------------------
 Config.tStart = 4.2; % [s]
-Config.tEnd = 4.305;
+Config.tEnd = 4.45;
 
 % Acquiring Ne and Te data
 Stem = '\MPEX::TOP.';
@@ -15,13 +16,10 @@ RootAddress = [Stem,Branch];
 DataAddress{3} = [RootAddress, 'PWR_28GHZ'];
 [EBW,t_28]= my_mdsvalue_v3(shotlist,DataAddress(3));
 
-
-
 % AddressType='s'; % s for standard
 % CalType='niso'; % niso for not isolated- "Standard DLP circuit box", 
 % CalType = 'iso' for isolated - "Transformer box"
 % ----------
-
 
 switch DLPType
     case '4'
@@ -46,8 +44,10 @@ switch DLPType
         DLP = 10.5;
         AddressType  = 's';
         CalType = 'niso';  
-        Config.L_tip = 1.2/1000;
-        Config.D_tip = 0.254/1000; % [m]
+        Config.L_tip = 0/1000; % 
+        Config.D_tip = 0.77/1000; % [m]
+        %Config.L_tip = 1.8/1000;
+        %Config.D_tip = 0.254/1000; % [m]
 end
 
 switch AddressType
@@ -110,7 +110,7 @@ title('$ n_e $ $ [m^{-3}] $','interpreter','Latex','FontSize',13,'Rotation',0)
 legend(h,['DLP ',num2str(DLP)],'location','NorthEast')
 %set(gca,'PlotBoxAspectRatio',[1 1 1])
 ylim([0,7e19])
-xlim([4.2,4.3])
+xlim([4.2,4.45])
 grid on
 
 subplot(2,2,2); hold on
@@ -124,7 +124,7 @@ end
 legend(h,L,'location','NorthWest')
 title('$ T_e $ $ [eV] $','interpreter','Latex','FontSize',13,'Rotation',0)
 ylim([0,12])
-xlim([4.2,4.3])
+xlim([4.2,4.45])
 set(gca,'Fontsize', 20,'FontWeight','Bold')
 grid on
 Pressure=e_c.*Ni{s}.*Te{s};
@@ -133,29 +133,29 @@ for s = 1:sizeshotlist(1,2)
     plot(time{s},e_c.*Ni{s}.*Te{s},C{s},'lineWidth',2)
 end
 ylim([0,40])
-xlim([4.2,4.3])
+xlim([4.2,4.45])
 title('$ P_e $ $ [Pa] $','interpreter','Latex','FontSize',13,'Rotation',0)
 
 set(findobj('-Property','YTick'),'box','on')
 set(gcf,'color','w')
 set(gca,'Fontsize', 20,'FontWeight','Bold')
 
-if 0
+if 1
     figure; hold on
     for s = 1:sizeshotlist(1,2)
     plot(tm{s},Vp{s})
     h(s) = plot(tm{s},Ip{s}*1000);
     ylim([-100,100])
-    xlim([4.15,4.32])
+    xlim([4.15,4.45])
     grid on
     end
-    plot(t_28{s},EBW{s})
-    legend(h,num2str(shotlist'))
+    %plot(t_28{s},EBW{s})
+    %legend(h,num2str(shotlist'))
 end
 
-if 0  
+if 1  
     figure;
-    for c = 1:25;
+    for c = 1:25
         subplot(5,5,c); hold on
         plot(Vsweep{s}{c},Isweep{s}{c}*1e3,'k')
         plot(Vsweep{s}{c},Ifit{s}{c}*1e3,'r')
@@ -164,7 +164,7 @@ if 0
     end
     
     figure;
-        for c = 26:50;
+        for c = 26:50
         subplot(5,5,c-25); hold on
         plot(Vsweep{s}{c},Isweep{s}{c}*1e3,'k')
         plot(Vsweep{s}{c},Ifit{s}{c}*1e3,'r')
@@ -173,7 +173,7 @@ if 0
         end
         
     figure;
-        for c = 51:75;
+        for c = 51:75
         subplot(5,5,c-50); hold on
         plot(Vsweep{s}{c},Isweep{s}{c}*1e3,'k')
         plot(Vsweep{s}{c},Ifit{s}{c}*1e3,'r')

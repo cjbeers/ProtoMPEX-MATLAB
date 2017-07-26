@@ -11,20 +11,22 @@
 cleanup
 tic
 
-MAKEAbUnitsMovie=0;
-MAKETemperatureMovie=0;
-MAKEDeltaTMovie=1;
-
+%0=no movie, 1=movie
+MAKEAbUnitsMovie=0; %Fully zoomed out movie with raw signal
+MAKETemperatureMovie=0; %Zoomed in movie with tempeartures
+MAKEDeltaTMovie=1; %Zoomed in movie with delta T to a set frame
+SAVEDeltaTMovie = 0; %Saves Delta T movie to email out if need it
 
 %% % Start Code
 
 %Loads IR .seq file
 %[FILENAME, PATHNAME, FILTERINDEX] = uigetfile('*.jpg;*.seq', 'Choose IR file (jpg) or radiometric sequence (seq)');
-Shots=15375; %USER defines shot number, if not found change the PATHNAME to the correct day/file location
+Shots=15832; %USER defines shot number, if not found change the PATHNAME to the correct day/file location
+IR.ColarBarMax = 75;
 IR.FrameStart=1;
 IR.FrameEnd=60;
 IR.FILENAME = ['Shot ' ,num2str(Shots),'.seq'];
-IR.PATHNAME = 'Z:\IR_Camera\2017_06_28\';
+IR.PATHNAME = 'Z:\IR_Camera\2017_07_20\';
 FILTERINDEX = 1;
 
 IR.videoFileName=[IR.PATHNAME IR.FILENAME];
@@ -93,14 +95,14 @@ if MAKETemperatureMovie==1
  
     for ii=IR.FrameStart:IR.FrameEnd
         
-        IR.Temperature(:,:,ii)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(100:300,260:460,ii));
+        IR.Temperature(:,:,ii)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.73, images),images(175:350,250:400,ii));
     end
         
     for ii=IR.FrameStart:IR.FrameEnd
         
         IR.fig2=figure(2);
         imagesc(IR.Temperature(:,:,ii), 'CDataMapping','scaled')
-        caxis([0 250])
+        caxis([0 IR.ColarBarMax])
         colormap jet
         c=colorbar;
         ylabel(c, 'T [°C]', 'FontSize', 13);
@@ -124,7 +126,7 @@ if MAKETemperatureMovie==0
     
     for ii=IR.FrameStart:IR.FrameEnd
         
-    IR.Temperature(:,:,ii+1)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(100:300,260:460,ii));
+    IR.Temperature(:,:,ii)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.73, images),images(175:350,250:400,ii));
        
     end
 end
@@ -134,12 +136,12 @@ end
     IR.DeltaT(:,:,(ii)) = IR.Temperature(:,:,ii)-IR.Temperature(:,:,IR.FrameStart);
     
     end
-   
+ 
     for ii=IR.FrameStart:IR.FrameEnd
        
         IR.fig3=figure(3);
         imagesc(IR.DeltaT(:,:,ii), 'CDataMapping','scaled')
-        caxis([0 200])
+        caxis([0 IR.ColarBarMax])
         colormap jet
         c=colorbar;
         ylabel(c, 'Delta T [°C]', 'FontSize', 13);
@@ -152,6 +154,14 @@ end
     end
     close figure 3
     IR.Movie3=implay(IR.DeltaTFrames(IR.FrameStart:IR.FrameEnd),10); %Creates Movie at 10 fps
+
+if SAVEDeltaTMovie == 1
+v=VideoWriter(['Shot ', num2str(Shots), ' Delta T Movie'],'Motion JPEG AVI');
+v.FrameRate = 10;
+open(v);
+writeVideo(v,IR.DeltaTFrames);
+close(v);
+end
 
 end
 toc/60

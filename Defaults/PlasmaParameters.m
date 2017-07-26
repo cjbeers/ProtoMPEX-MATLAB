@@ -5,9 +5,9 @@ clc
 epsilon_0org=8.854E-12;  %F/m or C^2/J or s^2*C^2/m^2*kg
 confactor=1.602E-19; %J to eV
 epsilon_0=epsilon_0org*confactor; %C^2/eV
-Te=3; %eV
+Te=1; %eV
 %KT=10  %keV
-Ne=5E19;  %1/m^3
+Ne=3E19;  %1/m^3
 e=-1.602E-19;  %C
 Z=2; %Charge State
 %{

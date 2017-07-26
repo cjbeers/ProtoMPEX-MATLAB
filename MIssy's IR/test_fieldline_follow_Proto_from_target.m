@@ -1,20 +1,25 @@
 % function test_fieldline_follow_Proto
+
+%Modify get_proto_current before doing this
+
 clearvars;
 x0_guess = []; y0_guess = []; force_guess = 0;
 verbose = 0;
-shot =15100;
+shot =15785;
+tempmax= 75; %the maximum colorbar temp. 
 if verbose == 1     %MS edit, 4/18/17
     
-    helicon_current = 160;
+    helicon_current = 260;
     current_A = 4000;
     current_B = 4000;
-    current_C = 600;
+    current_C = 0;
     config = 'newstandard';
     skimmer = 1;
    
     plasma_radius_cm = 1.9;
     target_position = 2;  %target position 1: 7.5, target position 2: 11.5
     sleeve = 1;
+    add_reflector = 1;
     
 else
     
@@ -37,6 +42,7 @@ else
     [helicon_current,current_A,current_B,config,skimmer,current_C] = get_Proto_current(shot);
     target_position = 2;   %target position 1: 7.5, target position 2: 11.5
     sleeve = 1;
+    add_reflector = 1;
     
 end
 
@@ -45,7 +51,7 @@ drawnow;
 current_in = [helicon_current, current_A,current_B, current_C]; % MS edit - 4/18/17
 
 [coil,current] = build_Proto_coils(current_in,config,verbose);  %MS edit - 4/18/17
-geo = get_Proto_geometry(1,1,skimmer,target_position,sleeve);
+geo = get_Proto_geometry(1,1,skimmer,target_position,sleeve, add_reflector);
 
 bfield.coil = coil;
 bfield.current = current;
@@ -88,7 +94,7 @@ set(gca,'fontsize',14)
 xlabel('Z [m]','fontsize',14)
 ylabel('R [m]','fontsize',14)
 title(['Shot ',num2str(shot)])
-% geo = get_Proto_geometry(1,0,skimmer,target_position,sleeve);
+% geo = get_Proto_geometry(1,0,skimmer,target_position,sleeve,add_reflector);
 axis([0.5,4.5,0,0.15]) % plotting fieldlines (blue)
 
 figure; hold on; box on;
@@ -116,10 +122,10 @@ for i = 1:size(rcoil,1)
     plot(zcoil(i,:),rcoil(i,:),'r')
 end
 % geo = get_Proto_geometry(1,0,skimmer);
-geo = get_Proto_geometry(1,0,skimmer,target_position,sleeve);
+geo = get_Proto_geometry(1,0,skimmer,target_position,sleeve,add_reflector);
 plot(geo.target.z*[1,1],geo.target.r*[0,1],'k','linewidth',3)
 plot([geo.helicon.z1,geo.helicon.z2],geo.helicon.r*[1,1],'k','linewidth',3)
-caxis([0 150])
+caxis([0 tempmax])
 colormap jet
 axis([0.5,4.5,0,0.15])  %empty config with scale
 title(sprintf('Shot %d, I_H^*=%3.0f A',shot,helicon_current*(3300/current_A)))
@@ -131,8 +137,8 @@ hold on; box on;
 xlabel('Z [m]','fontsize',14)
 ylabel('R [m]','fontsize',14)
 set(gca,'fontsize',14)
-geo = get_Proto_geometry(1,1,skimmer,target_position,sleeve);
-caxis([0 150])
+geo = get_Proto_geometry(1,1,skimmer,target_position,sleeve,add_reflector);
+caxis([0 tempmax])
 colorbar;
 colormap jet
 title(['Shot ',num2str(shot)]) 

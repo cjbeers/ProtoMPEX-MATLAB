@@ -1,5 +1,6 @@
 
-shotlist = [14340];
+clear all
+shotlist = [15807];
 DLPnum=3; %1 for top, 2 for above center, 3 for below center, 4 for bottom
 DLPProbe=1; %1 for channel 1, 2 for channel 2
 
@@ -15,11 +16,6 @@ Branch = 'MACHOPS1:';
 RootAddress = [Stem,Branch];
 DataAddress{3} = [RootAddress, 'PWR_28GHZ'];
 [EBW,t_28]= my_mdsvalue_v3(shotlist,DataAddress(3));
-
-% AddressType='s'; % s for standard
-% CalType='niso'; % niso for not isolated- "Standard DLP circuit box", 
-% CalType = 'iso' for isolated - "Transformer box"
-% ----------
 
 switch DLPnum
     case 1
@@ -47,8 +43,8 @@ if DLPProbe == 1
     
 DataAddress{1} = [RootAddress,'LP_V_RAMP']; % V
 DataAddress{2} = [RootAddress,'TARGET_LP']; % I
-Config.V_Att = 2;  % Output voltage of DLP box (Voltage) = V_Att*Digitized data 
-Config.I_Att = 5;  % Output voltage of DLP box (Current) = I_att*Digitized data
+Config.V_Att = 1;  % Output voltage of DLP box (Voltage) = V_Att*Digitized data 
+Config.I_Att = 1;  % Output voltage of DLP box (Current) = I_att*Digitized data
 Config.V_cal = [18.67, 2.774];   % Voltage output of DLP = V_cal(1)*Output voltage of DLP box + V_cal(2)
 Config.I_cal = [-148.40, 0.0185]; % Current output of DLP = (I_cal(2) + Output voltage of DLP box)/Ical(1)
 
