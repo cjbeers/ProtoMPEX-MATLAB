@@ -6,15 +6,16 @@ load('proto_mpex_12coils_flat_field_highdens.mat');
 
 %step 2: load shot number and associated current
 
-shot = input('Choose shot to analyze - enter shot number only' ); 
-if shot > 15176
-    [helicon_current,current_A,current_B,config,skimmer,current_C,reflector] = get_Proto_current(shot);
+shot = input('Choose shot to analyze - enter shot number only ' ); 
+if shot > 15100 % Need to edit get_proto_geometry beforehand
+    [helicon_current,current_A,current_B,config,skimmer,current_C] = get_Proto_current(shot);
 else
     [helicon_current,current_A,current_B,config,skimmer,current_C] = get_Proto_current(shot);
 end
 
-target_position = 2;   %target position 1: 7.5, target position 2: 11.5
+target_position = 3;   %target position 1: 7.5, 2: 11.5, 3: Off center 11.5
 sleeve = 1;
+add_reflector = 1;
 
 current_in = [helicon_current, current_A,current_B, current_C];
 [fil,cur] = setup_Proto_coils(current_in,config); %will reassign cur based on shot. 
@@ -45,7 +46,7 @@ atg=Atg;
     b_lh_x=[0,1];
     b_lh_y=[1,1]*lhres;
     rlocs=[.01,.02,.03,.04,.05,.06,.0625];
-    geop=get_Proto_geometry(0,0,1,2,1);
+    geop=get_Proto_geometry(0,0,1,3,1,1);
 
     [br,bz,psi]=B_coaxial_coilsm(brg,bzg,atg,avec,cur);
 

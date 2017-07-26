@@ -9,10 +9,9 @@
 % facing target
 % ==================
 
-close all
-clear all
+cleanup
 
-shotlist = 13769; % April 7th 2017, MP 10.5 on-axis
+shotlist = 15829; % April 7th 2017, MP 10.5 on-axis
 x = [0];
 
 % Acquiring Isat current from MP tip 1 and tip 2
@@ -20,14 +19,16 @@ Stem = '\MPEX::TOP.';
 Branch = 'MACHOPS1:';
 RootAddress = [Stem,Branch];
 
-DataAddress{1} = [RootAddress,'INT_2MM_1']; % I_senseA Channel 09
-DataAddress{2} = [RootAddress,'INT_2MM_2']; % I_senseA Channel 10
-DataAddress{3} = [RootAddress,'TARGET_LP']; % I
-DataAddress{4} = [RootAddress,'LP_V_RAMP']; % V
+DataAddress{1} = [RootAddress,'INT_4MM_1']; % %1A
+DataAddress{2} = [RootAddress,'INT_4MM_2']; % %1B
+DataAddress{3} = [RootAddress,'INT_2MM_1']; % 3A
+DataAddress{4} = [RootAddress,'INT_2MM_2']; % 3B
+DataAddress{5} = [RootAddress,'TARGET_LP']; % I
+DataAddress{6} = [RootAddress,'LP_V_RAMP']; % V
 
 % Mach Probe tip lengths
 
-MP_type = 'MP1' % MP1 or MP2
+MP_type = 'MP1'; % MP1 or MP2
 
 switch MP_type
     case 'MP1'
@@ -45,13 +46,44 @@ end
 
 [f_1,tf1]   = my_mdsvalue_v2(shotlist,DataAddress(1)); % [V] signal from digitizer from Tip A
 [f_2,tf2]   = my_mdsvalue_v2(shotlist,DataAddress(2)); % [V] signal from digitizer from Tip B
-[Isat,tisat] = my_mdsvalue_v2(shotlist,DataAddress(3));
-[V,tv] = my_mdsvalue_v2(shotlist,DataAddress(4));
-
+[f_3,tf3]   = my_mdsvalue_v2(shotlist,DataAddress(3)); % [V] signal from digitizer from Tip A
+[f_4,tf4]   = my_mdsvalue_v2(shotlist,DataAddress(4)); % [V] signal from digitizer from Tip B
+[Isat,tisat] = my_mdsvalue_v2(shotlist,DataAddress(5));
+[V,tv] = my_mdsvalue_v2(shotlist,DataAddress(6));
 
 % Calibration using 10 Ohm resitor
 R = 10.0; % Ohms
 
+figure
+plot(tf1{1}(1:end-1), f_1{1}(1:end)/10, 'black')
+ylim([-0.5,0.5])
+title(['Shot ', num2str(shotlist), ' Current vs. time'])
+ylabel('Current [A]')
+xlabel('Time [s]')
+hold on;
+plot(tf2{1}(1:end-1), f_2{1}(1:end)/10, 'm')
+legend('4A', '4B')
+% ylim([-0.5,0.5])
+% title(['Shot ', num2str(shotlist), ' Current vs. time'])
+% ylabel('Current [A]')
+% xlabel('Time [s]')
+
+
+figure
+plot(tf3{1}(1:end-1), f_3{1}(1:end)/10, 'black')
+ylim([-0.5,0.5])
+title(['Shot ', num2str(shotlist), ' Current vs. time'])
+ylabel('Current [A]')
+xlabel('Time [s]')
+hold on;
+plot(tf4{1}(1:end-1), f_4{1}(1:end)/10, 'm')
+legend('3A', '3B')
+% ylim([-0.5,0.5])
+% title(['Shot ', num2str(shotlist), ' Current vs. time'])
+% ylabel('Current [A]')
+% xlabel('Time [s]')
+
+return;
 %%
 %close all
 C = {'k','r','bl','g','m','k:','r:','bl:','g:','m:','k','r','bl','g','m','k:','r:','bl:','g:','m:','k','r','bl','g','m','k:','r:','bl:','g:','m:'};
@@ -204,9 +236,12 @@ for s = 1:1
     errorbar(mean([25e3,34e3]),MachNumberSS(s),dMachNumberSS(s),'gsq')
 end
 
-if 1
+if x == 1
 G = [shotlist,x,MachNumberSS',dMachNumberSS'];
 F = {'Shot','R [cm]','MachNum','dMachNum'};
 FileName = 'MachNum_Spool_10_2017_04_07.xlsx';
 xlswrite(FileName,[F;num2cell(G)]);
 end
+
+formatPrint='Mach Number = %1.5g\n';
+fprintf(formatPrint, MachNumberSS)
