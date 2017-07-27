@@ -16,18 +16,22 @@ else
     [helicon_current,current_A,current_B,config,skimmer,current_C] = get_Proto_current(shot);
 end
 
-else KnownFields == 1
+elseif KnownFields == 1
     
-   helicon_current =260; %Coils 3,4
-   current_A = 4000; %Coils 1,6
-   current_B = 4000; %Coils 7-12
+   helicon_current =300; %Coils 3,4
+   current_A = 5900; %Coils 1,6
+   current_B = 5900; %Coils 7-12
    current_C = 0;  %Coil 2
    skimmer = 1;
-   config = 'newstandard';
-   add_reflector = 1;
+   config = 'standard';
+   add_reflector = 0;
+   
+else
+    disp('Error')
+    return;    
 end
 
-target_position = 3;   %target position 1: 7.5, 2: 11.5, 3: Off center 11.5
+target_position = 2;   %target position 1: 7.5, 2: 11.5, 3: Off center 11.5
 sleeve = 1;
 
 
@@ -60,7 +64,7 @@ atg=Atg;
     b_lh_x=[0,1];
     b_lh_y=[1,1]*lhres;
     rlocs=[.01,.02,.03,.04,.05,.06,.0625];
-    geop=get_Proto_geometry(0,0,1,3,1,1);
+    geop=get_Proto_geometry(0,0,skimmer,target_position,sleeve,add_reflector);
 
     [br,bz,psi]=B_coaxial_coilsm(brg,bzg,atg,avec,cur);
 

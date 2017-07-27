@@ -41,8 +41,8 @@ end
 
 if DLPProbe == 1
     
-DataAddress{1} = [RootAddress,'LP_V_RAMP']; % V
-DataAddress{2} = [RootAddress,'TARGET_LP']; % I
+DataAddress{1} = [RootAddress,'TargetDLP1_V']; % V
+DataAddress{2} = [RootAddress,'TargetDLP1_I']; % I
 Config.V_Att = 1;  % Output voltage of DLP box (Voltage) = V_Att*Digitized data 
 Config.I_Att = 1;  % Output voltage of DLP box (Current) = I_att*Digitized data
 Config.V_cal = [18.67, 2.774];   % Voltage output of DLP = V_cal(1)*Output voltage of DLP box + V_cal(2)
@@ -50,8 +50,8 @@ Config.I_cal = [-148.40, 0.0185]; % Current output of DLP = (I_cal(2) + Output v
 
 elseif DLPProbe == 2
     
-DataAddress{1} = [RootAddress,'INT_4MM_1']; % V
-DataAddress{2} = [RootAddress,'INT_4MM_2']; % I
+DataAddress{1} = [RootAddress,'TargetDLP2_I']; % V
+DataAddress{2} = [RootAddress,'TargetDLP2_I']; % I
 Config.V_Att = 1;  % Output voltage of DLP box (Voltage) = V_Att*Digitized data 
 Config.I_Att = 1;  % Output voltage of DLP box (Current) = I_att*Digitized data
 Config.V_cal = [18.71, 2.787];   % Voltage output of DLP = V_cal(1)*Output voltage of DLP box + V_cal(2)
