@@ -65,6 +65,8 @@ DATA(ii).Temperature(:,:,1)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmis
 DATA(ii).Temperature(:,:,2)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(120:325,275:475,30));
 DATA(ii).Temperature(:,:,3)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.26, images),images(120:325,275:475,36));
 
+%DATA(ii).Temperature(:,:,3)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(0.73, images),images(175:350,250:400,ii)); %For Graphite target  
+
 % DATA(ii).Temperature(:,:,1) = Temperature(:,:,1)';
 % DATA(ii).Temperature(:,:,2) = Temperature(:,:,2)';
 % DATA(ii).Temperature(:,:,3) = Temperature(:,:,3)';

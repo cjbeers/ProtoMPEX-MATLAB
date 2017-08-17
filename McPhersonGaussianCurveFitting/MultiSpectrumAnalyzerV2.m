@@ -20,13 +20,13 @@ tic %starts timing the code
 %Turns on=1/off=0 program sections
 
 PLOTPIXELS=0; %plots counts vs. pixel number
-PLOTWAVELENGTH=0; %plots counts vs. wavelength
+PLOTWAVELENGTH=1; %plots counts vs. wavelength
 PLOTINTENSITY=0; %plots the absolute intensity vs. wavelength
 USEIPEAKS=0; %uses program ipeaks to find wavelength peaks
 USEIPEAKSFORINTENSITYPEAKS=0; %uses ipeaks to find the intensity peaks
 FINDFWHM=0; %not really needed anymore because ion temp can be found
 FINDFLOW=0; % used when looking up and down stream, FINDFWHM must also = 1
-FINDIONTEMP=1; %uses Elijah's code to calculate ion temperature
+FINDIONTEMP=0; %uses Elijah's code to calculate ion temperature
 IONTEMPSINGLEFRAME=0; %looks at single frame to fit ion temp
 
 %% Read in file of interest
@@ -35,7 +35,7 @@ IONTEMPSINGLEFRAME=0; %looks at single frame to fit ion temp
 %Grating = input(prompt);
 Spectra.Grating = 1800;  %USER chooses which Grating was used
 
-Spectra.Wavelength=(7065); %USER changes to match file wavelength location on McPherson
+Spectra.Wavelength=(7217); %USER changes to match file wavelength location on McPherson
 [Spectra.RawDATA,Spectra.ExposureTime] = readSPE('Z:\McPherson\2017_01_09\D2Ar_7217_30um_12620.SPE');...
     %USER Specifiy Location
 Spectra.Length = size(Spectra.RawDATA);
@@ -247,15 +247,15 @@ if Spectra.Grating ==300
 for ii=1:512
 WL=Spectra.LambdaPlot(1,ii);
 Spectra.F1CF(1,ii) =(1101630822525047*WL^6)/649037107316853453566312041152512 - (7265777621430527*WL^5)/1267650600228229401496703205376 + (4967798444037317*WL^4)/618970019642690137449562112 - (7213530429423309*WL^3)/1208925819614629174706176 + (5868229780194579*WL^2)/2361183241434822606848 - (5074883106023453*WL)/9223372036854775808 + 7297156861788209/144115188075855872;
-Spectra.Intensity1(1,ii)=((Spectra.F1CF(1,ii)*flip(Spectra.BGSub1(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
+Spectra.Intensity1(1,ii)=((Spectra.F1CF(1,ii)*flip(Spectra.SelfBGSub1(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
 Spectra.F2CF(1,ii) =(2626695280632411*WL^6)/1298074214633706907132624082305024 - (1076220889837839*WL^5)/158456325028528675187087900672 + (5845266505055671*WL^4)/618970019642690137449562112 - (8418572225483743*WL^3)/1208925819614629174706176 + (3392225726576867*WL^2)/1180591620717411303424 - (5804480930144169*WL)/9223372036854775808 + 4122263530836521/72057594037927936;
-Spectra.Intensity2(1,ii)=((Spectra.F2CF(1,ii)*flip(Spectra.BGSub2(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
+Spectra.Intensity2(1,ii)=((Spectra.F2CF(1,ii)*flip(Spectra.SelfBGSub2(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
 Spectra.F3CF(1,ii) =(6685689374474273*WL^6)/5192296858534827628530496329220096 - (5538637756507167*WL^5)/1267650600228229401496703205376 + (3809644293763157*WL^4)/618970019642690137449562112 - (2786038952453225*WL^3)/604462909807314587353088 + (4572309193917549*WL^2)/2361183241434822606848 - (3994730768181719*WL)/9223372036854775808 + 5813337095729975/144115188075855872;
-Spectra.Intensity3(1,ii)=((Spectra.F3CF(1,ii)*flip(Spectra.BGSub3(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
+Spectra.Intensity3(1,ii)=((Spectra.F3CF(1,ii)*flip(Spectra.SelfBGSub3(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
 Spectra.F4CF(1,ii) =(7302221534579973*WL^6)/5192296858534827628530496329220096 - (1512047247641153*WL^5)/316912650057057350374175801344 + (519560686567997*WL^4)/77371252455336267181195264 - (6069351690507449*WL^3)/1208925819614629174706176 + (4967682192603545*WL^2)/2361183241434822606848 - (4324620186983531*WL)/9223372036854775808 + 6262978433970463/144115188075855872;
-Spectra.Intensity4(1,ii)=((Spectra.F4CF(1,ii)*flip(Spectra.BGSub4(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
+Spectra.Intensity4(1,ii)=((Spectra.F4CF(1,ii)*flip(Spectra.SelfBGSub4(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
 Spectra.F5CF(1,ii) =-(3056574429229055*WL^6)/2596148429267413814265248164610048 + (5619162961737097*WL^5)/1267650600228229401496703205376 - (4231508340035941*WL^4)/618970019642690137449562112 + (3345429297905545*WL^3)/604462909807314587353088 - (5859150790520435*WL^2)/2361183241434822606848 + (5387567721134835*WL)/9223372036854775808 - 8114035101143863/144115188075855872;
-Spectra.Intensity5(1,ii)=((Spectra.F5CF(1,ii)*flip(Spectra.BGSub5(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
+Spectra.Intensity5(1,ii)=((Spectra.F5CF(1,ii)*flip(Spectra.SelfBGSub5(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
 end
 
 %For 1800nm Grating:
@@ -264,15 +264,15 @@ elseif Spectra.Grating ==1800
 for ii=1:512
 WL=Spectra.LambdaPlot(1,ii);
 Spectra.F1CF(1,ii) = (8639858633378925*WL^6)/162259276829213363391578010288128 - (6752534369187517*WL^5)/39614081257132168796771975168 + (4371564017049417*WL^4)/19342813113834066795298816 - (1500140754751339*WL^3)/9444732965739290427392 + (1151024590460689*WL^2)/18446744073709551616 - (1872109269432241*WL)/144115188075855872 + 5042492432869085/4503599627370496;
-Spectra.Intensity1(1,ii)=((Spectra.F1CF(1,ii)*flip(Spectra.BGSub1(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
+Spectra.Intensity1(1,ii)=((Spectra.F1CF(1,ii)*flip(Spectra.SelfBGSub1(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
 Spectra.F2CF(1,ii) =(633581297858053*WL^6)/5070602400912917605986812821504 - (8121773701465285*WL^5)/19807040628566084398385987584 + (2690009207465985*WL^4)/4835703278458516698824704 - (7542774615408457*WL^3)/18889465931478580854784 + (2950856088803465*WL^2)/18446744073709551616 - (4887277633992995*WL)/144115188075855872 + 6693695750256497/2251799813685248;
-Spectra.Intensity2(1,ii)=((Spectra.F2CF(1,ii)*flip(Spectra.BGSub2(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
+Spectra.Intensity2(1,ii)=((Spectra.F2CF(1,ii)*flip(Spectra.SelfBGSub2(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
 Spectra.F3CF(1,ii) =(4558147662457993*WL^6)/40564819207303340847894502572032 - (911820085030147*WL^5)/2475880078570760549798248448 + (2413104084810979*WL^4)/4835703278458516698824704 - (6758446563225483*WL^3)/18889465931478580854784 + (5282100525926083*WL^2)/36893488147419103232 - (2184730141835485*WL)/72057594037927936 + 5978301140921691/2251799813685248;
-Spectra.Intensity3(1,ii)=((Spectra.F3CF(1,ii)*flip(Spectra.BGSub3(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
+Spectra.Intensity3(1,ii)=((Spectra.F3CF(1,ii)*flip(Spectra.SelfBGSub3(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
 Spectra.F4CF(1,ii) =(2612623629397875*WL^6)/20282409603651670423947251286016 - (8357945244197111*WL^5)/19807040628566084398385987584 + (172707543343351*WL^4)/302231454903657293676544 - (1933629052041071*WL^3)/4722366482869645213696 + (6040887448379897*WL^2)/36893488147419103232 - (1248386249030235*WL)/36028797018963968 + 6826993165843605/2251799813685248;
-Spectra.Intensity4(1,ii)=((Spectra.F4CF(1,ii)*flip(Spectra.BGSub4(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
+Spectra.Intensity4(1,ii)=((Spectra.F4CF(1,ii)*flip(Spectra.SelfBGSub4(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
 Spectra.F5CF(1,ii) =(1217788750296653*WL^6)/10141204801825835211973625643008 - (7799579479577659*WL^5)/19807040628566084398385987584 + (1290709320930039*WL^4)/2417851639229258349412352 - (7233120040344691*WL^3)/18889465931478580854784 + (5655494708893753*WL^2)/36893488147419103232 - (4680239615105187*WL)/144115188075855872 + 6406011523163739/2251799813685248;
-Spectra.Intensity5(1,ii)=((Spectra.F5CF(1,ii)*flip(Spectra.BGSub5(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
+Spectra.Intensity5(1,ii)=((Spectra.F5CF(1,ii)*flip(Spectra.SelfBGSub5(Spectra.FrameOfInterest,ii)))/(Spectra.ExposureTime*1000))*100^2;
 end
 elseif Spectra.Grating ~= 300 && Spectra.Grating ~= 1800
     disp('Error in Grating Chosen')

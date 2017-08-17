@@ -18,20 +18,20 @@ end
 
 elseif KnownFields == 1
     
-   helicon_current =300; %Coils 3,4
-   current_A = 5900; %Coils 1,6
-   current_B = 5900; %Coils 7-12
-   current_C = 0;  %Coil 2
+   helicon_current =260; %Coils 3,4
+   current_A = 6400; %Coils 1,6
+   current_B = 6400; %Coils 7-12
+   current_C = 000;  %Coil 2
    skimmer = 1;
-   config = 'standard';
-   add_reflector = 0;
+   config = 'newstandard';
+   add_reflector = 1;
    
 else
     disp('Error')
     return;    
 end
 
-target_position = 2;   %target position 1: 7.5, 2: 11.5, 3: Off center 11.5
+target_position = 3;   %target position 1: 7.5, 2: 11.5, 3: Off center 11.5
 sleeve = 1;
 
 
@@ -96,11 +96,12 @@ atg=Atg;
     m12_x=[z0(12),z0(12)+cl(12),z0(12)+cl(12),z0(12),z0(12)];
 
 
-
-
     m_y=[0,0,bma,bma,0];
     vals=psivals(avec,zvec,psi,zvec(bmloc),rlocs);
     disp(zvec(bmloc))
+    
+    %% Plots flux tube and B field
+    
     subplot(2,1,1);
     hold off
     contour(zvec,avec,psi,vals,'b');
@@ -110,11 +111,11 @@ atg=Atg;
     grid
     title('Flux tube mapping');
     h=ylabel('R  (m)');
-    set(h,'fontsize',22,'fontweight','bold');
+    set(h,'fontsize',12,'fontweight','bold');
     h=xlabel('Z  (m)');
-    set(h,'fontsize',22,'fontweight','bold');
+    set(h,'fontsize',12,'fontweight','bold');
     axis([0,zmax,0,.2])
-    set(gca,'Fontsize',22,'fontweight','bold');
+    set(gca,'Fontsize',12,'fontweight','bold');
     %set(findall(gcf,'type','text'),'fontsize',fontsize,'fontweight',fontweight)
     subplot(2,1,2)
 
@@ -124,9 +125,9 @@ atg=Atg;
     grid
     title('mod B on axis');
     h=ylabel('|B|  (T)');
-    set(h,'fontsize',22,'fontweight','bold');
+    set(h,'fontsize',12,'fontweight','bold');
     h=xlabel('Z  (m)');
-    set(h,'fontsize',22,'fontweight','bold');
+    set(h,'fontsize',12,'fontweight','bold');
 
     text(m1_x(1)+.15*cl(1),0.05*bma,'1','fontsize',14);
     text(m2_x(1)+.15*cl(1),0.05*bma,'2','fontsize',14);
@@ -158,7 +159,7 @@ atg=Atg;
     locs=axis;		 
 
     axis([0,zmax,locs(3),locs(4)]);
-    set(gca,'Fontsize',22,'fontweight','bold');
+    set(gca,'Fontsize',12,'fontweight','bold');
     %set(findall(gcf,'type','text'),'fontsize',fontsize,'fontweight',fontweight)
     text(-.1*locs(2),-.22*locs(4),textout1,'fontsize',12,'fontweight','normal');	
     text(-.1*locs(2),-.27*locs(4),textout2,'fontsize',12,'fontweight','normal');
