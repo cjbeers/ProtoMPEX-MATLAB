@@ -1,19 +1,41 @@
+%%
+cleanup
 
-Ne=4e19;
-Te1=2;
-Te=Te1;
+Maincoil=load('C:\Users\cxe\Documents\Proto-MPEX\Analyzed Data\2017_08_02\Shot15884_MainCoilAmps');
+Heliconpower=load('C:\Users\cxe\Documents\Proto-MPEX\Analyzed Data\2017_08_02\Shot15884_HeliconPower');
+Heliconcoil=load('C:\Users\cxe\Documents\Proto-MPEX\Analyzed Data\2017_08_02\Shot15884_HeliconCoilAmps');
 
-Te_K=Te1*11604.3;  % 11604.3 K/eV
-k_b=8.6173324E-5; %eV/K
-m_i=2*((931.5E6)/(2.998E8)^2); %eV/c^2
-%For now the USER inputs Ti, eventually want code to find this
-Ti=Te; %eV
-Std_Ti=0; 
-Ti_K=Ti*11604.3; %Ion Temp. in K
-y=3; %3 for 1D adiabatic flow, 1 for isothermal flow
-ye=5.5; %sheath transmission factor for electrons
-yt=1.5; %sheath transmission factor for ions
-corfactor=1.602E-19; %Joules to eV
-%Gamma_se = Flux to sheath entrance
+%%
+figure;
+subplot(2,2,2); hold on
+plot(Maincoil(:,1), (Maincoil(:,2)))
+ax = gca;
+ax.FontSize = 13;
+title('Machine Conditions', 'FontSize', 13);
+%xlabel('Time [s]', 'FontSize', 13);
+ylabel('Main Coil Current [kA]', 'FontSize', 13);
+xlim([4.1 4.4]);
+%ylim([0 inf]);
 
-Gamma_se=0.61*Ne.*((((k_b)*(Te+y*Ti_K))/(m_i)).^0.5) %(1/(m^2*s^1))
+
+subplot(2,2,3); hold on
+plot(Heliconcoil(:,1), Heliconcoil(:,2))
+ax = gca;
+ax.FontSize = 13;
+%title('Machine Conditions', 'FontSize', 13);
+xlabel('Time [s]', 'FontSize', 13);
+ylabel('Helicon Current [A]', 'FontSize', 13);
+xlim([4.1 4.4]);
+ylim([0 300]);
+
+subplot(2,2,4); hold on
+plot(Heliconpower(:,1), Heliconpower(:,2))
+ax = gca;
+ax.FontSize = 13;
+%('Machine Conditions', 'FontSize', 13);
+xlabel('Time [s]', 'FontSize', 13);
+ylabel('Helicon Power [kW]', 'FontSize', 13);
+xlim([4.1 4.4]);
+ylim([0 150]);
+hold off;
+

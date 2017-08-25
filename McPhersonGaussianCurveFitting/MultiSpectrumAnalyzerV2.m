@@ -407,5 +407,3 @@ DATA.X=flip(Spectra.LambdaPlot);
 %location
 end
 end
-
-
