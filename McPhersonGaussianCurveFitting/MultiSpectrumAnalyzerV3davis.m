@@ -314,6 +314,7 @@ if FINDFLOW==1
     Gaussian.DeltaLambda(:,:,:) = Gaussian.GaussCenter(:,:,:)-CenterOfInterest;
     velocity = (Spectra.DeltaLambda/CenterOfInterest)*v_c;
 end
+%%
 
 if FINDIONTEMP==1
     
@@ -361,6 +362,8 @@ end
 end
 end
 end
+
+%%
 
 if IONTEMPSINGLEFRAME==1
 

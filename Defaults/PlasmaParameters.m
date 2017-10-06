@@ -2,10 +2,10 @@
 cleanup
 
 
-epsilon_0org=8.854E-12;  %F/m or C^2/J or s^2*C^2/m^2*kg
+epsilon_0org=8.854E-12;  %F/m or C^2/J or s^2*C^2/m^3*kg
 confactor=1.602E-19; %J to eV
 epsilon_0=epsilon_0org*confactor; %C^2/eV
-Ne=4E19;  %1/m^3
+Ne=5E19;  %1/m^3
 Te=2; %eV
 Ti=Te; %eV
 %KT=10  %keV
@@ -14,23 +14,26 @@ Z=1; %Charge State
 y=1; %Gamma value
 B=0.75; %B field in T
 
-%{
+%
 mpkg=1.672E-27; %kg
 %mp=1.007; %amu
-mp= (mpkg/1.782661E-36); %eV
-%}
+%mp= (mpkg/1.782661E-36); %eV
+%
 mp=938.27e6/(3.0E8)^2; %eV %Mass of proton
-%{
-mekg=9.11E-31; %kg
+%
+mekg=9.109E-31; %kg
 %me=5.485E-4; %amu
-me=(mekg/1.782661E-36); %eV
-%}
+%me=(mekg/1.782661E-36); %eV
+%
 me=0.51e6/(3.0E8)^2; %eV %Mass of electron
 % mi=3727e6/(3.0E8)^2; %eV %Mass of ion (He-2)
 mi=mp*2; %eV %Mass of ion D
 m_D=3.34E-27; %kg of D
 mu= mi/mp;
 debyel=sqrt((epsilon_0*Te)/(Ne*e^2));
+PlasmaFreqe=sqrt((Ne*e^2)/(mekg*epsilon_0org));
+PlasmaFreqi=sqrt((Ne*e^2)/(mpkg*epsilon_0org));
+PlasmaFreqTot=sqrt((Ne*e^2)/(mekg*epsilon_0org)+(Ne*e^2)/(mpkg*epsilon_0org))
 
 lambda=12*pi*(((epsilon_0*Te)^3)/(Ne*e^6))^(1/2);
 %lambda=4*pi*n*debyel^3
@@ -76,5 +79,18 @@ yt=1.5; %sheath transmission factor for ions
 
 Gamma_se=0.61*Ne.*((((k_b)*(Te+y*Ti_K))/(m_i)).^0.5) %(1/(m^2*s^1))
 
+%% Equlibirum timing or relaxation time
+
+A1=2;
+A2=40;
+ne=3E19*(1/100)^3; %cm-3
+Z1=1;
+Z2=1;
+logA=12; % ln(A) from Sprizer
+T1=10*11604; % K, (converted from eV)
+T2=0*11604; 
+
+
+Teq=5.87*((A1*A2)/(ne*Z1^2*Z2^2*logA))*((T1/A1+T2/A2)^(3/2));
 
 

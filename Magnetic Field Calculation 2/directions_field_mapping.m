@@ -18,13 +18,13 @@ end
 
 elseif KnownFields == 1
     
-   helicon_current =260; %Coils 3,4
+   helicon_current = 260; %Coils 3,4
    current_A = 6400; %Coils 1,6
    current_B = 6400; %Coils 7-12
-   current_C = 000;  %Coil 2
+   current_C = 700;  %Coil 2
    skimmer = 1;
    config = 'newstandard';
-   add_reflector = 1;
+   add_reflector = 0;
    
 else
     disp('Error')

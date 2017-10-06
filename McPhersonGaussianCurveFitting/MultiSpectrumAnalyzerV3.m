@@ -37,13 +37,27 @@ POWERLOSS=0; %uses the intensity to find the power loss for a single spectra fro
 Spectra.Grating = 1800;  %USER chooses which Grating was used
 
 Spectra.Wavelength=(7217); %USER changes to match file wavelength location on McPherson
-[Spectra.RawDATA,Spectra.ExposureTime] = readSPE('Z:\McPherson\2017_01_09\D2Ar_7217_30um_12620.SPE');...
+[Spectra.RawDATA,Spectra.ExposureTime] = readSPE('Z:\McPherson\2017_01_09\D2Ar_7217_30um_12619.SPE');...
     %USER Specifiy Location
 Spectra.Length = size(Spectra.RawDATA);
 Spectra.RawBGDATA = readSPE('Z:\McPherson\calibration\cal_2016_08_04\ROIs\abs_calib_20um_1s_bg_1.SPE');...
     %USER Specify Location OR use the same BG spectrum each time
 
 B_Field = [160 4000 4000 600]; %In order: helicon current, current_A, current_B, current_C in Amps
+
+Fiber1_5North = 58.9279/100+0.5; %[cm to m]
+Fiber1_5Top = 58.9279/100+0.5;
+Fiber2_5North = 92.9258/100+0.5;
+Fiber2_5Top = 92.9258/100+0.5;
+Fiber4_5Bottom = 139.1259/100+0.5;
+Fiber5_5North = 170.9183/100+0.5;
+Fiber6_5North = 198.1936/100+0.5;
+Fiber6_5South = 210.4186/100+0.5;
+Fiber7_5North = 250.2509/100+0.5;
+Fiber9_5South = 298.9854/100+0.5;
+Fiber9_5North = 298.9854/100+0.5;
+Fiber10_5South = 330.698/100+0.5;
+Fiber11_5North = 362.43/100+0.5;
 
 Fibers= [Fiber2_5North Fiber2_5North Fiber2_5North Fiber2_5North Fiber2_5North];%Enter all fiber locations for Fibers 1-5 left to right (0 indicates Fiber not in use)
 
@@ -477,20 +491,6 @@ end
 %% Finds plasma volume to calculate power loss
 
 if POWERLOSS == 1
-    
-Fiber1_5North = 58.9279/100+0.5; %[cm to m]
-Fiber1_5Top = 58.9279/100+0.5;
-Fiber2_5North = 92.9258/100+0.5;
-Fiber2_5Top = 92.9258/100+0.5;
-Fiber4_5Bottom = 139.1259/100+0.5;
-Fiber5_5North = 170.9183/100+0.5;
-Fiber6_5North = 198.1936/100+0.5;
-Fiber6_5South = 210.4186/100+0.5;
-Fiber7_5North = 250.2509/100+0.5;
-Fiber9_5South = 298.9854/100+0.5;
-Fiber9_5North = 298.9854/100+0.5;
-Fiber10_5South = 330.698/100+0.5;
-Fiber11_5North = 362.43/100+0.5;
 
 [coil1, coil2] = Spool_Finder(Fibers);
 h=zeros(1,5); %set up for radii of machine at fiber location
@@ -533,24 +533,24 @@ end
 %use caution when interpreting zero as a return.
 
 for jj=1:Spectra.Length(1,3)
-Spectra.Loss1(1,jj)=(Spectra.Intensity1(1,jj)/h(:,5))*Volume(:,5);
-Spectra.Loss2(1,jj)=(Spectra.Intensity2(1,jj)/h(:,4))*Volume(:,4);
-Spectra.Loss3(1,jj)=(Spectra.Intensity3(1,jj)/h(:,3))*Volume(:,3);
-Spectra.Loss4(1,jj)=(Spectra.Intensity4(1,jj)/h(:,2))*Volume(:,2);
-Spectra.Loss5(1,jj)=(Spectra.Intensity5(1,jj)/h(:,1))*Volume(:,1);
+Spectra.Loss1(jj,:)=(Spectra.Intensity1(jj,:)/h(:,5))*Volume(:,5);
+Spectra.Loss2(jj,:)=(Spectra.Intensity2(jj,:)/h(:,4))*Volume(:,4);
+Spectra.Loss3(jj,:)=(Spectra.Intensity3(jj,:)/h(:,3))*Volume(:,3);
+Spectra.Loss4(jj,:)=(Spectra.Intensity4(jj,:)/h(:,2))*Volume(:,2);
+Spectra.Loss5(jj,:)=(Spectra.Intensity5(jj,:)/h(:,1))*Volume(:,1);
 end
 
 %VRatio must be written in reverse order as shown, as Fibers array lists
 %fibers in physical fiber order from 1 to 5, while Intensity is calculated
 %in the standard way.
-
+%%
 figure;
-plot(Spectra.LambdaPlot,(Spectra.Loss1))
+plot(Spectra.LambdaPlot,(Spectra.Loss1(Spectra.FrameOfInterest,:)))
 hold on
-plot(Spectra.LambdaPlot,(Spectra.Loss2))
-plot(Spectra.LambdaPlot,(Spectra.Loss3))
-plot(Spectra.LambdaPlot,(Spectra.Loss4))
-plot(Spectra.LambdaPlot,(Spectra.Loss5))
+plot(Spectra.LambdaPlot,(Spectra.Loss2(Spectra.FrameOfInterest,:)))
+plot(Spectra.LambdaPlot,(Spectra.Loss3(Spectra.FrameOfInterest,:)))
+plot(Spectra.LambdaPlot,(Spectra.Loss4(Spectra.FrameOfInterest,:)))
+plot(Spectra.LambdaPlot,(Spectra.Loss5(Spectra.FrameOfInterest,:)))
 ax = gca;
 ax.FontSize = 15;
 title('Power Loss vs wavelength [nm]','FontSize',15);

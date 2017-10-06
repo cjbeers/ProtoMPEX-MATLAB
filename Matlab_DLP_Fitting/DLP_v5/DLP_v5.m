@@ -1,6 +1,6 @@
 
-cleanup
-shotlist = [15999];
+%cleanup
+shotlist = [15943];
 DLPType='10';
 
 sizeshotlist=size(shotlist);
@@ -131,6 +131,7 @@ xlim([4.2,Config.tEnd])
 set(gca,'Fontsize', 20,'FontWeight','Bold')
 grid on
 Pressure=e_c.*Ni{s}.*Te{s};
+
 subplot(2,2,3); hold on
 for s = 1:sizeshotlist(1,2)
     plot(time{s},e_c.*Ni{s}.*Te{s},C{s},'lineWidth',2)
@@ -176,7 +177,7 @@ if 1
         end
         
     figure;
-        for c = 51:75 %FitLength(1,2)
+        for c = 51:FitLength(1,2)
         subplot(5,5,c-50); hold on
         plot(Vsweep{s}{c},Isweep{s}{c}*1e3,'k')
         plot(Vsweep{s}{c},Ifit{s}{c}*1e3,'r')
