@@ -12,9 +12,9 @@ clc
 tic
 %##### Load image #####
 %[FILENAME, PATHNAME, FILTERINDEX] = uigetfile('*.jpg;*.seq', 'Choose IR file (jpg) or radiometric sequence (seq)');
-Shots=15829; %USER defines shot number, if not found change the PATHNAME to the correct day/file location
+Shots=17189; %USER defines shot number, if not found change the PATHNAME to the correct day/file location
 FILENAME = ['Shot ' ,num2str(Shots),'.seq'];
-PATHNAME = 'Z:\IR_Camera\2017_07_20\';
+PATHNAME = 'Z:\IR_Camera\2017_10_25\';
 FILTERINDEX = 1;
 
 videoFileName=[PATHNAME FILENAME];

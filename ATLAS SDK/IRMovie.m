@@ -22,15 +22,15 @@ SAVEDeltaTMovie = 0; %Saves Delta T movie to email out if need it
 
 %Loads IR .seq file
 %[FILENAME, PATHNAME, FILTERINDEX] = uigetfile('*.jpg;*.seq', 'Choose IR file (jpg) or radiometric sequence (seq)');
-Shots=15943; %USER defines shot number, if not found change the PATHNAME to the correct day/file location
+Shots=17199; %USER defines shot number, if not found change the PATHNAME to the correct day/file location
 IR.ColarBarMax = 50;
 IR.FrameStart=1;
-IR.FrameEnd=60;
+IR.FrameEnd=100;
 IR.Emissivity = 0.73; %0.26 for SS 0.73 for graphite
 
 %% Code Start
 IR.FILENAME = ['Shot ' ,num2str(Shots),'.seq'];
-IR.PATHNAME = 'Z:\IR_Camera\2017_08_02\';
+IR.PATHNAME = 'Z:\IR_Camera\2017_10_25\';
 FILTERINDEX = 1;
 
 IR.videoFileName=[IR.PATHNAME IR.FILENAME];
@@ -46,7 +46,7 @@ seq = file.ThermalSequencePlayer();
 IR.img = seq.ThermalImage.ImageProcessing.GetPixelsArray;
 IR.im = double(IR.img);
 IR.Counts=seq.ThermalImage.Count; %# of frames
-IR.images=zeros(480, 640, IR.Counts);
+images=zeros(240, 640, IR.Counts);
 
 %Puts all frames into images
 i=1;
@@ -54,7 +54,7 @@ if(seq.Count > 1)
     while(seq.Next())
         IR.img = seq.ThermalImage.ImageProcessing.GetPixelsArray;
         IR.im = double(IR.img);
-        images(:,:,i)=(IR.im);
+        images(:,:,i)=(IR.im); %Does not let me place into IR.images
         i=i+1;
     end
 end
@@ -64,7 +64,7 @@ end
         IR.colorsize=size(IR.colorticks);
         
           jj=1;
-        for o=10400:1000:30000
+        for o=10400:1000:15000
            IR.colorlabels(1,jj) = seq.ThermalImage.GetValueFromSignal(o);
            jj=jj+1;
         end
@@ -76,7 +76,7 @@ if MAKEAbUnitsMovie==1
     for ii=IR.FrameStart:IR.FrameEnd
         IR.fig=figure(1);
         imagesc(flip(images(:,:,ii)), 'CDataMapping','scaled')
-        caxis([10400 30000]); %0-100 C
+        caxis([10400 15000]); %0-100 C
         colormap jet;
         colorbar('Ticks',IR.colorticks, 'TickLabels',IR.colorlabels);
         c=colorbar;
@@ -99,9 +99,9 @@ if MAKETemperatureMovie==1
  
     for ii=IR.FrameStart:IR.FrameEnd
         
-        IR.Temperature(:,:,ii)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(IR.Emissivity, images),images(170:320,180:300,ii));
+        IR.Temperature(:,:,ii)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(IR.Emissivity, images),images(40:175,250:425,ii));
     end
-        
+    %%
     for ii=IR.FrameStart:IR.FrameEnd
         
         IR.fig2=figure(2);
@@ -130,7 +130,7 @@ if MAKETemperatureMovie==0
     
     for ii=IR.FrameStart:IR.FrameEnd
         
-    IR.Temperature(:,:,ii)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(IR.Emissivity, images),images(170:320,180:300,ii));
+    IR.Temperature(:,:,ii)=arrayfun(@(images) seq.ThermalImage.GetValueFromEmissivity(IR.Emissivity, images),images(40:175,250:425,ii));
        
     end
 end

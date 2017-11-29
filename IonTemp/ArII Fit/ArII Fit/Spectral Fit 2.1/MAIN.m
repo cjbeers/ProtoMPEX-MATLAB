@@ -311,9 +311,9 @@ PSL_I_DOP=[1,0,0,0];
 %******************************
 %Lorentzian function parameters
 %******************************
-PSL_GAM_LOR=[1,1,0,0];
-PSL_X_LOR=[1,1,0,0];
-PSL_I_LOR=[1,1,0,0];
+PSL_GAM_LOR=[0,0,0,0];
+PSL_X_LOR=[1,0,0,0];
+PSL_I_LOR=[1,0,0,0];
 
 %*****************************
 %Background emission intensity

@@ -62,7 +62,6 @@ Table(i,2)=Gamma_se(1,i);
 Table(i,3)=HeatFlux(1,i);
 end
 
-
 formatPrint='Ti = %1.4g\n';
 fprintf(formatPrint, Ti)
 

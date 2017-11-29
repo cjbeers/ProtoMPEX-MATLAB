@@ -9,7 +9,7 @@ clear all
 %****************
 %Atom of interest
 %****************
-RAD.ATOM='H';
+RAD.ATOM='ArII';
 
 %*******************************************************
 %**   Logic to turn on/off (1/0) the fine structure   ** 
@@ -45,7 +45,7 @@ RAD.WAVE='4806A';
 %                   ~~ ANG -> UNITS=radians  ~~                 **
 %                   ~~ NU  -> UNITS=Hz       ~~                 **
 %*****************************************************************
-B.MAG=0.08;
+B.MAG=0.74;
 
 EDC.MAG=[0 0 0]*1e5;
 

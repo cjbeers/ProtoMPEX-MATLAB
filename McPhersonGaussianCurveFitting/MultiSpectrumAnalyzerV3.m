@@ -13,6 +13,7 @@
 %% Start Code
 
 clear all
+fclose all
 %close all
 format shortG; 
 format compact;
@@ -27,7 +28,7 @@ USEIPEAKSFORINTENSITYPEAKS=0; %uses ipeaks to find the intensity peaks
 FINDFWHM=0; %not really needed anymore because ion temp can be found
 FINDFLOW=0; % used when looking up and down stream, FINDFWHM must also = 1
 FINDIONTEMP=0; %uses Elijah's code to calculate ion temperature
-IONTEMPSINGLEFRAME=0; %looks at single frame to fit ion temp
+IONTEMPSINGLEFRAME=1; %looks at single frame to fit ion temp
 POWERLOSS=0; %uses the intensity to find the power loss for a single spectra from each fiber
 
 %% Read in file of interest
@@ -43,7 +44,7 @@ Spectra.Length = size(Spectra.RawDATA);
 Spectra.RawBGDATA = readSPE('Z:\McPherson\calibration\cal_2016_08_04\ROIs\abs_calib_20um_1s_bg_1.SPE');...
     %USER Specify Location OR use the same BG spectrum each time
 
-B_Field = [160 4000 4000 600]; %In order: helicon current, current_A, current_B, current_C in Amps
+B_Field = [160 6400 6400 600]; %In order: helicon current, current_A, current_B, current_C in Amps
 
 Fiber1_5North = 58.9279/100+0.5; %[cm to m]
 Fiber1_5Top = 58.9279/100+0.5;
@@ -59,7 +60,7 @@ Fiber9_5North = 298.9854/100+0.5;
 Fiber10_5South = 330.698/100+0.5;
 Fiber11_5North = 362.43/100+0.5;
 
-Fibers= [Fiber2_5North Fiber2_5North Fiber2_5North Fiber2_5North Fiber2_5North];%Enter all fiber locations for Fibers 1-5 left to right (0 indicates Fiber not in use)
+Fibers= [Fiber6_5North Fiber9_5South Fiber9_5South Fiber9_5South Fiber11_5North];%Enter all fiber locations for Fibers 1-5 left to right (0 indicates Fiber not in use)
 
 if length(Spectra.Length)==2
     Spectra.Length(1,3)=1;
@@ -460,7 +461,7 @@ Coil11 = (3.99920000000000+3.99920000000000+0.0979000000000000)/2; % Center of C
 Coil12 = (4.31720000000000+4.31720000000000+0.0979000000000000)/2; % Center of Coil 12
 INSFUN = [0.2559 0.2521 0.2516 0.2568 0.2658]; %Pin-Lamp instrument function input
     
-for ii=1:5
+for ii=3:3
 if Fibers(:,ii)==0
 else 
 BIN = ((muo*40*B_Field(:,1)*(21.7/100)^2/2)*(((Fibers(:,ii)-Coil3)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil4)^2+(21.7/100)^2)^(-3/2)))+((muo*40*B_Field(:,2)*(21.7/100)^2/2)*(((Fibers(:,ii)-Coil1)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil5)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil6)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil7)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil8)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil9)^2+(21.7/100)^2)^(-3/2)))+((muo*40*B_Field(:,3)*(21.7/100)^2/2)*(((Fibers(:,ii)-Coil10)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil11)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil12)^2+(21.7/100)^2)^(-3/2)))+((muo*40*B_Field(:,4)*(21.7/100)^2/2)*(((Fibers(:,ii)-Coil2)^2+(21.7/100)^2)^(-3/2)));    
@@ -479,7 +480,7 @@ DATA.I = Spectra.SelfBGSub4(Spectra.FrameOfInterest,:);
     elseif ii==5
 
 DATA.X=flip(Spectra.LambdaPlot);
-[KTNarray(jj,ii), CHIarray(jj,ii)] = FIT_EXAMPLE_V3(DATA,BIN,INSFUN(:,ii)); %Calls Elijah's code to do the ion temp fitting, 
+%[KTNarray(jj,ii), CHIarray(jj,ii)] = FIT_EXAMPLE_V3(DATA,BIN,INSFUN(:,ii)); %Calls Elijah's code to do the ion temp fitting, 
 %USER must edit this code to work with backround location, and peak of interest
 %location
     end

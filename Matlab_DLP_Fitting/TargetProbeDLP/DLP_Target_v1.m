@@ -1,14 +1,14 @@
 
 clear all
-shotlist = [15807];
-DLPnum=3; %1 for top, 2 for above center, 3 for below center, 4 for bottom
+shotlist = [17611];
+DLPnum=2; %1 for top, 2 for above center, 3 for below center, 4 for bottom
 DLPProbe=1; %1 for channel 1, 2 for channel 2
 
 sizeshotlist=size(shotlist);
 
 % -------------------------
 Config.tStart = 4.2; % [s]
-Config.tEnd = 4.305;
+Config.tEnd = 4.6;
 
 % Acquiring Ne and Te data
 Stem = '\MPEX::TOP.';

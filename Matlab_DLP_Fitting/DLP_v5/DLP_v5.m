@@ -1,13 +1,14 @@
 
-%cleanup
-shotlist = [15943];
-DLPType='10';
+cleanup
+shotlist = [12497];
+DLPType='9';
+PLOTDLPsweeps=1;
 
 sizeshotlist=size(shotlist);
 
 % -------------------------
 Config.tStart = 4.2; % [s]4
-Config.tEnd = 4.35;
+Config.tEnd = 4.5;
 
 % Acquiring Ne and Te data
 Stem = '\MPEX::TOP.';
@@ -45,7 +46,7 @@ switch DLPType
         AddressType  = 's';
         CalType = 'niso';  
         %Config.L_tip = 0/1000; % [m] for Flush Probe
-        %Config.D_tip = 0.77/1000; % [m] for Flush Probe
+        %Config.D_tip = 0.83/1000; % [m] for Flush Probe
         Config.L_tip = 1.8/1000; % 10.5 DLP
         Config.D_tip = 0.254/1000; % [m] 10.5 DLP
 end
@@ -112,7 +113,7 @@ title('$ n_e $ $ [m^{-3}] $','interpreter','Latex','FontSize',13,'Rotation',0)
 legend(h,['DLP ',num2str(DLP)],'location','NorthEast')
 %legend(h,['TDLP3'],'location','NorthEast')
 %set(gca,'PlotBoxAspectRatio',[1 1 1])
-ylim([0,7e19])
+ylim([0,6e19])
 xlim([4.2,Config.tEnd])
 grid on
 
@@ -126,7 +127,7 @@ for s = 1:sizeshotlist(1,2)
 end
 legend(h,L,'location','NorthWest')
 title('$ T_e $ $ [eV] $','interpreter','Latex','FontSize',13,'Rotation',0)
-ylim([0,10])
+ylim([0,15])
 xlim([4.2,Config.tEnd])
 set(gca,'Fontsize', 20,'FontWeight','Bold')
 grid on
@@ -136,7 +137,7 @@ subplot(2,2,3); hold on
 for s = 1:sizeshotlist(1,2)
     plot(time{s},e_c.*Ni{s}.*Te{s},C{s},'lineWidth',2)
 end
-ylim([0,40])
+ylim([0,25])
 xlim([4.2,Config.tEnd])
 title('$ P_e $ $ [Pa] $','interpreter','Latex','FontSize',13,'Rotation',0)
 
@@ -144,7 +145,7 @@ set(findobj('-Property','YTick'),'box','on')
 set(gcf,'color','w')
 set(gca,'Fontsize', 20,'FontWeight','Bold')
 
-if 1
+if PLOTDLPsweeps ==1
     figure; hold on
     for s = 1:sizeshotlist(1,2)
     plot(tm{s},Vp{s})
@@ -155,9 +156,7 @@ if 1
     end
     %plot(t_28{s},EBW{s})
     %legend(h,num2str(shotlist'))
-end
-
-if 1  
+    
     figure;
     for c = 1:25
         subplot(5,5,c); hold on

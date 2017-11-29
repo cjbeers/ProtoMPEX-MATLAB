@@ -18,13 +18,13 @@ end
 
 elseif KnownFields == 1
     
-   helicon_current = 260; %Coils 3,4
-   current_A = 6400; %Coils 1,6
-   current_B = 6400; %Coils 7-12
-   current_C = 700;  %Coil 2
+   helicon_current = 160; %Coils 3,4
+   current_A = 6000; %Coils 1,6
+   current_B = 6800; %Coils 7-12
+   current_C = 600;  %Coil 2
    skimmer = 1;
    config = 'newstandard';
-   add_reflector = 0;
+   add_reflector = 1;
    
 else
     disp('Error')
@@ -102,6 +102,7 @@ atg=Atg;
     
     %% Plots flux tube and B field
     
+    figure;
     subplot(2,1,1);
     hold off
     contour(zvec,avec,psi,vals,'b');
