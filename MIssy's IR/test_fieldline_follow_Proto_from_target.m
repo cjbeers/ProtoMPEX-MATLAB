@@ -5,21 +5,21 @@
 clearvars;
 x0_guess = []; y0_guess = []; force_guess = 0;
 verbose = 0;
-shot =15785;
-tempmax= 75; %the maximum colorbar temp. 
+shot =13962;
+tempmax= 150; %the maximum colorbar temp. 
 if verbose == 1     %MS edit, 4/18/17
     
-    helicon_current = 260;
+    helicon_current = 160;
     current_A = 4000;
     current_B = 4000;
-    current_C = 0;
-    config = 'newstandard';
+    current_C = 600;
+    config = 'flat';
     skimmer = 1;
    
     plasma_radius_cm = 1.9;
     target_position = 2;  %target position 1: 7.5, target position 2: 11.5
     sleeve = 1;
-    add_reflector = 1;
+    add_reflector = 0;
     
 else
     
@@ -138,7 +138,7 @@ xlabel('Z [m]','fontsize',14)
 ylabel('R [m]','fontsize',14)
 set(gca,'fontsize',14)
 geo = get_Proto_geometry(1,1,skimmer,target_position,sleeve,add_reflector);
-caxis([0 tempmax])
+caxis([0 20])
 colorbar;
 colormap jet
 title(['Shot ',num2str(shot)]) 

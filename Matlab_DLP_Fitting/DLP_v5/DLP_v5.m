@@ -1,21 +1,21 @@
 
 cleanup
-shotlist = [12497];
-DLPType='9';
+shotlist = [18584];
+DLPType='10';
 PLOTDLPsweeps=1;
 
 sizeshotlist=size(shotlist);
 
 % -------------------------
-Config.tStart = 4.2; % [s]4
+Config.tStart = 4.14; % [s]4
 Config.tEnd = 4.5;
 
 % Acquiring Ne and Te data
 Stem = '\MPEX::TOP.';
 Branch = 'MACHOPS1:';
 RootAddress = [Stem,Branch];
-DataAddress{3} = [RootAddress, 'PWR_28GHZ'];
-[EBW,t_28]= my_mdsvalue_v3(shotlist,DataAddress(3));
+%DataAddress{3} = [RootAddress, 'PWR_28GHZ'];
+%[EBW,t_28]= my_mdsvalue_v3(shotlist,DataAddress(3));
 
 % AddressType='s'; % s for standard
 % CalType='niso'; % niso for not isolated- "Standard DLP circuit box", 
@@ -44,19 +44,19 @@ switch DLPType
     case '10'
         DLP = '10.5';
         AddressType  = 's';
-        CalType = 'niso';  
-        %Config.L_tip = 0/1000; % [m] for Flush Probe
-        %Config.D_tip = 0.83/1000; % [m] for Flush Probe
-        Config.L_tip = 1.8/1000; % 10.5 DLP
-        Config.D_tip = 0.254/1000; % [m] 10.5 DLP
+        CalType = 'iso';  
+        Config.L_tip = 0/1000; % [m] for Flush Probe
+        Config.D_tip = 0.83/1000; % [m] for Flush Probe
+        %Config.L_tip = 1.8/1000; % 10.5 DLP
+        %Config.D_tip = 0.254/1000; % [m] 10.5 DLP
 end
 
 switch AddressType
     case 's'
 DataAddress{1} = [RootAddress,'LP_V_RAMP']; % V
 DataAddress{2} = [RootAddress,'TARGET_LP']; % I
-Config.V_Att = 2;  % Output voltage of DLP box (Voltage) = V_Att*Digitized data 
-Config.I_Att = 5;  % Output voltage of DLP box (Current) = I_att*Digitized data
+Config.V_Att = 1;  % Output voltage of DLP box (Voltage) = V_Att*Digitized data 
+Config.I_Att = 1;  % Output voltage of DLP box (Current) = I_att*Digitized data
     case 'n'
 DataAddress{1} = [RootAddress,'INT_4MM_1']; % V
 DataAddress{2} = [RootAddress,'INT_4MM_2']; % I
@@ -113,7 +113,7 @@ title('$ n_e $ $ [m^{-3}] $','interpreter','Latex','FontSize',13,'Rotation',0)
 legend(h,['DLP ',num2str(DLP)],'location','NorthEast')
 %legend(h,['TDLP3'],'location','NorthEast')
 %set(gca,'PlotBoxAspectRatio',[1 1 1])
-ylim([0,6e19])
+ylim([0,8e19])
 xlim([4.2,Config.tEnd])
 grid on
 
@@ -127,7 +127,7 @@ for s = 1:sizeshotlist(1,2)
 end
 legend(h,L,'location','NorthWest')
 title('$ T_e $ $ [eV] $','interpreter','Latex','FontSize',13,'Rotation',0)
-ylim([0,15])
+ylim([0,20])
 xlim([4.2,Config.tEnd])
 set(gca,'Fontsize', 20,'FontWeight','Bold')
 grid on

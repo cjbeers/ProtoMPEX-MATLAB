@@ -36,7 +36,7 @@ scalestep = deltamax/10;
 %Plot MaxDelta
 figure;
 figDeltaT=imagesc(Frame, 'CDataMapping','scaled');
-%caxis([0 deltamax])
+caxis([0 75])
 colormap jet
 c=colorbar;
 ylabel(c, 'Delta T [C]')

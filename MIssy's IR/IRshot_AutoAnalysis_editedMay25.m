@@ -274,8 +274,8 @@ if abs(hel_frame-framenumber)<2
     end
 end
     
-MaxDelta=DeltaTMatrix(:,:,finalframenumber);
-
+%MaxDelta=DeltaTMatrix(:,:,finalframenumber);
+MaxDelta=DeltaTMatrix(:,:,30);
 
 deltamax = double(max(max(int16(round(MaxDelta,2,'significant')))));
 deltamin = double(min(min(int8(round(MaxDelta,1,'significant')))));

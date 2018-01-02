@@ -2,6 +2,7 @@
 
 %Constants for both shots required for analysis 
 
+DeltaTMaxPlot=100;
 
 Cp=710; %J/kg*C
 density=1760; %kg/m3
@@ -201,6 +202,7 @@ if number2compare == 1
     plot(time1,TG_powerdensity_step1,'LineWidth',2,'-k.',time1,hel_powerdensity_step1,'LineWidth',2,'-b.',time1,avg_powerdensity_step1,'LineWidth',2,'-m.')
     ax.FontSize = 13;
     title(['Power Density between Frames'],'FontSize',13);
+    ylim([-inf 20]);
     xlabel('Time(s)','FontSize',13);
     ylabel('Power Density (MW/m2)','FontSize',13);
     legend('TG','Helicon','Average'); 
@@ -243,9 +245,10 @@ if number2compare == 2
     plot(time2,TG_templist_step2,'-.b','LineWidth',2)
     ax.FontSize = 13;
     xlim([4.1 4.6]);
-    title(['Delta T for TG/Edge between Frames'],'FontSize',13);
+    ylim([-inf 20]);
+    title(['TG/Edge Heat Flux'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
-    ylabel('Delta T (C)','FontSize',13);
+    ylabel('Heat Flux [Ab. Units]','FontSize',13);
     legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)]);
     legend('Location','Northwest')
     
@@ -255,9 +258,10 @@ if number2compare == 2
     plot(time2,hel_templist_step2,'-.b','LineWidth',2)
     ax.FontSize = 13;
     xlim([4.1 4.6]);
-    title(['Delta T for Helicon/Center between Frames'],'FontSize',13);
+    ylim([-inf 20]);
+    title(['Helicon/Center Heat Flux'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
-    ylabel('Delta T (C)','FontSize',13);
+    ylabel('Heat Flux [Ab. Units]','FontSize',13);
     legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)]);
     legend('Location','Northwest')
     
@@ -267,9 +271,10 @@ if number2compare == 2
     plot(time2,meanlist_step2,'-.b','LineWidth',2)
     ax.FontSize = 13;
     xlim([4.1 4.6]);
-    title(['Delta T for Average between Frames'],'FontSize',13);
+    ylim([-inf 20]);
+    title(['Average Heat Flux'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
-    ylabel('Delta T (C)','FontSize',13);
+    ylabel('Heat Flux [Ab. Units]','FontSize',13);
     legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)]);
     legend('Location','Northwest')
 
@@ -278,6 +283,7 @@ if number2compare == 2
     hold on
     plot(time2,TG_templist2,'-b.','LineWidth',2)
     ax.FontSize = 13;
+    ylim([0 DeltaTMaxPlot]);
     title(['Delta T  for TG/Edge'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Delta T (C)','FontSize',13);
@@ -289,6 +295,7 @@ if number2compare == 2
     hold on
     plot(time2,hel_templist2,'-b.','LineWidth',2)
     ax.FontSize = 13;
+    ylim([0 DeltaTMaxPlot]);
     title(['Delta T for Helicon/Center'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Delta T (C)','FontSize',13);
@@ -300,6 +307,7 @@ if number2compare == 2
     hold on
     plot(time2,meanlist2,'-b.','LineWidth',2)
     ax.FontSize = 13;
+    ylim([0 ]);
     title(['Delta T for Average'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Delta T (C)','FontSize',13);
@@ -357,9 +365,10 @@ if number2compare == 3
     plot(time3,TG_templist_step3,'--g.','LineWidth',2)
     ax.FontSize = 13;
     xlim([4.1 4.6]);
-    title(['Delta T for TG/Edge between Frames'],'FontSize',13);
+    ylim([-inf 20]);
+    title(['TG/Edge Heat Flux'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
-    ylabel('Delta T (C)','FontSize',13);
+    ylabel('Heat Flux [Ab. Units]','FontSize',13);
     legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)]);
     legend('Location','Northwest')
     
@@ -371,9 +380,10 @@ if number2compare == 3
     plot(time3,hel_templist_step3,'--g.','LineWidth',2)
     ax.FontSize = 13;
     xlim([4.1 4.6]);
-    title(['Delta T for Helicon/Center between Frames'],'FontSize',13);
+    ylim([-inf 20]);
+    title(['Helicon/Center Heat Flux'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
-    ylabel('Delta T (C)','FontSize',13);
+    ylabel('Heat Flux [Ab. Units]','FontSize',13);
     legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)]);
     legend('Location','Northwest')
     
@@ -385,9 +395,10 @@ if number2compare == 3
     plot(time3,meanlist_step3,'--g.','LineWidth',2)
     ax.FontSize = 13;
     xlim([4.1 4.6]);
-    title(['Delta T for Average between Frames'],'FontSize',13);
+    ylim([-inf 20]);
+    title(['Average Heat Flux'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
-    ylabel('Delta T (C)','FontSize',13);
+    ylabel('Heat Flux [Ab. Units]','FontSize',13);
     legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)]);
     legend('Location','Northwest')
 
@@ -398,6 +409,7 @@ if number2compare == 3
     hold on
     plot(time3,TG_templist3,'--g','LineWidth',2)
     ax.FontSize = 13;
+    ylim([0 DeltaTMaxPlot]);
     title(['Delta T  for TG/Edge'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Delta T (C)','FontSize',13);
@@ -411,6 +423,7 @@ if number2compare == 3
     hold on
     plot(time3,hel_templist3,'--g','LineWidth',2)
     ax.FontSize = 13;
+    ylim([0 DeltaTMaxPlot]);
     title(['Delta T for Helicon/Center'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Delta T (C)','FontSize',13);
@@ -424,6 +437,7 @@ if number2compare == 3
     hold on
     plot(time3,meanlist3,'--g','LineWidth',2)
     ax.FontSize = 13;
+    ylim([0 DeltaTMaxPlot]);
     title(['Delta T for Average'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Delta T (C)','FontSize',13);
@@ -491,9 +505,10 @@ if number2compare == 4
     plot(time4,TG_templist_step4,'-*k','LineWidth',2)
     ax.FontSize = 13;
     xlim([4.1 4.6]);
-    title(['Delta T for TG/Edge between Frames'],'FontSize',13);
+    ylim([-inf 20]);
+    title(['TG/Edge Heat Flux'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
-    ylabel('Delta T (C)','FontSize',13);
+    ylabel('Heat Flux [Ab. Units]','FontSize',13);
     legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)],['Shot 4:',FILENAME4(1:end-4)]);
     legend('Location','Northwest')
     
@@ -506,9 +521,10 @@ if number2compare == 4
     plot(time4,hel_templist_step4,'-*k','LineWidth',2)
     ax.FontSize = 13;
     xlim([4.1 4.6]);
-    title(['Delta T for Helicon/Center between Frames'],'FontSize',13);
+    ylim([-inf 20]);
+    title(['Helicon/Center Heat Flux'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
-    ylabel('Delta T (C)','FontSize',13);
+    ylabel('Heat Flux [Ab. Units]','FontSize',13);
     legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)],['Shot 4:',FILENAME4(1:end-4)]);
     legend('Location','Northwest')
     
@@ -521,9 +537,10 @@ if number2compare == 4
     plot(time4,meanlist_step4,'-*k','LineWidth',2)
     ax.FontSize = 13;
     xlim([4.1 4.6]);
-    title(['Delta T for Average between Frames'],'FontSize',13);
+    ylim([-inf 20]);
+    title(['Average Heat Flux'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
-    ylabel('Delta T (C)','FontSize',13);
+    ylabel('Heat Flux [Ab. Units]','FontSize',13);
     legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)],['Shot 4:',FILENAME4(1:end-4)]);
     legend('Location','Northwest')
 
@@ -535,6 +552,7 @@ if number2compare == 4
     plot(time3,TG_templist3,'--g','LineWidth',2)
     plot(time4,TG_templist4,'-*k','LineWidth',2)
     ax.FontSize = 13;
+    ylim([0 DeltaTMaxPlot]);
     title(['Delta T  for TG/Edge'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Delta T (C)','FontSize',13);
@@ -549,6 +567,7 @@ if number2compare == 4
     plot(time3,hel_templist3,'--g','LineWidth',2)
     plot(time4,hel_templist4,'-*k','LineWidth',2)
     ax.FontSize = 13;
+    ylim([0 DeltaTMaxPlot]);
     title(['Delta T for Helicon/Center'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Delta T (C)','FontSize',13);
@@ -563,6 +582,7 @@ if number2compare == 4
     plot(time3,meanlist3,'--g','LineWidth',2)
     plot(time4,meanlist4,'-*k','LineWidth',2)
     ax.FontSize = 13;
+    ylim([0 DeltaTMaxPlot]);
     title(['Delta T for Average'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Delta T (C)','FontSize',13);

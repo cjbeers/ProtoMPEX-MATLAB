@@ -36,7 +36,7 @@ LOG_KTN=0;
 %Magentic field and temperature fit boundaries 
 %*********************************************
 BD_B=[0 1];
-BD_KTN=[0 20];
+BD_KTN=[0 30];
 
 if NumGauss==2
 BD_KTN_2=[1 30];

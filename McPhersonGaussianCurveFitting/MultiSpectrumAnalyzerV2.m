@@ -12,7 +12,7 @@
 
 %% Start Code
 
-clear all
+clearvars -except
 %close all
 format shortG; 
 format compact;
@@ -27,8 +27,8 @@ USEIPEAKS=0; %uses program ipeaks to find wavelength peaks
 USEIPEAKSFORINTENSITYPEAKS=0; %uses ipeaks to find the intensity peaks
 FINDFWHM=0; %not really needed anymore because ion temp can be found
 FINDFLOW=0; % used when looking up and down stream, FINDFWHM must also = 1
-FINDIONTEMP=0; %uses Elijah's code to calculate ion temperature
-IONTEMPSINGLEFRAME=1; %looks at single frame to fit ion temp
+FINDIONTEMP=1; %uses Elijah's code to calculate ion temperature
+IONTEMPSINGLEFRAME=0; %looks at single frame to fit ion temp
 
 %% Read in file of interest
 
@@ -37,7 +37,7 @@ IONTEMPSINGLEFRAME=1; %looks at single frame to fit ion temp
 Spectra.Grating = 1800;  %USER chooses which Grating was used
 
 Spectra.Wavelength=(7217); %USER changes to match file wavelength location on McPherson
-[Spectra.RawDATA,Spectra.ExposureTime] = readSPE('Z:\McPherson\2017_11_01\D2Ar_7217_30um_17279.SPE');...
+[Spectra.RawDATA,Spectra.ExposureTime] = readSPE('Z:\McPherson\2017_12_19\D2Ar_7217_30um_18748.SPE');...
     %USER Specifiy Location
 Spectra.Length = size(Spectra.RawDATA);
 Spectra.RawBGDATA = readSPE('Z:\McPherson\calibration\cal_2017_03_06\Bkgtest_7298_30um_1.SPE');...
@@ -54,9 +54,11 @@ elseif Spectra.Length(1,3) ==4
 elseif Spectra.Length(1,3) == 13
     Spectra.FrameOfInterest=8;
 elseif Spectra.Length(1,3) ==20
-    Spectra.FrameOfInterest=12;
+    Spectra.FrameOfInterest=5;
 elseif Spectra.Length(1,3) == 37
     Spectra.FrameOfInterest=14;
+elseif Spectra.Length(1,3) ==40
+    Spectra.FrameOfInterest=9;
 elseif Spectra.Length(1,3) == 50
     Spectra.FrameOfInterest=27;
 else
@@ -382,7 +384,7 @@ if FINDIONTEMP==1
     NumGauss=1;
     
 for aa=1:5 %USER changes Fibers to view
-for bb=5:11 % USER changes Frames to view
+for bb=9:23 % USER changes Frames to view
 
 DATA.I=Spectra.RawDATA(aa,:,bb);
 
@@ -391,7 +393,7 @@ DATA.I=Spectra.RawDATA(aa,:,bb);
 
 [KTN, CHI] = FIT_EXAMPLE(DATA,BIN,INSFUN,NumGauss); %USER must use correct values within this code
 
-if KTN >= 40 || KTN <=1E-5
+if KTN >= 75 || KTN <=1E-5
     KTN = 0;
     CHI = 0;
 end
@@ -408,8 +410,8 @@ if IONTEMPSINGLEFRAME==1
 BIN=0.90;
 INSFUN=0.16;
 NumGauss=1;
-for ii=12:12
-DATA.I=Spectra.SelfBGSub2(ii,:); %USER changes to fiber of interest
+for ii= [10 12 14]
+DATA.I=Spectra.SelfBGSub3(ii,:); %USER changes to fiber of interest
 DATA.X=flip(Spectra.LambdaPlot);
 [KTNarray(ii), CHIarray(ii)] = FIT_EXAMPLE(DATA,BIN,INSFUN,NumGauss); %Calls Elijah's code to do the ion temp fitting, 
 %USER must edit this code to work with backround location, and peak of interest

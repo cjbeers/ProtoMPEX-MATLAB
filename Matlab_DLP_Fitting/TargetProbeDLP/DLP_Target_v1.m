@@ -1,7 +1,7 @@
 
 clear all
-shotlist = [17611];
-DLPnum=2; %1 for top, 2 for above center, 3 for below center, 4 for bottom
+shotlist = [18175];
+DLPnum=3; %1 for top, 2 for above center, 3 for below center, 4 for bottom
 DLPProbe=1; %1 for channel 1, 2 for channel 2
 
 sizeshotlist=size(shotlist);
@@ -14,8 +14,8 @@ Config.tEnd = 4.6;
 Stem = '\MPEX::TOP.';
 Branch = 'MACHOPS1:';
 RootAddress = [Stem,Branch];
-DataAddress{3} = [RootAddress, 'PWR_28GHZ'];
-[EBW,t_28]= my_mdsvalue_v3(shotlist,DataAddress(3));
+%DataAddress{3} = [RootAddress, 'PWR_28GHZ'];
+%[EBW,t_28]= my_mdsvalue_v3(shotlist,DataAddress(3));
 
 switch DLPnum
     case 1
@@ -41,8 +41,8 @@ end
 
 if DLPProbe == 1
     
-DataAddress{1} = [RootAddress,'TargetDLP1_V']; % V
-DataAddress{2} = [RootAddress,'TargetDLP1_I']; % I
+DataAddress{1} = [RootAddress,'PWR_28GHZ']; % V
+DataAddress{2} = [RootAddress,'ICH_LP']; % I
 Config.V_Att = 1;  % Output voltage of DLP box (Voltage) = V_Att*Digitized data 
 Config.I_Att = 1;  % Output voltage of DLP box (Current) = I_att*Digitized data
 Config.V_cal = [18.67, 2.774];   % Voltage output of DLP = V_cal(1)*Output voltage of DLP box + V_cal(2)

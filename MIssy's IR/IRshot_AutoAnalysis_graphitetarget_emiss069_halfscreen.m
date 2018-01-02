@@ -284,6 +284,7 @@ hel_max=hel_templist(hel_frame); %update max as necessary
 figure;
 plot(1:zoomframes, TG_templist_step,'-b.',1:zoomframes, TG_templist,'-b.',1:zoomframes,hel_templist_step,'-k.', 1:zoomframes,hel_templist,'-k.',1:zoomframes,meanlist,'-m.',1:zoomframes,meanlist_step,'-m.');
 grid on
+ylim([0 73]);
 legend('TG Frame from Frame', 'TG Frame from Frame 1','Helicon Frame from Frame','Helicon Frame from Frame 1','Average Frame from Frame1','Average Frame from Frame'); 
 legend('Location','Northwest');
 
@@ -344,7 +345,7 @@ e_range = round((((deltamax*Cp*thickness*density))/1E6),1,'significant');
 %Plot MaxDelta
 figure;
 figDeltaT=imagesc(MaxDelta, 'CDataMapping','scaled');
-caxis([0 30])
+caxis([0 75])
 colormap jet
 c=colorbar;
 ylabel(c, 'Delta T [C]')
@@ -455,8 +456,8 @@ if powersource == 1
 %     ech_start_time = input('when did the ech turn on after t=+4 sec [sec]?  ');
 %     ech_end_time = input('when did the ech turn off after t=+4 sec [sec]?  ');
     
-    ech_start_frame = int16(((ech_start_time-helicon_start)/0.02))+plasmaframe;
-    ech_end_frame = int16(((ech_end_time-helicon_start)/0.02))+plasmaframe;
+    ech_start_frame = int16(((ech_start_time-helicon_start)/0.01))+plasmaframe;
+    ech_end_frame = int16(((ech_end_time-helicon_start)/0.01))+plasmaframe;
     
     %delta of the ECH pulse
     figure;
@@ -515,8 +516,8 @@ if powersource == 2
 %     ich_start_time = input('when did the ich turn on after t=+4 sec [sec]?  ');
 %     ich_end_time = input('when did the ich turn off after t=+4 sec [sec]?  ');
     
-    ich_start_frame = int16(((ich_start_time-helicon_start)/0.02))+plasmaframe;
-    ich_end_frame = int16(((ich_end_time-helicon_start)/0.02))+plasmaframe;
+    ich_start_frame = int16(((ich_start_time-helicon_start)/0.01))+plasmaframe;
+    ich_end_frame = int16(((ich_end_time-helicon_start)/0.01))+plasmaframe;
     
     %delta of the ECH pulse
     figure;
@@ -575,14 +576,14 @@ if powersource == 3
 %     ech_start_time = input('when did the ech turn on after t=+4 sec [sec]?  ');
 %     ech_end_time = input('when did the ech turn off after t=+4 sec [sec]?  ');
     
-    ech_start_frame = int16(((ech_start_time-helicon_start)/0.02))+plasmaframe;
-    ech_end_frame = int16(((ech_end_time-helicon_start)/0.02))+plasmaframe;
+    ech_start_frame = int16(((ech_start_time-helicon_start)/0.01))+plasmaframe;
+    ech_end_frame = int16(((ech_end_time-helicon_start)/0.01))+plasmaframe;
     
 %     ich_start_time = input('when did the ich turn on after t=+4 sec [sec]?  ');
 %     ich_end_time = input('when did the ich turn off after t=+4 sec [sec]?  ');
 %     
-    ich_start_frame = int16(((ich_start_time-helicon_start)/0.02))+plasmaframe;
-    ich_end_frame = int16(((ich_end_time-helicon_start)/0.02))+plasmaframe;
+    ich_start_frame = int16(((ich_start_time-helicon_start)/0.01))+plasmaframe;
+    ich_end_frame = int16(((ich_end_time-helicon_start)/0.01))+plasmaframe;
     
     if ech_start_frame < ich_start_frame
         power_start_frame = ech_start_frame;
@@ -648,15 +649,16 @@ if powersource == 3
     
 end
 
-%%
-%PLOTS!
+%% PLOTS!
+
 %Delta T plot
 figure;
 plot(1:zoomframes,TG_templist_step,'-k.',1:zoomframes,hel_templist_step,'-b.',1:zoomframes,meanlist_step,'-m.')
 ax.FontSize = 13;
-title([shotnumber,'; Delta T between Frames'],'FontSize',13);
+ylim([-inf 20])
+title([shotnumber,'; Heat Flux'],'FontSize',13);
 xlabel('Frames','FontSize',13);
-ylabel('Delta T (deg C)','FontSize',13);
+ylabel('Heat Flux [Ab. Units]','FontSize',13);
 legend('TG','Helicon','Average');  
 legend('Location','Northwest')
 
@@ -710,11 +712,11 @@ PowerDensity_max = (Cp*DeltaMax_step_peak*thickness*density)/delta_tframe/1E6;
 %find time step
 frame2time = zeros(zoomframes,1);
     for i = 1:plasmaframe
-        frame2time(i) = helicon_start-(plasmaframe-i)*0.02;
+        frame2time(i) = helicon_start-(plasmaframe-i)*0.01;
         i=i+1;
     end
     for i = plasmaframe:zoomframes
-        frame2time(i) = helicon_start+(i-plasmaframe)*0.02;
+        frame2time(i) = helicon_start+(i-plasmaframe)*0.01;
         i=i+1;
     end
 
@@ -723,7 +725,7 @@ frame2time = zeros(zoomframes,1);
 % ax.FontSize = 13;
 % title([shotnumber,'; Power Density between Frames'],'FontSize',13);
 % xlabel('Frames','FontSize',13);
-% ylabel('Power Density (MW/m2)','FontSize',13);
+% ylabel('Power Density (MW/m2)','FontSize',13);f
 % legend('TG','Helicon','Average'); 
 % legend('Location','Northwest')
 % 
@@ -784,6 +786,6 @@ filename=strcat(FILENAME(5:end-4),'.mat');
 %get the full image of the hottest frame in terms of delta T.
 emax=cell2mat(num2cell(EMax));
 Frame=cell2mat(num2cell(MaxDelta));
-%save(filename,'Frame','PowerDensity_max','shotnumber','zoomframes','TG_frame','finalframenumber','TC_radius','px_per_cm','emax','helicon_start','center_plate','TG_templist','hel_templist','TG_templist_step','hel_templist_step','DeltaTMatrix_step','meanlist_step','meanlist','area_TG','avg_area','x_c2','y_c2','diameter', 'plasmaframe','Temperature');
+save(filename,'Frame','PowerDensity_max','shotnumber','zoomframes','TG_frame','finalframenumber','TC_radius','px_per_cm','emax','helicon_start','center_plate','TG_templist','hel_templist','TG_templist_step','hel_templist_step','DeltaTMatrix_step','meanlist_step','meanlist','area_TG','avg_area','x_c2','y_c2','diameter', 'plasmaframe','Temperature');
 
 timeall=(toc)/60  
