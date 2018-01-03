@@ -45,10 +45,10 @@ switch DLPType
         DLP = '10.5';
         AddressType  = 's';
         CalType = 'iso';  
-        Config.L_tip = 0/1000; % [m] for Flush Probe
-        Config.D_tip = 0.83/1000; % [m] for Flush Probe
-        %Config.L_tip = 1.8/1000; % 10.5 DLP
-        %Config.D_tip = 0.254/1000; % [m] 10.5 DLP
+        %Config.L_tip = 0/1000; % [m] for Flush Probe
+        %Config.D_tip = 0.83/1000; % [m] for Flush Probe
+        Config.L_tip = 1.8/1000; % 10.5 DLP
+        Config.D_tip = 0.254/1000; % [m] 10.5 DLP
 end
 
 switch AddressType

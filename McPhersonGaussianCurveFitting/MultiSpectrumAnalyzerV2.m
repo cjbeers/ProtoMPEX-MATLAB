@@ -334,7 +334,7 @@ Gaussian.GuassCenter=zeros(Spectra.Length(1,1),1,Spectra.Length(1,3));
 DATA.X=flip(Spectra.LambdaPlot);
 
 for aa=1:Spectra.Length(1,3)
-for bb=1:Spectra.Length(1,1) %5:5
+for bb=1:Spectra.Length(1,1) %1:5
 
 DATA.I=Spectra.RawDATA(bb,:,aa);
 

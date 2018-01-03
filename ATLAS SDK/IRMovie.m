@@ -13,8 +13,8 @@ cleanup
 tic
 
 %0=no, 1=yes
-MAKEAbUnitsMovie=1; %Fully zoomed out movie with raw signal
-MAKETemperatureMovie=0; %Zoomed in movie with tempeartures
+MAKEAbUnitsMovie=0; %Fully zoomed out movie with raw signal
+MAKETemperatureMovie=1; %Zoomed in movie with tempeartures
 MAKEDeltaTMovie=0; %Zoomed in movie with delta T to a set frame
 MAKEHeatFluxMovie=0; %Zoomed in movie of heat flux
 SAVEDeltaTMovie =0; %Saves Delta T movie to email out if need it
@@ -24,7 +24,7 @@ SAVEHeatFluxMovie=0; %Saves Heat Flux movie
 
 %Loads IR .seq file
 %[FILENAME, PATHNAME, FILTERINDEX] = uigetfile('*.jpg;*.seq', 'Choose IR file (jpg) or radiometric sequence (seq)');
-Shots=18669; %USER defines shot number, if not found change the PATHNAME to the correct day/file location
+Shots=18653; %USER defines shot number, if not found change the PATHNAME to the correct day/file location
 IR.ColarBarMax = 200;
 IR.FrameStart=1;
 IR.FrameEnd=200;
@@ -56,7 +56,7 @@ if(seq.Count > 1)
     while(seq.Next())
         IR.img = seq.ThermalImage.ImageProcessing.GetPixelsArray;
         IR.im = double(IR.img);
-        images(:,:,i)=(IR.im); %Does not let me place into IR.images
+        images(:,:,i)=fliplr(IR.im); %Does not let me place into IR.images
         i=i+1;
     end
 end
@@ -77,7 +77,7 @@ if MAKEAbUnitsMovie==1
     
     for ii=IR.FrameStart:IR.FrameEnd
         IR.fig=figure(1);
-        imagesc(flip(images(:,:,ii)), 'CDataMapping','scaled')
+        imagesc(images(:,:,ii), 'CDataMapping','scaled')
         caxis([10400 30000]); %0-100 C
         colormap jet;
         colorbar('Ticks',IR.colorticks, 'TickLabels',IR.colorlabels);
@@ -107,7 +107,7 @@ if MAKETemperatureMovie==1
     for ii=IR.FrameStart:IR.FrameEnd
         
         IR.fig2=figure(2);
-        imagesc(fliplr(IR.Temperature(:,:,ii)), 'CDataMapping','scaled')
+        imagesc(IR.Temperature(:,:,ii), 'CDataMapping','scaled')
         caxis([0 100])
         colormap jet
         c=colorbar;
@@ -148,7 +148,7 @@ end
     for ii=IR.FrameStart:IR.FrameEnd
        
         IR.fig3=figure(3);
-        imagesc(fliplr(IR.DeltaT(:,:,ii)), 'CDataMapping','scaled')
+        imagesc(IR.DeltaT(:,:,ii), 'CDataMapping','scaled')
         caxis([0 IR.ColarBarMax])
         colormap jet
         c=colorbar;
@@ -183,7 +183,7 @@ if MAKEHeatFluxMovie==1
     for ii=IR.FrameStart:(IR.FrameEnd-1)
        
         IR.fig4=figure(4);
-        imagesc(fliplr(IR.HeatFlux(:,:,ii)), 'CDataMapping','scaled')
+        imagesc(IR.HeatFlux(:,:,ii), 'CDataMapping','scaled')
         caxis([0 20])
         colormap jet
         c=colorbar;

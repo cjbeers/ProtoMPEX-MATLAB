@@ -35,5 +35,5 @@ title([shotnumber,'; Heat Flux'],'FontSize',13);
 xlabel('Time (s)','FontSize',13);
 ylabel('Heat Flux (MW/m^2)','FontSize',13);
 xticks([0 20 40 60 80 100])
-set(gca,'XTickLabel',time(1:16.66:100,1))
+set(gca,'XTickLabel',[1:16.66:100,1])
 

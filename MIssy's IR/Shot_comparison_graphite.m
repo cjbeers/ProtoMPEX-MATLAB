@@ -13,7 +13,8 @@ delta_tframe = 0.01;%gap between frames
 
 number2compare = input ('How many shots are opening (can pick up to four)? ');
 
-[FILENAME1] = uigetfile('*.m;*.mat', 'Choose the first IR shot file to compare (.mat or .m)');
+[FILENAME1, PATHNAME, FILTERINDEX] = uigetfile('*.m;*.mat', 'Choose the first IR shot file to compare (.mat or .m)');
+FILENAME1=[PATHNAME FILENAME1];
 load(FILENAME1);
 
 area_TG1=area_TG;
@@ -55,7 +56,9 @@ avg_area1 = avg_side1^2;
 zoomframes1 = length(hel_templist1);
 
 if number2compare >1
-    [FILENAME2] = uigetfile('*.m;*.mat', 'Choose the second IR shot file to compare (.mat or .m)');
+    
+    [FILENAME2, PATHNAME, FILTERINDEX] = uigetfile('*.m;*.mat', 'Choose the first IR shot file to compare (.mat or .m)');
+    FILENAME2=[PATHNAME FILENAME2];
     load(FILENAME2);
 
     area_TG2=area_TG;
@@ -98,7 +101,8 @@ if number2compare >1
 
     if number2compare>2
         
-        [FILENAME3] = uigetfile('*.m;*.mat', 'Choose the second IR shot file to compare (.mat or .m)');
+        [FILENAME3, PATHNAME, FILTERINDEX] = uigetfile('*.m;*.mat', 'Choose the first IR shot file to compare (.mat or .m)');
+        FILENAME3=[PATHNAME FILENAME3];
         load(FILENAME3);
 
         area_TG3=area_TG;
@@ -141,7 +145,8 @@ if number2compare >1
 
             if number2compare>3
                 
-            [FILENAME4] = uigetfile('*.m;*.mat', 'Choose the second IR shot file to compare (.mat or .m)');
+            [FILENAME4, PATHNAME, FILTERINDEX] = uigetfile('*.m;*.mat', 'Choose the first IR shot file to compare (.mat or .m)');
+            FILENAME4=[PATHNAME FILENAME4];
             load(FILENAME4);
 
             area_TG4=area_TG;
@@ -198,7 +203,7 @@ if number2compare == 1
     end
     
     figure;
-    %plot(1:zoomframes1,TG_powerdensity_step1,'-k.',1:zoomframes1,hel_powerdensity_step1,'-b.',1:zoomframes1,avg_powerdensity_step1,'-m.')
+    %plot(end-8:zoomframes1,TG_powerdensity_step1,'-k.',1:zoomframes1,hel_powerdensity_step1,'-b.',1:zoomframes1,avg_powerdensity_step1,'-m.')
     plot(time1,TG_powerdensity_step1,'LineWidth',2,'-k.',time1,hel_powerdensity_step1,'LineWidth',2,'-b.',time1,avg_powerdensity_step1,'LineWidth',2,'-m.')
     ax.FontSize = 13;
     title(['Power Density between Frames'],'FontSize',13);
@@ -249,7 +254,7 @@ if number2compare == 2
     title(['TG/Edge Heat Flux'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Heat Flux [Ab. Units]','FontSize',13);
-    legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)]);
+    legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)]);
     legend('Location','Northwest')
     
     figure; %plot the center/helicon power density for all three shots
@@ -262,7 +267,7 @@ if number2compare == 2
     title(['Helicon/Center Heat Flux'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Heat Flux [Ab. Units]','FontSize',13);
-    legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)]);
+    legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)]);
     legend('Location','Northwest')
     
     figure; % plot the average power density for all three shots
@@ -275,7 +280,7 @@ if number2compare == 2
     title(['Average Heat Flux'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Heat Flux [Ab. Units]','FontSize',13);
-    legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)]);
+    legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)]);
     legend('Location','Northwest')
 
     figure; %plot the TG/edge power density for all three shots 
@@ -287,7 +292,7 @@ if number2compare == 2
     title(['Delta T  for TG/Edge'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Delta T (C)','FontSize',13);
-    legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)]);
+    legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)]);
     legend('Location','Northwest')
     
     figure; %plot the center/helicon power density for all three shots
@@ -299,7 +304,7 @@ if number2compare == 2
     title(['Delta T for Helicon/Center'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Delta T (C)','FontSize',13);
-    legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)]);
+    legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)]);
     legend('Location','Northwest')
     
     figure; % plot the average power density for all three shots
@@ -307,11 +312,11 @@ if number2compare == 2
     hold on
     plot(time2,meanlist2,'-b.','LineWidth',2)
     ax.FontSize = 13;
-    ylim([0 ]);
+    ylim([0 DeltaTMaxPlot]);
     title(['Delta T for Average'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Delta T (C)','FontSize',13);
-    legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)]);
+    legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)]);
     legend('Location','Northwest')
     
 %     figure;
@@ -323,7 +328,7 @@ if number2compare == 2
 %     title(['Power between Frames'],'FontSize',13);
 %     xlabel('Time (s)','FontSize',13);
 %     ylabel('Power(kW)','FontSize',13);
-%     legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)]);
+%     legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)]);
 %     legend('Location','Northwest')
 
 end
@@ -369,7 +374,7 @@ if number2compare == 3
     title(['TG/Edge Heat Flux'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Heat Flux [Ab. Units]','FontSize',13);
-    legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)]);
+    legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)],['Shot 3:',FILENAME3(end-8:end-4)]);
     legend('Location','Northwest')
     
     figure; %plot the center/helicon power density for all three shots
@@ -384,7 +389,7 @@ if number2compare == 3
     title(['Helicon/Center Heat Flux'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Heat Flux [Ab. Units]','FontSize',13);
-    legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)]);
+    legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)],['Shot 3:',FILENAME3(end-8:end-4)]);
     legend('Location','Northwest')
     
     figure; % plot the average power density for all three shots
@@ -399,7 +404,7 @@ if number2compare == 3
     title(['Average Heat Flux'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Heat Flux [Ab. Units]','FontSize',13);
-    legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)]);
+    legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)],['Shot 3:',FILENAME3(end-8:end-4)]);
     legend('Location','Northwest')
 
     figure; %plot the TG/edge power density for all three shots 
@@ -413,7 +418,7 @@ if number2compare == 3
     title(['Delta T  for TG/Edge'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Delta T (C)','FontSize',13);
-    legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)]);
+    legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)],['Shot 3:',FILENAME3(end-8:end-4)]);
     legend('Location','Northwest')
     
     figure; %plot the center/helicon power density for all three shots
@@ -427,7 +432,7 @@ if number2compare == 3
     title(['Delta T for Helicon/Center'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Delta T (C)','FontSize',13);
-    legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)]);
+    legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)],['Shot 3:',FILENAME3(end-8:end-4)]);
     legend('Location','Northwest')
     
     figure; % plot the average power density for all three shots
@@ -441,7 +446,7 @@ if number2compare == 3
     title(['Delta T for Average'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Delta T (C)','FontSize',13);
-    legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)]);
+    legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)],['Shot 3:',FILENAME3(end-8:end-4)]);
     legend('Location','Northwest')
 %     figure;
 %     plot(time1,avg_power_step1,'-m.')
@@ -453,7 +458,7 @@ if number2compare == 3
 %     title(['Power between Frames'],'FontSize',13);
 %     xlabel('Time (s)','FontSize',13);
 %     ylabel('Power(kW)','FontSize',13);
-%     legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)]);
+%     legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)],['Shot 3:',FILENAME3(end-8:end-4)]);
 %     legend('Location','Northwest')
     
 end
@@ -509,7 +514,7 @@ if number2compare == 4
     title(['TG/Edge Heat Flux'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Heat Flux [Ab. Units]','FontSize',13);
-    legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)],['Shot 4:',FILENAME4(1:end-4)]);
+    legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)],['Shot 3:',FILENAME3(end-8:end-4)],['Shot 4:',FILENAME4(end-8:end-4)]);
     legend('Location','Northwest')
     
     figure; %plot the center/helicon power density for all three shots
@@ -525,7 +530,7 @@ if number2compare == 4
     title(['Helicon/Center Heat Flux'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Heat Flux [Ab. Units]','FontSize',13);
-    legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)],['Shot 4:',FILENAME4(1:end-4)]);
+    legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)],['Shot 3:',FILENAME3(end-8:end-4)],['Shot 4:',FILENAME4(end-8:end-4)]);
     legend('Location','Northwest')
     
     figure; % plot the average power density for all three shots
@@ -541,7 +546,7 @@ if number2compare == 4
     title(['Average Heat Flux'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Heat Flux [Ab. Units]','FontSize',13);
-    legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)],['Shot 4:',FILENAME4(1:end-4)]);
+    legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)],['Shot 3:',FILENAME3(end-8:end-4)],['Shot 4:',FILENAME4(end-8:end-4)]);
     legend('Location','Northwest')
 
     figure; %plot the TG/edge power density for all three shots 
@@ -556,7 +561,7 @@ if number2compare == 4
     title(['Delta T  for TG/Edge'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Delta T (C)','FontSize',13);
-    legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)],['Shot 4:',FILENAME4(1:end-4)]);
+    legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)],['Shot 3:',FILENAME3(end-8:end-4)],['Shot 4:',FILENAME4(end-8:end-4)]);
     legend('Location','Northwest')
     
     figure; %plot the center/helicon power density for all three shots
@@ -571,7 +576,7 @@ if number2compare == 4
     title(['Delta T for Helicon/Center'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Delta T (C)','FontSize',13);
-    legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)],['Shot 4:',FILENAME4(1:end-4)]);
+    legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)],['Shot 3:',FILENAME3(end-8:end-4)],['Shot 4:',FILENAME4(end-8:end-4)]);
     legend('Location','Northwest')
     
     figure; % plot the average power density for all three shots
@@ -586,7 +591,7 @@ if number2compare == 4
     title(['Delta T for Average'],'FontSize',13);
     xlabel('Time (s)','FontSize',13);
     ylabel('Delta T (C)','FontSize',13);
-    legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)],['Shot 4:',FILENAME4(1:end-4)]);
+    legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)],['Shot 3:',FILENAME3(end-8:end-4)],['Shot 4:',FILENAME4(end-8:end-4)]);
     legend('Location','Northwest')
     
     
@@ -602,7 +607,7 @@ if number2compare == 4
 %     title(['Power between Frames'],'FontSize',13);
 %     xlabel('Time (s)','FontSize',13);
 %     ylabel('Power(kW)','FontSize',13);
-%     legend(['Shot 1:' FILENAME1(1:end-4)],['Shot 2:',FILENAME2(1:end-4)],['Shot 3:',FILENAME3(1:end-4)],['Shot 4:',FILENAME4(1:end-4)]);
+%     legend(['Shot 1:' FILENAME1(end-8:end-4)],['Shot 2:',FILENAME2(end-8:end-4)],['Shot 3:',FILENAME3(end-8:end-4)],['Shot 4:',FILENAME4(end-8:end-4)]);
 %     legend('Location','Northwest')
 %    
 end

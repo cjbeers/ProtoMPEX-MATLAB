@@ -3,14 +3,17 @@
 
 cleanup
 
-[FILENAME] = uigetfile('*.m;*.mat', 'Choose the first IR shot file to compare (.mat or .m)');
-load(FILENAME);
+[FILENAME, PATHNAME, FILTERINDEX] = uigetfile('*.m;*.mat', 'Choose the first IR shot file to compare (.mat or .m)');
+videoFileName=[PATHNAME FILENAME];
+load(videoFileName)
+
+TempMax=100;
 
 %% Plot MaxDelta
 
 figure;
 figDeltaT=imagesc(Frame, 'CDataMapping','scaled');
-caxis([0 75])
+caxis([0 TempMax])
 colormap jet
 c=colorbar;
 ylabel(c, 'Delta T [C]')
@@ -105,7 +108,7 @@ end
 
     figure;
     plot(time1,TG_templist1,'k','LineWidth',2)
-    ylim([0 75]);
+    ylim([0 TempMax]);
     hold on
     plot(time1,hel_templist1,'b','LineWidth',2)
     plot(time1,meanlist1,'m','lineWidth',2)
