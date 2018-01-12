@@ -1,4 +1,4 @@
-function [DATA,TIME]=EZSSS(VAR,OPT,MODE)
+function [DATA,OPT]=EZSSS(VAR,OPT,MODE)
 %
 %                                   /++++\
 %                              /++++++++++++++\

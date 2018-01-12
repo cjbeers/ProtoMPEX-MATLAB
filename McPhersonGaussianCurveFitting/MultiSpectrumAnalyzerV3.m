@@ -1,4 +1,4 @@
-%Coded by: Josh Beers
+%Coded by: Josh Beers updated to V3 by Davis Easley
 %ORNL
 
 %USER MUST HAVE IPEAKS FILES DOWNLOADED IN MATLAB PATH IF USING IPEAKS
@@ -30,6 +30,7 @@ FINDFLOW=0; % used when looking up and down stream, FINDFWHM must also = 1
 FINDIONTEMP=0; %uses Elijah's code to calculate ion temperature
 IONTEMPSINGLEFRAME=1; %looks at single frame to fit ion temp
 POWERLOSS=0; %uses the intensity to find the power loss for a single spectra from each fiber
+VOLUMECALC=0; %Finds the volume of the plasma
 
 %% Read in file of interest
 
@@ -38,13 +39,13 @@ POWERLOSS=0; %uses the intensity to find the power loss for a single spectra fro
 Spectra.Grating = 1800;  %USER chooses which Grating was used
 
 Spectra.Wavelength=(7217); %USER changes to match file wavelength location on McPherson
-[Spectra.RawDATA,Spectra.ExposureTime] = readSPE('Z:\McPherson\2017_01_09\D2Ar_7217_30um_12619.SPE');...
+[Spectra.RawDATA,Spectra.ExposureTime] = readSPE('Z:\McPherson\2017_12_15\D2Ar_7217_30um_18651.SPE');...
     %USER Specifiy Location
 Spectra.Length = size(Spectra.RawDATA);
 Spectra.RawBGDATA = readSPE('Z:\McPherson\calibration\cal_2016_08_04\ROIs\abs_calib_20um_1s_bg_1.SPE');...
     %USER Specify Location OR use the same BG spectrum each time
 
-B_Field = [160 6400 6400 600]; %In order: helicon current, current_A, current_B, current_C in Amps
+B_Field = [180 5800 5800 600]; %USER inputs in order: helicon current, current_A, current_B, current_C in Amps
 
 Fiber1_5North = 58.9279/100+0.5; %[cm to m]
 Fiber1_5Top = 58.9279/100+0.5;
@@ -60,22 +61,24 @@ Fiber9_5North = 298.9854/100+0.5;
 Fiber10_5South = 330.698/100+0.5;
 Fiber11_5North = 362.43/100+0.5;
 
-Fibers= [Fiber6_5North Fiber9_5South Fiber9_5South Fiber9_5South Fiber11_5North];%Enter all fiber locations for Fibers 1-5 left to right (0 indicates Fiber not in use)
+Fibers= [Fiber6_5North Fiber9_5South Fiber9_5South Fiber9_5South Fiber10_5South];%USER enters all fiber locations for Fibers 1-5 left to right (0 indicates Fiber not in use)
 
 if length(Spectra.Length)==2
     Spectra.Length(1,3)=1;
 end
 
 if Spectra.Length(1,3) == 1
-    Spectra.FrameOfInterest=1;
+    Spectra.FrameOfInterest = 1;
 elseif Spectra.Length(1,3) == 13
-    Spectra.FrameOfInterest=8;
+    Spectra.FrameOfInterest = 8;
 elseif Spectra.Length(1,3) == 37
-    Spectra.FrameOfInterest=14;
+    Spectra.FrameOfInterest = 14;
 elseif Spectra.Length(1,3) == 50
-    Spectra.FrameOfInterest=27;
+    Spectra.FrameOfInterest = 26;
+elseif Spectra.Length(1,3) == 40
+    Spectra.FrameOfInterest = 9;
 else
-    disp('Spectra frames used are wierd fix FrameOfInterest');
+    disp('Spectra frames used are weird fix FrameOfInterest');
 end
 
 if Spectra.Grating == 300
@@ -91,7 +94,7 @@ if Spectra.Grating == 300
 %Spectra.P0 = 180; %USER put peaklocation here!!! peak location can change it is not the same each time
 Spectra.P0 = 210; % 210 for 300nm Grating, 132 for 1800nm Grating, ~260 when centering McPher
 elseif Spectra.Grating == 1800
-    Spectra.P0= 261; %USER can look at the ipeaks to find the location of their peak of interest
+    Spectra.P0= 234; %USER can look at the ipeaks to find the location of their peak of interest
 end
 
 %Creates a matrix to be filled with raw data
@@ -385,58 +388,47 @@ theta=10; %In degrees
   
 end
 
-
 %% Calculates the ion temperature from Ar II spectra centered around 480.6 nm
 
 if FINDIONTEMP == 1
     
     Spectra.RawDATA=double(Spectra.RawDATA);
     
-    CHIarray=zeros(Spectra.Length(1,1) - Spectra.Length(1,3));
-    KTNarray=zeros(Spectra.Length(1,1) - Spectra.Length(1,3));
-     
-    DATA.X=flip(Spectra.LambdaPlot); %DATA structure is passed to fitting code
-  muo = (4*pi)*10^(-7);
-Coil1 = (0.939200000000000+0.939200000000000+0.0979000000000000)/2; %Center of Coil 1
-Coil2 = (1.24920000000000+1.24920000000000+0.0979000000000000)/2; % Center of Coil 2
-Coil3 = (1.57920000000000+1.57920000000000+0.0979000000000000)/2; % Center of Coil 3
-Coil4 = (1.81520000000000+1.81520000000000+0.0979000000000000)/2; % Center of Coil 4
-Coil5 = (2.14120000000000+2.14120000000000+0.0979000000000000)/2; % Center of Coil 5
-Coil6 = (2.33920000000000+2.33920000000000+0.0979000000000000)/2; % Center of Coil 6
-Coil7 = (2.89520000000000+2.89520000000000+0.0979000000000000)/2; % Center of Coil 7
-Coil8 = (3.17120000000000+3.17120000000000+0.0979000000000000)/2; % Center of Coil 8
-Coil9 = (3.36920000000000+3.36920000000000+0.0979000000000000)/2; % Center of Coil 9
-Coil10 = (3.68520000000000+3.68520000000000+0.0979000000000000)/2; %Center of Coil 10
-Coil11 = (3.99920000000000+3.99920000000000+0.0979000000000000)/2; % Center of Coil 11
-Coil12 = (4.31720000000000+4.31720000000000+0.0979000000000000)/2; % Center of Coil 12
-INSFUN = [0.2559 0.2521 0.2516 0.2568 0.2658]; %Pin-Lamp instrument function input
-
-for ii=1:5
+    CHIarray = zeros(Spectra.Length(1,1)-Spectra.Length(1,3));
+    KTNarray = zeros(Spectra.Length(1,1)-Spectra.Length(1,3));
     
-if Fibers(:,ii)==0
-else
-BIN = ((muo*40*B_Field(:,1)*(21.7/100)^2/2)*(((Fibers(:,ii)-Coil3)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil4)^2+(21.7/100)^2)^(-3/2)))+((muo*40*B_Field(:,2)*(21.7/100)^2/2)*(((Fibers(:,ii)-Coil1)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil5)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil6)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil7)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil8)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil9)^2+(21.7/100)^2)^(-3/2)))+((muo*40*B_Field(:,3)*(21.7/100)^2/2)*(((Fibers(:,ii)-Coil10)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil11)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil12)^2+(21.7/100)^2)^(-3/2)))+((muo*40*B_Field(:,4)*(21.7/100)^2/2)*(((Fibers(:,ii)-Coil2)^2+(21.7/100)^2)^(-3/2)));
-% Adjust BIN designations depending upon magnetic geometry. 
-%BIN = 0.874;
+    DATA.X = flip(Spectra.LambdaPlot); %DATA structure is passed to fitting code
+NumGauss = 1;
+INSFUN = [0.2559 0.2521 0.2516 0.2568 0.2658]; %Pin-Lamp instrument function input
+[coil1,coil2] = Spool_Finder(Fibers); % line-by-line comments for this section detailed in IonTempSingleFrame
+spool=(coil1+coil2)/2; %Finds distance to desired spool 
+[zvec, bt] = directions_field_mappingV3(B_Field); % Gets the magnetic field map
+zvec = single(zvec);
+bt = single(bt); 
+BIN = zeros(1,5); % Initialize magnetic field input values
 
-for aa=1:5 %USER changes Fibers to view
-for bb=8:8 % USER changes Frames to view
-
-DATA.I=Spectra.RawDATA(aa,:,bb);
+for aa=1:5 % specify fiber(s)
+    if Fibers(:,aa)==0
+    else
+    [f,idx]= min(abs(zvec(1,:)-spool(:,aa)));
+    BIN(1,aa)=bt(1,idx); %Magnetic field at Fiber location   
+% Adjust BIN designations depending upon magnetic geometry.
+%    BIN = 0.874;
+    
+for bb = 8:9 %specify frame(s)
+    
+DATA.I = Spectra.RawDATA(aa,:,bb);
 
 %Calls FIT_EXAMPLE to find ion tempeartures and their reduced chi values
-%(not chi squared values?)
 
-[KTN, CHI] = FIT_EXAMPLE(DATA,BIN,INSFUN(:,ii)); %USER must use correct values within this code
+[KTN, CHI] = FIT_EXAMPLE_V3(DATA,BIN(1,aa),INSFUN(:,aa),NumGauss); %USER must use correct values within this code
 
-if KTN >= 40 || KTN <=1E-5
+if KTN >= 75 || KTN <= 1E-5
     KTN = 0;
     CHI = 0;
 end
-
-KTNarray(bb,1,aa)=KTN; % [eV]
-CHIarray(bb,1,aa)=CHI; 
-end
+KTNarray(bb,1,aa) = KTN; %[eV]
+CHIarray(bb,1,aa) = CHI; %Reduced Chi values (Goodness of Fit), above 1 is a bad fit
 end
 end
 end
@@ -445,56 +437,54 @@ end
 %% For testing a single frame for Ti
 
 if IONTEMPSINGLEFRAME==1
-    
-muo = (4*pi)*10^(-7);
-Coil1 = (0.939200000000000+0.939200000000000+0.0979000000000000)/2; %Center of Coil 1
-Coil2 = (1.24920000000000+1.24920000000000+0.0979000000000000)/2; % Center of Coil 2
-Coil3 = (1.57920000000000+1.57920000000000+0.0979000000000000)/2; % Center of Coil 3
-Coil4 = (1.81520000000000+1.81520000000000+0.0979000000000000)/2; % Center of Coil 4
-Coil5 = (2.14120000000000+2.14120000000000+0.0979000000000000)/2; % Center of Coil 5
-Coil6 = (2.33920000000000+2.33920000000000+0.0979000000000000)/2; % Center of Coil 6
-Coil7 = (2.89520000000000+2.89520000000000+0.0979000000000000)/2; % Center of Coil 7
-Coil8 = (3.17120000000000+3.17120000000000+0.0979000000000000)/2; % Center of Coil 8
-Coil9 = (3.36920000000000+3.36920000000000+0.0979000000000000)/2; % Center of Coil 9
-Coil10 = (3.68520000000000+3.68520000000000+0.0979000000000000)/2; %Center of Coil 10
-Coil11 = (3.99920000000000+3.99920000000000+0.0979000000000000)/2; % Center of Coil 11
-Coil12 = (4.31720000000000+4.31720000000000+0.0979000000000000)/2; % Center of Coil 12
+
+NumGauss=1;
 INSFUN = [0.2559 0.2521 0.2516 0.2568 0.2658]; %Pin-Lamp instrument function input
+[coil1,coil2] = Spool_Finder(Fibers); % find local coils @ fiber
+spool=(coil1+coil2)/2; % convert coils to center of spool
+[zvec, bt] = directions_field_mappingV3(B_Field); %grab magnetic flux within machine vs. axial distance
+zvec = single(zvec);
+bt = single(bt);
+  
+ii=3; %Fiber #
+for kk=9:11 %Frame being analyzed
     
-for ii=3:3
 if Fibers(:,ii)==0
 else 
-BIN = ((muo*40*B_Field(:,1)*(21.7/100)^2/2)*(((Fibers(:,ii)-Coil3)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil4)^2+(21.7/100)^2)^(-3/2)))+((muo*40*B_Field(:,2)*(21.7/100)^2/2)*(((Fibers(:,ii)-Coil1)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil5)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil6)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil7)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil8)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil9)^2+(21.7/100)^2)^(-3/2)))+((muo*40*B_Field(:,3)*(21.7/100)^2/2)*(((Fibers(:,ii)-Coil10)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil11)^2+(21.7/100)^2)^(-3/2)+((Fibers(:,ii)-Coil12)^2+(21.7/100)^2)^(-3/2)))+((muo*40*B_Field(:,4)*(21.7/100)^2/2)*(((Fibers(:,ii)-Coil2)^2+(21.7/100)^2)^(-3/2)));    
-% Adjust BIN designations depending upon magnetic geometry.
-%BIN = 0.874;
-
-for jj = 1:1
+    [f,idx]= min(abs(zvec(1,:)-spool(:,ii)));
+    BIN=bt(1,idx); %Adjust BIN designations depending upon magnetic geometry.
+    
+for jj = 1:1 %# of fits on same data set
     if ii==1
-DATA.I = Spectra.SelfBGSub1(Spectra.FrameOfInterest,:);
+DATA.I = Spectra.SelfBGSub1(kk,:);
     elseif ii==2
-DATA.I = Spectra.SelfBGSub2(Spectra.FrameOfInterest,:);
+DATA.I = Spectra.SelfBGSub2(kk,:);
     elseif ii==3
-DATA.I = Spectra.SelfBGSub3(Spectra.FrameOfInterest,:);
+DATA.I = Spectra.SelfBGSub3(kk,:);
     elseif ii==4
-DATA.I = Spectra.SelfBGSub4(Spectra.FrameOfInterest,:); 
+DATA.I = Spectra.SelfBGSub4(kk,:); 
     elseif ii==5
-
-DATA.X=flip(Spectra.LambdaPlot);
-%[KTNarray(jj,ii), CHIarray(jj,ii)] = FIT_EXAMPLE_V3(DATA,BIN,INSFUN(:,ii)); %Calls Elijah's code to do the ion temp fitting, 
-%USER must edit this code to work with backround location, and peak of interest
-%location
+DATA.I = Spectra.SelfBGSub5(kk,:);
     end
+DATA.X = flip(Spectra.LambdaPlot);
+[KTNarray(jj,kk), CHIarray(jj,kk)] = FIT_EXAMPLE_V3(DATA,BIN,INSFUN(:,ii),NumGauss); %Calls Elijah's code to do the ion temp fitting, USER must edit this code to work with backround location, and peak of interest location
 end
 end
 end
 end
 
-%% Finds plasma volume to calculate power loss
+%% Calculates powerloss from spectra and/or calculates the plasma volume within the machine
 
-if POWERLOSS == 1
+if POWERLOSS==1
+    
+    VOLUMECALC=1;
+end
 
+if VOLUMECALC==1 % Calculates the volume of the plasma near fiber optic
+    
 [coil1, coil2] = Spool_Finder(Fibers);
 h=zeros(1,5); %set up for radii of machine at fiber location
+
 for ii=1:5
     if Fibers(:,ii) == Fiber1_5North | Fiber1_5Top | Fiber2_5North | Fiber2_5Top | Fiber4_5Bottom | Fiber5_5North
         h(:,ii) = 15.2/200; % [h = .5 diameter & converstion from [cm] to [m]
@@ -505,20 +495,21 @@ for ii=1:5
     end
 end
 
-%Finds volume of plasma based on LCFS
-
 L=h*tand(1); %0.5 range of acceptance cone for fiber optic along z-axis
 [r,s,ContourValues] = test_calc_flux_mpex_V3(coil1,coil2, B_Field,Fibers,L); %r=radii values for plasma calculations, s=radii values for cone calculations
 Area = pi*r.^2;
 Area2 = pi*s.^2;
 VolumePlasma=zeros(1,5);
 VolumeCone=zeros(1,5);
+
 for ii=1:5
     VolumePlasma(:,ii) = sum((Area(:,ii)*(coil2(:,ii)-coil1(:,ii))/nnz(Area(:,ii)))); 
     VolumeCone(:,ii) = sum(Area2(:,ii)*(2*L(:,ii))/nnz(Area2(:,ii)));
 end 
+
 Volume = zeros(1,5);
 VRatio = zeros(1,5);
+
 for ii=1:5
     if VolumePlasma(:,ii) >= VolumeCone(:,ii)
     Volume(:,ii) = VolumeCone(:,ii);
@@ -527,31 +518,37 @@ for ii=1:5
     end
 end
 
+if POWERLOSS==1
+else
+fprintf('Volume = %i\n', Volume);
+end
+end
+
+%% Plots the powerloss/volume
+if POWERLOSS==1   
+
 %Calculates the amount of power lost by using fiber as opposed to looking
 %at entire plasma. In cases where the fiber can encompass the whole plasma
 %between nearest two coils, the loss is said to be zero. Note that if a
 %fiber is not in use for this experiment, the loss should also be zero, so
 %use caution when interpreting zero as a return.
-
-for jj=1:Spectra.Length(1,3)
-Spectra.Loss1(jj,:)=(Spectra.Intensity1(jj,:)/h(:,5))*Volume(:,5);
-Spectra.Loss2(jj,:)=(Spectra.Intensity2(jj,:)/h(:,4))*Volume(:,4);
-Spectra.Loss3(jj,:)=(Spectra.Intensity3(jj,:)/h(:,3))*Volume(:,3);
-Spectra.Loss4(jj,:)=(Spectra.Intensity4(jj,:)/h(:,2))*Volume(:,2);
-Spectra.Loss5(jj,:)=(Spectra.Intensity5(jj,:)/h(:,1))*Volume(:,1);
-end
+Spectra.Loss1=(Spectra.Intensity1/h(:,5))*Volume(:,5);
+Spectra.Loss2=(Spectra.Intensity2/h(:,4))*Volume(:,4);
+Spectra.Loss3=(Spectra.Intensity3/h(:,3))*Volume(:,3);
+Spectra.Loss4=(Spectra.Intensity4/h(:,2))*Volume(:,2);
+Spectra.Loss5=(Spectra.Intensity5/h(:,1))*Volume(:,1);
 
 %VRatio must be written in reverse order as shown, as Fibers array lists
 %fibers in physical fiber order from 1 to 5, while Intensity is calculated
 %in the standard way.
-%%
+
 figure;
-plot(Spectra.LambdaPlot,(Spectra.Loss1(Spectra.FrameOfInterest,:)))
+plot(Spectra.LambdaPlot,(Spectra.Loss1))
 hold on
-plot(Spectra.LambdaPlot,(Spectra.Loss2(Spectra.FrameOfInterest,:)))
-plot(Spectra.LambdaPlot,(Spectra.Loss3(Spectra.FrameOfInterest,:)))
-plot(Spectra.LambdaPlot,(Spectra.Loss4(Spectra.FrameOfInterest,:)))
-plot(Spectra.LambdaPlot,(Spectra.Loss5(Spectra.FrameOfInterest,:)))
+plot(Spectra.LambdaPlot,(Spectra.Loss2))
+plot(Spectra.LambdaPlot,(Spectra.Loss3))
+plot(Spectra.LambdaPlot,(Spectra.Loss4))
+plot(Spectra.LambdaPlot,(Spectra.Loss5))
 ax = gca;
 ax.FontSize = 15;
 title('Power Loss vs wavelength [nm]','FontSize',15);
@@ -561,3 +558,4 @@ xlim([Spectra.LambdaMin Spectra.LambdaMax])
 ylim([0 inf]);
 hold off
 end
+

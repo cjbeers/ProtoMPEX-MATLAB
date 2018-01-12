@@ -3,7 +3,7 @@ function [FIT,PARA,PARA_BACK_CON,PARA_BACK_VAR]=MAIN(NSPF,EXP,INS,LINE,OPT)
 %*********************************
 %Folder path containing EZSSS code
 %*********************************
-PATH=[pwd filesep 'IonTemp/ArII Fit/ArII Fit/Spectral Fit 2.1' filesep 'EZSSS 2.0'];
+PATH=[pwd filesep 'IonTemp\ArII Fit\ArII Fit\EZSSS 2.0\Spectral Fit 2.1'];
 
 %***************
 %Add folder PATH

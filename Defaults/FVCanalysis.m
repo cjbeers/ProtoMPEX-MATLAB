@@ -13,19 +13,24 @@ keypressfcn=0; % 0=off, 1=on
 
 [FILENAME1, PATHNAME, FILTERINDEX] = uigetfile('*.mov;*.mp4;', 'Choose alpha filtered color camera file');
 videoFileName1=[PATHNAME FILENAME1];
-
 AlphaVideo.RawData=importdata(videoFileName1);
+
+[FILENAME1, PATHNAME, FILTERINDEX] = uigetfile('*.txt', 'Choose alpha filtered color camera file');
+AlphaVideo.CameraData=importdata([PATHNAME FILENAME1]);
 
 [FILENAME2, PATHNAME, FILTERINDEX] = uigetfile('*.mov;*.mp4;', 'Choose beta filtered color camera file');
 videoFileName2=[PATHNAME FILENAME2];
-
 BetaVideo.RawData=importdata(videoFileName2);
+
+[FILENAME2, PATHNAME, FILTERINDEX] = uigetfile('*.txt', 'Choose alpha filtered color camera file');
+BetaVideo.CameraData=importdata([PATHNAME FILENAME2]);
 
 [FILENAME3, PATHNAME, FILTERINDEX] = uigetfile('*.mov;*.mp4;', 'Choose gamma filtered color camera file');
 videoFileName3=[PATHNAME FILENAME3];
-
 GammaVideo.RawData=importdata(videoFileName3);
 
+[FILENAME3, PATHNAME, FILTERINDEX] = uigetfile('*.txt', 'Choose alpha filtered color camera file');
+GammaVideo.CameraData=importdata([PATHNAME FILENAME3]);
 
 %% Seperate Video into RGB
 

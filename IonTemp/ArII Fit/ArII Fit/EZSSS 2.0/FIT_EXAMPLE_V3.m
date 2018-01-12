@@ -1,5 +1,5 @@
 
-function [KTN, CHI] = FIT_EXAMPLE(DATA,BIN,INSFUN,NumGauss)
+function [KTN, CHI] = FIT_EXAMPLE_V3(DATA,BIN,INSFUN,NumGauss)
 
 %**************************************************************************
 %Start Code
@@ -62,9 +62,9 @@ I=I/max(I);
 if FINDERROR==1
 WINDOW=[4805.6 4806.3];
 
-NE=9;
-NR=0.065;
-SI=26000;
+NE=8;
+NR=0.1;
+SI=45000;
 
 ERROR='FILL';
 TEXT_BOX='off';
@@ -140,24 +140,20 @@ EXP.IEE=IE;
 %nominal Gaussian function is f(x)=I*exp(-(x-LAM)^2/(2*SIG_NOMINAL^2))
 %--------------------------------------------------------------------------
 
-%SIG=sqrt(2*SIG_NOMINAL^2)
-
 %******************************
 %Assign the insturment function 
 %******************************
 INS{1}=1;         %Scalar - Number of Gaussian functions
 INS{2}=1;         %Array - I of Guassian Functions
 INS{3}=0;         %Array - LAM of Guassian Functions
-INS{4}=INSFUN;      %Array - SIG of Guassian Functions
-
-
+INS{4}=INSFUN/exp(1/2);      %Array - SIG of Guassian Functions, INSFUN=instrument function input
 
 %************
 %Fit the data
 %************
 [B,KTN,CHI,RESULTS]=FIT_DATA(EXP,INS,BIN,NumGauss);
 
-%%
+%% Plots
 if PLOTIONFIT==1
  
 figure

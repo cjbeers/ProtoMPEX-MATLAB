@@ -8,7 +8,7 @@ NAP=4;
 %***********************************
 %Folder path containing fitting code
 %***********************************
-CODE_PATH=[pwd filesep 'IonTemp/ArII Fit/ArII Fit/Spectral Fit 2.1'];
+CODE_PATH=[pwd filesep 'IonTemp\ArII Fit\ArII Fit\EZSSS 2.0\Spectral Fit 2.1'];
 
 %**********************
 %Add spectral code path

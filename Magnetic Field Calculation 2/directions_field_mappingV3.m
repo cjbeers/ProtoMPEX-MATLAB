@@ -1,35 +1,42 @@
-%Running: magnetic field mapping + the magnetic field strength along the
-%machine length
+function [zvec, bt] = directions_field_mappingV3(B_Field)
 
-%step 1: load proto_mpex_12coils_flat_field_highdens.mat
+% %Running: magnetic field mapping + the magnetic field strength along the
+% %machine lengthB
+% 
+% %step 1: load proto_mpex_12coils_flat_field_highdens.mat
 load('proto_mpex_12coils_flat_field_highdens.mat');
 
-%step 2: load shot number and associated current
-KnownFields = 1;
+% %step 2: load shot number and associated current
+% KnownFields = 1;
+% 
+% if KnownFields == 0
+% 
+% shot = input('Choose shot to analyze - enter shot number only ' ); 
+% if shot > 15100 % Need to edit get_proto_geometry beforehand
+%     [helicon_current,current_A,current_B,config,skimmer,current_C] = get_Proto_current(shot);
+% else
+%     [helicon_current,current_A,current_B,config,skimmer,current_C] = get_Proto_current(shot);
+% end
+% 
+% elseif KnownFields == 1
+%     
+%    helicon_current = 160; %Coils 3,4
+%    current_A = 6000; %Coils 1,6
+%    current_B = 6800; %Coils 7-12
+%    current_C = 600;  %Coil 2
 
-if KnownFields == 0
-
-shot = input('Choose shot to analyze - enter shot number only ' ); 
-if shot > 15100 % Need to edit get_proto_geometry beforehand
-    [helicon_current,current_A,current_B,config,skimmer,current_C] = get_Proto_current(shot);
-else
-    [helicon_current,current_A,current_B,config,skimmer,current_C] = get_Proto_current(shot);
-end
-
-elseif KnownFields == 1
-    
-   helicon_current = 180; %Coils 3,4
-   current_A = 6000; %Coils 1,6
-   current_B = 5800; %Coils 7-12
-   current_C = 600;  %Coil 2
-   skimmer = 1;
-   config = 'newstandard';
-   add_reflector = 1;
+helicon_current = B_Field(:,1);
+current_A = B_Field(:,2);
+current_B = B_Field(:,3);
+current_C = B_Field(:,4);
+skimmer = 1;
+config = 'newstandard';
+add_reflector = 1;
    
-else
-    disp('Error')
-    return;    
-end
+% else
+%     disp('Error')
+%     return;    
+% end
 
 target_position = 3;   %target position 1: 7.5, 2: 11.5, 3: Off center 11.5
 sleeve = 1;
@@ -165,7 +172,7 @@ atg=Atg;
     text(-.1*locs(2),-.22*locs(4),textout1,'fontsize',12,'fontweight','normal');	
     text(-.1*locs(2),-.27*locs(4),textout2,'fontsize',12,'fontweight','normal');
     hold off
-
-
+close all
+end
 
                              
