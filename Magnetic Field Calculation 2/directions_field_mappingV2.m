@@ -18,10 +18,10 @@ end
 
 elseif KnownFields == 1
     
-   helicon_current = 180; %Coils 3,4
-   current_A = 6000; %Coils 1,6
-   current_B = 5800; %Coils 7-12
-   current_C = 600;  %Coil 2
+   helicon_current = 120; %Coils 3,4 TR2
+   current_A = 4500; %Coils 1,6  PS2
+   current_B = 4500; %Coils 7-12 PS1
+   current_C = 600;  %Coil 2 TR1
    skimmer = 1;
    config = 'newstandard';
    add_reflector = 1;
@@ -99,16 +99,19 @@ atg=Atg;
     m_y=[0,0,bma,bma,0];
     vals=psivals(avec,zvec,psi,zvec(bmloc),rlocs);
     disp(zvec(bmloc))
+    zmax=locs(2);
+    
+    PSIarray=psi;
     
     %% Plots flux tube and B field
     
     figure;
     subplot(2,1,1);
     hold off
-    contour(zvec,avec,psi,vals,'b');
+    contour(zvec(:,1:end-50),avec,PSIarray(:,51:end),vals,'b');
     hold on
-    contour(zvec,avec,psi,[vals(7),vals(7)],'r');
-    plot(geop.vessel.z,geop.vessel.r,'k',tube_x,tube_y,'c--',skimmer_x,skimmer_y1,'r--',skimmer_x,skimmer_y2,'r--',window_x,window_y,'c');
+    contour(zvec(:,1:end-50),avec,PSIarray(:,51:end),[vals(7),vals(7)],'r');
+    plot(geop.vessel.z-0.5,geop.vessel.r,'k',tube_x-0.5,tube_y,'c--',skimmer_x-0.5,skimmer_y1,'r--',skimmer_x-0.5,skimmer_y2,'r--',window_x-0.5,window_y,'c');
     grid
     title('Flux tube mapping');
     h=ylabel('R  (m)');
@@ -118,11 +121,12 @@ atg=Atg;
     axis([0,zmax,0,.2])
     set(gca,'Fontsize',12,'fontweight','bold');
     %set(findall(gcf,'type','text'),'fontsize',fontsize,'fontweight',fontweight)
+    
+  
     subplot(2,1,2)
-
-    plot(zvec,bt(1,:),'b',m1_x,m_y,'r',m2_x,m_y,'r',m3_x,m_y,'r',m4_x,m_y,'r',...
-                          m5_x,m_y,'r',m6_x,m_y,'r',m7_x,m_y,'r',m8_x,m_y,'r',...
-                          m9_x,m_y,'r',m10_x,m_y,'r',m11_x,m_y,'r',m12_x,m_y,'r','linewidth',2);
+    plot(zvec(1,1:end-50),bt(1,51:end),'b',m1_x-0.5,m_y,'r',m2_x-0.5,m_y,'r',m3_x-0.5,m_y,'r',m4_x-0.5,m_y,'r',...
+                          m5_x-0.5,m_y,'r',m6_x-0.5,m_y,'r',m7_x-0.5,m_y,'r',m8_x-0.5,m_y,'r',...
+                          m9_x-0.5,m_y,'r',m10_x-0.5,m_y,'r',m11_x-0.5,m_y,'r',m12_x-0.5,m_y,'r','linewidth',2);
     grid
     title('mod B on axis');
     h=ylabel('|B|  (T)');
@@ -130,18 +134,18 @@ atg=Atg;
     h=xlabel('Z  (m)');
     set(h,'fontsize',12,'fontweight','bold');
 
-    text(m1_x(1)+.15*cl(1),0.05*bma,'1','fontsize',14);
-    text(m2_x(1)+.15*cl(1),0.05*bma,'2','fontsize',14);
-    text(m3_x(1)+.15*cl(1),0.05*bma,'3','fontsize',14);
-    text(m4_x(1)+.15*cl(1),0.05*bma,'4','fontsize',14);
-    text(m5_x(1)+.15*cl(1),0.05*bma,'5','fontsize',14);
-    text(m6_x(1)+.15*cl(1),0.05*bma,'6','fontsize',14);
-    text(m7_x(1)+.15*cl(1),0.05*bma,'7','fontsize',14);
-    text(m8_x(1)+.15*cl(1),0.05*bma,'8','fontsize',14);
-    text(m9_x(1)+.15*cl(1),0.05*bma,'9','fontsize',14);
-    text(m10_x(1)+.15*cl(1),0.05*bma,'10','fontsize',14);
-    text(m11_x(1)+.15*cl(1),0.05*bma,'11','fontsize',14);
-    text(m12_x(1)+.15*cl(1),0.05*bma,'12','fontsize',14);
+    text(m1_x(1)+.15*cl(1)-0.5,0.05*bma,'1','fontsize',14);
+    text(m2_x(1)+.15*cl(1)-0.5,0.05*bma,'2','fontsize',14);
+    text(m3_x(1)+.15*cl(1)-0.5,0.05*bma,'3','fontsize',14);
+    text(m4_x(1)+.15*cl(1)-0.5,0.05*bma,'4','fontsize',14);
+    text(m5_x(1)+.15*cl(1)-0.5,0.05*bma,'5','fontsize',14);
+    text(m6_x(1)+.15*cl(1)-0.5,0.05*bma,'6','fontsize',14);
+    text(m7_x(1)+.15*cl(1)-0.5,0.05*bma,'7','fontsize',14);
+    text(m8_x(1)+.15*cl(1)-0.5,0.05*bma,'8','fontsize',14);
+    text(m9_x(1)+.15*cl(1)-0.5,0.05*bma,'9','fontsize',14);
+    text(m10_x(1)+.15*cl(1)-0.5,0.05*bma,'10','fontsize',14);
+    text(m11_x(1)+.15*cl(1)-0.5,0.05*bma,'11','fontsize',14);
+    text(m12_x(1)+.15*cl(1)-0.5,0.05*bma,'12','fontsize',14);
 
     %for ii=1:14,text(z0(ii)+cl(1)/4,1.05*bma,num2str(ii));end
     textout1=['C1 = ',num2str(cur(1)),' amps   ',...
@@ -158,10 +162,14 @@ atg=Atg;
              'C12 = ',num2str(cur(12)),' amps   '];
 
     locs=axis;		 
-
+    
     axis([0,zmax,locs(3),locs(4)]);
     set(gca,'Fontsize',12,'fontweight','bold');
     %set(findall(gcf,'type','text'),'fontsize',fontsize,'fontweight',fontweight)
     text(-.1*locs(2),-.22*locs(4),textout1,'fontsize',12,'fontweight','normal');	
     text(-.1*locs(2),-.27*locs(4),textout2,'fontsize',12,'fontweight','normal');
     hold off
+
+
+
+                             
