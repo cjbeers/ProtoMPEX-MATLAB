@@ -2,6 +2,7 @@
 % For loading in .mat IR file and creating plots for presentations
 
 cleanup
+PLOTProfile=0; %Plots a line plot of the temeprature to see a 1D profile
 
 [FILENAME, PATHNAME, FILTERINDEX] = uigetfile('*.m;*.mat', 'Choose the first IR shot file to compare (.mat or .m)');
 videoFileName=[PATHNAME FILENAME];
@@ -132,5 +133,18 @@ end
     legend('TG','Helicon','Average'); 
     legend('Location','Northwest')
 
+%% Plot line through plasma center
 
+if PLOTProfile==1
+    
+sizeFrame=size(Frame);
+xvalue=(1:1:sizeFrame(1,1))/px_per_cm;
 
+figure
+plot(xvalue,Temperature(80,:,finalframenumber),'k')
+ax.FontSize = 13;
+title('Plasma Profile','FontSize',13);
+xlabel('Distance [cm]','FontSize',13);
+ylabel('Temperature [Deg. C]','FontSize',13); 
+
+end
