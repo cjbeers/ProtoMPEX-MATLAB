@@ -1,6 +1,6 @@
 
 cleanup
-Target=open('C:\Users\cxe\Documents\School\UTK\MSE 662\Lab1\Lab1.tif');
-Target.Lab1=(Target.Lab1);
-imagesc(Target.Lab1)
+Image1=open('C:\Users\cxe\Documents\Papers\PSI 18 Paper\FVC stuff\SStarget_pix2cm.jpg');
+Image1.SStarget_pix2cm=(Image1.SStarget_pix2cm);
+imagesc(Image1.SStarget_pix2cm)
 set (gcf, 'WindowButtonMotionFcn', @mouseMove);

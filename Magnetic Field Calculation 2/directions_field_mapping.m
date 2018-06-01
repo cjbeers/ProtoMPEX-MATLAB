@@ -18,9 +18,9 @@ end
 
 elseif KnownFields == 1
     
-   helicon_current = 180; %Coils 3,4
+   helicon_current = 160; %Coils 3,4
    current_A = 6000; %Coils 1,6
-   current_B = 5800; %Coils 7-12
+   current_B = 6000; %Coils 7-12
    current_C = 600;  %Coil 2
    skimmer = 1;
    config = 'newstandard';

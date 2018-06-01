@@ -1,6 +1,6 @@
 
 % readSPE.m
-function [image,exposure] = readSPE(dirPath, filename);
+function [image,exposure,gain] = readSPE(dirPath, filename);
 clc
 % readSPE.m  Read princeton instrument *.SPE image file
 %
@@ -116,6 +116,9 @@ nDim = getData(fd, '5A6', 'uint32');        %third dim
 
 %Gets and outputs exposure time
 exposure=getData(fd, '0A','float');
+
+%Gets and outputs gain
+gain=getData(fd, 'C6','uint16');
 
 % Get the pixel data type
 dataType = getData(fd, '6C', 'uint16');

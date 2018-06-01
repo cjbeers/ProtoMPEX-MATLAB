@@ -1,12 +1,12 @@
 
-% for ii=1:5
-%     
-%     for jj=1:20
-%         
-%         RawMax_Dalpha(ii,jj)=double(max(Spectra.RawDATA(ii,:,jj));
-%         
-%     end
-% end
+for ii=1:5
+    
+    for jj=1:20
+        
+        RawMax_Dalpha(ii,jj)=double(max(Spectra.RawDATA(ii,:,jj));
+        
+    end
+end
 
 %%
 figure;

@@ -1,4 +1,4 @@
-function width = FWHM(x,y)
+function width = CalcFWHM(x,y)
 
 % function width = fwhm(x,y)
 %

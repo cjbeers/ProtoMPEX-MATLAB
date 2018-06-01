@@ -8,7 +8,7 @@ PLOTProfile=0; %Plots a line plot of the temeprature to see a 1D profile
 videoFileName=[PATHNAME FILENAME];
 load(videoFileName)
 
-TempMax=100;
+TempMax=250;
 
 %% Plot MaxDelta
 
@@ -19,7 +19,7 @@ colormap jet
 c=colorbar;
 ylabel(c, 'Delta T [C]')
 ax.FontSize = 13;
-title([shotnumber,'; Delta Temperature vs. Camera Pixels'],'FontSize',13);
+title([shotnumber,'; Max Delta Temperature'],'FontSize',13);
 xlabel('Pixels','FontSize',13);
 ylabel('Pixels','FontSize',13);
 

@@ -3,8 +3,8 @@
 close all 
 clear all
  tic
-PATHNAME = 'Y:\IR_Camera\2017_12_15\';
-FILENAME = 'Shot-018663seq';
+PATHNAME = 'Z:\IR_Camera\2018_02_02\';
+FILENAME = 'Shot 19538.seq';
 
 framerate = 100; %%Hz
 
@@ -67,14 +67,14 @@ t_h_off = max(exp_time(-h_power>0.05));
 h = size(Data);
 t_IR = h(3)/framerate.*linspace(0,1,h(3))-(i_h_start-1)/framerate+t_h_on;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%figure
-%plot(exp_time,(H_power/min(h_power).*h_power)/1e3,'k','linewidth',3)
-%hold on
-%plot(exp_time,ech_power,'r','linewidth',3)
-%plot(exp_time,ich_power,'g','linewidth',3)
-%legend('Helicon','ECH','ICH')
-%xlabel('time [s]')
-%ylabel('power [kW]')
+% figure
+% plot(exp_time,(H_power/min(h_power).*h_power)/1e3,'k','linewidth',3)
+% hold on
+% plot(exp_time,ech_power,'r','linewidth',3)
+% plot(exp_time,ich_power,'g','linewidth',3)
+% legend('Helicon','ECH','ICH')
+% xlabel('time [s]')
+% ylabel('power [kW]')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %helicon_start = heliconsourcetimes(shot);
 %[helicon_start, ech_start_time,ech_end_time,ich_start_time,ich_end_time] = powersourcetimes(shot);

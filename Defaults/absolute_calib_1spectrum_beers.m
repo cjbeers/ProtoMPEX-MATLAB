@@ -12,7 +12,7 @@
 %in F1CF-F5CF
 
 %% Start Code
-ccc
+cleanup
 a=0; b=0; c=0; d=0; e=0; t=1; l=1; k=1; m=1; ii=1; iii=1; aa=1; tt=0; bb=1;
 % Read in interested raw data file and background file
 %Match raw with background, example, _1820_ matched to _1820_bg
@@ -20,17 +20,17 @@ a=0; b=0; c=0; d=0; e=0; t=1; l=1; k=1; m=1; ii=1; iii=1; aa=1; tt=0; bb=1;
 %USER creates array with wavelengths looked at and spool pieces looked from
 %(lambdanum and spoolnum)
 
-spoolnum=struct('SpoolNumber',{'9.5S_C'});
+spoolnum=struct('SpoolNumber',{'10.5S_C'});
 spoolcell=struct2cell(spoolnum);
 size1 = size(spoolcell);
 spoolcell = reshape(spoolcell, size1(1), []);
-lambdanum=[410.2,434.1,438.7,447.1,471.3,486.1,492.1,501.4,504.8,587.6,656.3,667.5,706.5]; %USER defines wavelengths
+lambdanum=[400:10:760]; %USER defines wavelengths
 size2=size(lambdanum);
 size2=size2(1,2);
 
-file = dir('Z:\McPherson\calibration\cal_2016_08_04\*.SPE');...
+file = dir('Z:\McPherson\calibration\cal_2018_04_13\*.SPE');...
     %USER Specifiy Location
-file_length =70; %length(file); %Using known number of files to be read.
+file_length =37; %length(file); %Using known number of files to be read.
 Data = cell(file_length,1);
 
 %Makes the path a character so readSPE works
@@ -47,15 +47,15 @@ filecell = sort_nat(filecell(:,1),'ascend');
 %filesorted = cell2struct(filecell, filefields, 1);
 
 %Puts the names in order for the readSPE.m to read them
-for i=1:70
+for i=1:file_length
     file(i).name=char(filecell(i,:));
 end
 
 %%
 %Starts the loop to read in and manipulate data
-for t = 5:70
+for t = 1:37
     
-    Data{t} = readSPE('Z:\McPherson\calibration\cal_2016_08_04\',file(t).name);
+    Data{t} = readSPE('Z:\McPherson\calibration\cal_2018_04_13\',file(t).name);
   
  Raw_data = cell2mat(Data(t,:,:)); %= readSPE('Z:\McPherson\calibration\abscal_2016_06_21\abs_calib_20um_500ms_1.SPE');...
     %USER Specifiy Location
@@ -194,6 +194,7 @@ P_o = 180; %USER put peaklocation here!!! peak location can change it is not the
         l=1;
    end
 lambda_o=lambdanum(1,l);
+Lambda0=lambda_o;
 
 pixels_c(1:P_o,:) = (P_o-1:-1:0)'; %From 1 to Peak of Interest 
 pixels_c(P_o+1:length(1,2),:) = (1:1:(length(1,2)-P_o))'; %From Peak of Interest to 512
@@ -202,10 +203,11 @@ pixels_c(P_o+1:length(1,2),:) = (1:1:(length(1,2)-P_o))'; %From Peak of Interest
 for bb=1:512
     if i>=P_o
       %Disper = -0.055; %For 300nm Grating
-      Disper= -0.0055; %For 1800nm Grating
+      Disper= -(0.09354-3.8264E-6*Lambda0*10+8.7181E-11*(Lambda0*10)^2-1.0366E-14*(Lambda0*10)^3-2.5001E-18*(Lambda0*10)^4)/10; %For 1800nm Grating, this Grating has been working for everything atm
+
     else
-      %Disper = -0.04; %For 300nm Gra
-      Disper= -0.0055; %For 1800nm Grating
+      %Disper = -0.04; %For 300nm Grating
+      Disper= -(0.09354-3.8264E-6*(Lambda0*10)+8.7181E-11*(Lambda0*10)^2-1.0366E-14*(Lambda0*10)^3-2.5001E-18*(Lambda0*10)^4)/10; %For 1800nm Grating, this Grating has been working for everything atm
     end
     pix_c_dis(bb,1) = pixels_c(bb,1)*Disper; %The entire file times the dispersion coeff.    
 end
@@ -239,7 +241,12 @@ end
 correctedtable = zeros(3,512);
 correctedtable(1,:)= pixel;
 correctedtable(2,:)=flip(lambdaplot);
-correctedtable(3,:)=flip(cor);
+correctedtable(3,:)=flip(cor_f1);
+correctedtable(4,:)=flip(cor_f2);
+correctedtable(5,:)=flip(cor_f3);
+correctedtable(6,:)=flip(cor_f4);
+correctedtable(7,:)=flip(cor_f5);
+
 %figure;
 %plot(lambdaplot,cor); %Figure 4
 
@@ -247,7 +254,7 @@ correctedtable(3,:)=flip(cor);
 %white light source. Only for calibration purposes. 
 %SplineFitting %If using the HL calibration light
 OLFitting %If using the OL integrating sphere 
-k=k+1;
+k=1;
 
 %%
 %Since the corrected data is displaying the intensity over time you need 
@@ -347,7 +354,7 @@ end
 %Plots CorrectedIabs vs. wavelength for a single fiber (Change
 %"CorrectedIabs(#)
 figure(1);
-plot(CorrectedIabs(2,1:4608),CorrectedIabs(3,1:4608),'red');
+plot(CorrectedIabs(2,1:4096),CorrectedIabs(3,1:4096),'red');
 hold on
 %{
 plot(CorrectedIabs(2,(4608:4608*2)),CorrectedIabs(3,(4608:4608*2)));

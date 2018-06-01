@@ -13,8 +13,8 @@ cleanup
 tic
 
 %0=no, 1=yes
-MAKEAbUnitsMovie=0; %Fully zoomed out movie with raw signal
-MAKETemperatureMovie=1; %Zoomed in movie with tempeartures
+MAKEAbUnitsMovie=1; %Fully zoomed out movie with raw signal
+MAKETemperatureMovie=0; %Zoomed in movie with tempeartures
 MAKEDeltaTMovie=0; %Zoomed in movie with delta T to a set frame
 MAKEHeatFluxMovie=0; %Zoomed in movie of heat flux
 SAVEDeltaTMovie =0; %Saves Delta T movie to email out if need it
@@ -24,15 +24,16 @@ SAVEHeatFluxMovie=0; %Saves Heat Flux movie
 
 %Loads IR .seq file
 %[FILENAME, PATHNAME, FILTERINDEX] = uigetfile('*.jpg;*.seq', 'Choose IR file (jpg) or radiometric sequence (seq)');
-Shots=18653; %USER defines shot number, if not found change the PATHNAME to the correct day/file location
-IR.ColarBarMax = 200;
+Shots=20984; %USER defines shot number, if not found change the PATHNAME to the correct day/file location
+IR.ColarBarMax = 50;
+IR.AbTempMax =30000;
 IR.FrameStart=1;
 IR.FrameEnd=200;
-IR.Emissivity = 0.73; %0.26 for SS 0.73 for graphite
+IR.Emissivity = 0.56; %0.26 for SS 0.73 for graphite
 
 %% Code Start
-IR.FILENAME = ['Shot ' ,num2str(Shots),'.seq'];
-IR.PATHNAME = 'Z:\IR_Camera\2017_12_15\';
+IR.FILENAME = ['Shot-0' ,num2str(Shots),'.seq'];
+IR.PATHNAME = 'Z:\IR_Camera\2018_04_06\';
 FILTERINDEX = 1;
 
 IR.videoFileName=[IR.PATHNAME IR.FILENAME];
@@ -62,11 +63,11 @@ if(seq.Count > 1)
 end
 
 %Creates array of tick marks to be used in colorbar
-        IR.colorticks=1.2E5:1E2:3E5;
+        IR.colorticks=1.2E5:1E2:IR.AbTempMax;
         IR.colorsize=size(IR.colorticks);
         
           jj=1;
-        for o=10400:2000:30000
+        for o=10400:2000:IR.AbTempMax
            IR.colorlabels(1,jj) = seq.ThermalImage.GetValueFromSignal(o);
            jj=jj+1;
         end
@@ -78,7 +79,7 @@ if MAKEAbUnitsMovie==1
     for ii=IR.FrameStart:IR.FrameEnd
         IR.fig=figure(1);
         imagesc(images(:,:,ii), 'CDataMapping','scaled')
-        caxis([10400 30000]); %0-100 C
+        caxis([10400 IR.AbTempMax]); %0-100 C
         colormap jet;
         colorbar('Ticks',IR.colorticks, 'TickLabels',IR.colorlabels);
         c=colorbar;

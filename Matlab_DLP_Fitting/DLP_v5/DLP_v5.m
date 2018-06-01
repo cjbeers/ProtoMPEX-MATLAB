@@ -1,14 +1,14 @@
 
 cleanup
-shotlist = [19221];
+shotlist = [19530];
 DLPType='10';
-PLOTDLPsweeps=1;
+PLOTDLPsweeps=0;
 
 sizeshotlist=size(shotlist);
 
 % -------------------------
 Config.tStart = 4.14; % [s]4
-Config.tEnd = 4.65;
+Config.tEnd = 4.7;
 
 % Acquiring Ne and Te data
 Stem = '\MPEX::TOP.';
@@ -44,7 +44,7 @@ switch DLPType
     case '10'
         DLP = '10.5';
         AddressType  = 's';
-        CalType = 'iso';  
+        CalType = 'niso';  
         %Config.L_tip = 0/1000; % [m] for Flush Probe
         %Config.D_tip = 0.83/1000; % [m] for Flush Probe
         Config.L_tip = 1.8/1000; % 10.5 DLP
@@ -55,8 +55,8 @@ switch AddressType
     case 's'
 DataAddress{1} = [RootAddress,'LP_V_RAMP']; % V
 DataAddress{2} = [RootAddress,'TARGET_LP']; % I
-Config.V_Att = 1;  % Output voltage of DLP box (Voltage) = V_Att*Digitized data 
-Config.I_Att = 1;  % Output voltage of DLP box (Current) = I_att*Digitized data
+Config.V_Att = 2;  % Output voltage of DLP box (Voltage) = V_Att*Digitized data 
+Config.I_Att = 5;  % Output voltage of DLP box (Current) = I_att*Digitized data
     case 'n'
 DataAddress{1} = [RootAddress,'INT_4MM_1']; % V
 DataAddress{2} = [RootAddress,'INT_4MM_2']; % I
@@ -113,7 +113,7 @@ title('$ n_e $ $ [m^{-3}] $','interpreter','Latex','FontSize',13,'Rotation',0)
 legend(h,['DLP ',num2str(DLP)],'location','NorthEast')
 %legend(h,['TDLP3'],'location','NorthEast')
 %set(gca,'PlotBoxAspectRatio',[1 1 1])
-ylim([0,8e19])
+ylim([0,10e19])
 xlim([4.2,Config.tEnd])
 grid on
 
@@ -137,7 +137,7 @@ subplot(2,2,3); hold on
 for s = 1:sizeshotlist(1,2)
     plot(time{s},e_c.*Ni{s}.*Te{s},C{s},'lineWidth',2)
 end
-ylim([0,25])
+ylim([0,40])
 xlim([4.2,Config.tEnd])
 title('$ P_e $ $ [Pa] $','interpreter','Latex','FontSize',13,'Rotation',0)
 
@@ -176,7 +176,7 @@ if PLOTDLPsweeps ==1
         end
         
     figure;
-        for c = 51:FitLength(1,2)
+        for c = 51:75
         subplot(5,5,c-50); hold on
         plot(Vsweep{s}{c},Isweep{s}{c}*1e3,'k')
         plot(Vsweep{s}{c},Ifit{s}{c}*1e3,'r')
@@ -185,10 +185,11 @@ if PLOTDLPsweeps ==1
         end    
 end
 
-for s = 1:sizeshotlist(1,2)
+%%
+%for s = 1:sizeshotlist(1,2)
     % Temperature
     x1 = Te{s}(10:18);
-    x11 = Te{s}(22:39);
+    x11 = Te{s}([91:105 107:111]);
     % Mean temperature for the most stable Te region for a given shot
     Te1(s) = mean(x1);
     Te11(s) = mean(x11);
@@ -198,16 +199,17 @@ for s = 1:sizeshotlist(1,2)
     Std_Te11 = std(x11);
     %Density
     x2= Ni{s}(10:18);
-    x21 = Ni{s}(22:39);
+    x21 = Ni{s}([91:105 107:111]);
     % Mean density for the most stable Ne region for a given shot% Standard Error
     Ne1(s)= mean(x2);
     Ne11(s)= mean(x21);
     Std_Ne1 = std(x2);
     Std_Ne =Std_Ne1;
     Std_Ne11 = std(x21);
-    PlasmaPressure=mean(Pressure(30:39));
+    %PlasmaPressure=mean(Pressure(70:110));
     
     %Prints values
+fprintf('\n');
 formatPrint='Te1 = %1.4g\n';
 fprintf(formatPrint, Te1(s))
 formatPrint='Te2 = %1.4g\n';
@@ -224,8 +226,8 @@ formatPrint='Std_Ni1 = %1.4e\n';
 fprintf(formatPrint, Std_Ne1)
 formatPrint='Std_Ni2 = %1.4e\n';
 fprintf(formatPrint, Std_Ne11)
-formatPrint='Pa = %1.4g\n';
-fprintf(formatPrint, PlasmaPressure)
-end
+%formatPrint='Pa = %1.4g\n';
+%fprintf(formatPrint, PlasmaPressure)
+%end
 
 return

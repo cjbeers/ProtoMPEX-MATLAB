@@ -18,10 +18,10 @@ end
 
 elseif KnownFields == 1
     
-   helicon_current = 120; %Coils 3,4 TR2
-   current_A = 4500; %Coils 1,6  PS2
-   current_B = 4500; %Coils 7-12 PS1
-   current_C = 600;  %Coil 2 TR1
+   helicon_current = 260; %Coils 3,4 TR2
+   current_A = 6400; %Coils 1,6  PS2
+   current_B = 6400; %Coils 7-12 PS1
+   current_C = 000;  %Coil 2 TR1
    skimmer = 1;
    config = 'newstandard';
    add_reflector = 1;
@@ -99,8 +99,8 @@ atg=Atg;
     m_y=[0,0,bma,bma,0];
     vals=psivals(avec,zvec,psi,zvec(bmloc),rlocs);
     disp(zvec(bmloc))
-    zmax=locs(2);
-    
+   
+    zmax=4.5;
     PSIarray=psi;
     
     %% Plots flux tube and B field
@@ -115,11 +115,11 @@ atg=Atg;
     grid
     title('Flux tube mapping');
     h=ylabel('R  (m)');
-    set(h,'fontsize',12,'fontweight','bold');
+    set(h,'fontsize',13,'fontweight','bold');
     h=xlabel('Z  (m)');
-    set(h,'fontsize',12,'fontweight','bold');
+    set(h,'fontsize',13,'fontweight','bold');
     axis([0,zmax,0,.2])
-    set(gca,'Fontsize',12,'fontweight','bold');
+    set(gca,'Fontsize',13,'fontweight','bold');
     %set(findall(gcf,'type','text'),'fontsize',fontsize,'fontweight',fontweight)
     
   
@@ -129,10 +129,10 @@ atg=Atg;
                           m9_x-0.5,m_y,'r',m10_x-0.5,m_y,'r',m11_x-0.5,m_y,'r',m12_x-0.5,m_y,'r','linewidth',2);
     grid
     title('mod B on axis');
-    h=ylabel('|B|  (T)');
-    set(h,'fontsize',12,'fontweight','bold');
-    h=xlabel('Z  (m)');
-    set(h,'fontsize',12,'fontweight','bold');
+    h=ylabel('|B| (T)','fontsize',18,'fontweight','bold');
+    %set(h,'fontsize',15,'fontweight','bold');
+    h=xlabel('Z (m)','fontsize',18,'fontweight','bold');
+    %set(h,'fontsize',18,'fontweight','bold');
 
     text(m1_x(1)+.15*cl(1)-0.5,0.05*bma,'1','fontsize',14);
     text(m2_x(1)+.15*cl(1)-0.5,0.05*bma,'2','fontsize',14);
@@ -143,9 +143,9 @@ atg=Atg;
     text(m7_x(1)+.15*cl(1)-0.5,0.05*bma,'7','fontsize',14);
     text(m8_x(1)+.15*cl(1)-0.5,0.05*bma,'8','fontsize',14);
     text(m9_x(1)+.15*cl(1)-0.5,0.05*bma,'9','fontsize',14);
-    text(m10_x(1)+.15*cl(1)-0.5,0.05*bma,'10','fontsize',14);
-    text(m11_x(1)+.15*cl(1)-0.5,0.05*bma,'11','fontsize',14);
-    text(m12_x(1)+.15*cl(1)-0.5,0.05*bma,'12','fontsize',14);
+    text(m10_x(1)+.15*cl(1)-0.51,0.05*bma,'10','fontsize',13);
+    text(m11_x(1)+.15*cl(1)-0.51,0.05*bma,'11','fontsize',13);
+    text(m12_x(1)+.15*cl(1)-0.51,0.05*bma,'12','fontsize',13);
 
     %for ii=1:14,text(z0(ii)+cl(1)/4,1.05*bma,num2str(ii));end
     textout1=['C1 = ',num2str(cur(1)),' amps   ',...
@@ -164,7 +164,7 @@ atg=Atg;
     locs=axis;		 
     
     axis([0,zmax,locs(3),locs(4)]);
-    set(gca,'Fontsize',12,'fontweight','bold');
+   set(gca,'Fontsize',18,'fontweight','bold');
     %set(findall(gcf,'type','text'),'fontsize',fontsize,'fontweight',fontweight)
     text(-.1*locs(2),-.22*locs(4),textout1,'fontsize',12,'fontweight','normal');	
     text(-.1*locs(2),-.27*locs(4),textout2,'fontsize',12,'fontweight','normal');

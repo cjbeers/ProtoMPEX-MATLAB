@@ -1,18 +1,17 @@
-%Coded by: Josh Beers updated to V3 by Davis Easley
+%Coded by: Josh Beers, Updated to V3 by Davis Easley
 %ORNL
 
 %USER MUST HAVE IPEAKS FILES DOWNLOADED IN MATLAB PATH IF USING IPEAKS
 %USER MUST HAVE FIT_EXAMPLE IF DOING ION TEMPERATURES
 
-%Code uses a single 255kb size McPherson .SPE file to view a calibrated 
+%Code uses a single McPherson .SPE file to view a calibrated 
 %counts vs. wavelength and intensity vs. wavelength plot with an edittable 
 %peak finder that displays the peaks and their values for both graph types
 
 %Search for "USER" to find locations that need to be changed
-
 %% Start Code
 
-clear all
+%clear all
 fclose all
 %close all
 format shortG; 
@@ -22,13 +21,13 @@ tic %starts timing the code
 
 PLOTPIXELS=0; %plots counts vs. pixel number
 PLOTWAVELENGTH=1; %plots counts vs. wavelength
-PLOTINTENSITY=0; %plots the absolute intensity vs. wavelength
+PLOTINTENSITY=1; %plots the absolute intensity vs. wavelength
 USEIPEAKS=0; %uses program ipeaks to find wavelength peaks
-USEIPEAKSFORINTENSITYPEAKS=0; %uses ipeaks to find the intensity peaks
+USEIPEAKSFORINTENSITYPEAKS=1; %uses ipeaks to find the intensity peaks
 FINDFWHM=0; %not really needed anymore because ion temp can be found
 FINDFLOW=0; % used when looking up and down stream, FINDFWHM must also = 1
 FINDIONTEMP=0; %uses Elijah's code to calculate ion temperature
-IONTEMPSINGLEFRAME=1; %looks at single frame to fit ion temp
+IONTEMPSINGLEFRAME=0; %looks at single frame to fit ion temp
 POWERLOSS=0; %uses the intensity to find the power loss for a single spectra from each fiber
 VOLUMECALC=0; %Finds the volume of the plasma
 
@@ -37,15 +36,31 @@ VOLUMECALC=0; %Finds the volume of the plasma
 %prompt = 'Grating used (300 or 1800) nm? '; %Two gratings can be used
 %Grating = input(prompt);
 Spectra.Grating = 1800;  %USER chooses which Grating was used
-
-Spectra.Wavelength=(7217); %USER changes to match file wavelength location on McPherson
-[Spectra.RawDATA,Spectra.ExposureTime] = readSPE('Z:\McPherson\2017_12_15\D2Ar_7217_30um_18651.SPE');...
+Spectra.Wavelength=9849;
+Spectra.FileName=('Z:\McPherson\2017_12_13\D2He_9849_30um_18471.SPE');
+[Spectra.RawDATA,Spectra.ExposureTime, Spectra.Gain] = readSPE(Spectra.FileName);
     %USER Specifiy Location
+%Spectra.Wavelength=double(string(Spectra.FileName(end-21:end-17))); %USER changes to match file wavelength location on McPherson
+%Spectra.RawDATA=flip(Spectra.RawDATA);
 Spectra.Length = size(Spectra.RawDATA);
-Spectra.RawBGDATA = readSPE('Z:\McPherson\calibration\cal_2016_08_04\ROIs\abs_calib_20um_1s_bg_1.SPE');...
+Spectra.RawBGDATA = readSPE('Z:\McPherson\2018_04_30\D2_6480_30um_21730.SPE');...
     %USER Specify Location OR use the same BG spectrum each time
 
-B_Field = [180 5800 5800 600]; %USER inputs in order: helicon current, current_A, current_B, current_C in Amps
+c=299792458; %m/s
+h=6.2607E-34; %Js
+%E=hc/lambda %in Joules/photon.
+
+if Spectra.Gain==1
+    Spectra.RawDATA=Spectra.RawDATA*1.89;
+elseif Spectra.Gain==3
+    Spectra.RawDATA=Spectra.RawDATA/1.9;
+elseif Spectra.Gain==2
+    
+else
+    disp('Error in Gain')
+end
+
+B_Field = [180 6000 5800 600]; %USER inputs in order: helicon current, current_A, current_B, current_C in Amps
 
 Fiber1_5North = 58.9279/100+0.5; %[cm to m]
 Fiber1_5Top = 58.9279/100+0.5;
@@ -61,7 +76,7 @@ Fiber9_5North = 298.9854/100+0.5;
 Fiber10_5South = 330.698/100+0.5;
 Fiber11_5North = 362.43/100+0.5;
 
-Fibers= [Fiber6_5North Fiber9_5South Fiber9_5South Fiber9_5South Fiber10_5South];%USER enters all fiber locations for Fibers 1-5 left to right (0 indicates Fiber not in use)
+Fibers= [Fiber11_5North Fiber11_5North Fiber11_5North Fiber10_5South Fiber9_5South];%USER enters all fiber locations for Fibers 1-5 left to right (0 indicates Fiber not in use)
 
 if length(Spectra.Length)==2
     Spectra.Length(1,3)=1;
@@ -76,25 +91,31 @@ elseif Spectra.Length(1,3) == 37
 elseif Spectra.Length(1,3) == 50
     Spectra.FrameOfInterest = 26;
 elseif Spectra.Length(1,3) == 40
+    Spectra.FrameOfInterest = 12;
+elseif Spectra.Length(1,3) == 60
     Spectra.FrameOfInterest = 9;
+elseif Spectra.Length(1,3) ==20
+    Spectra.FrameOfInterest=9;
 else
-    disp('Spectra frames used are weird fix FrameOfInterest');
+    Spectra.FrameOfInterest = 13;
+    %disp('Spectra frames used are weird fix FrameOfInterest');
 end
 
-if Spectra.Grating == 300
+if Spectra.Grating==300
 Spectra.Lambda0 = (Spectra.Wavelength*.4); %What you tunned the Mcpherson to in nanometers!
 elseif Spectra.Grating == 1800
-%Spectra.Lambda0 = (Spectra.Wavelength/15); %USER uses this one if not
+Spectra.Lambda0 = (Spectra.Wavelength/15); %USER uses this one if not
 %centering the McPherson
-Spectra.Lambda0=480.6; %For looking at the Ar II line for ion temperatures 
+%Spectra.Lambda0=480.6; %For looking at the Ar II line for ion temperatures 
+%Spectra.Lambda0=504.8;
 %or when centering the McPherson peak of interest
 end
 
 if Spectra.Grating == 300
 %Spectra.P0 = 180; %USER put peaklocation here!!! peak location can change it is not the same each time
-Spectra.P0 = 210; % 210 for 300nm Grating, 132 for 1800nm Grating, ~260 when centering McPher
+Spectra.P0 = 210; % 210 for 300nm Grating, 180 for 1800nm Grating, ~230 when centering McPher
 elseif Spectra.Grating == 1800
-    Spectra.P0= 234; %USER can look at the ipeaks to find the location of their peak of interest
+    Spectra.P0= 230; %USER can look at the ipeaks to find the location of their peak of interest
 end
 
 %Creates a matrix to be filled with raw data
@@ -110,33 +131,33 @@ Spectra.RawFiberBG2=zeros(Spectra.Length(:,3),Spectra.Length(:,2));
 Spectra.RawFiberBG3=zeros(Spectra.Length(:,3),Spectra.Length(:,2));
 Spectra.RawFiberBG4=zeros(Spectra.Length(:,3),Spectra.Length(:,2));
 Spectra.RawFiberBG5=zeros(Spectra.Length(:,3),Spectra.Length(:,2));
-
+        
 for ii = 1:Spectra.Length(:,3) %Breaks raw data into individual fibers
-  Spectra.RawFiber1(ii,:) = double(Spectra.RawDATA(1,:,ii));
-  Spectra.RawFiber2(ii,:) = double(Spectra.RawDATA(2,:,ii));
-  Spectra.RawFiber3(ii,:) = double(Spectra.RawDATA(3,:,ii));
-  Spectra.RawFiber4(ii,:) = double(Spectra.RawDATA(4,:,ii));
-  Spectra.RawFiber5(ii,:) = double(Spectra.RawDATA(5,:,ii));
+  Spectra.RawFiber1(ii,:) = flip(double(Spectra.RawDATA(1,:,ii)));
+  Spectra.RawFiber2(ii,:) = flip(double(Spectra.RawDATA(2,:,ii)));
+  Spectra.RawFiber3(ii,:) = flip(double(Spectra.RawDATA(3,:,ii)));
+  Spectra.RawFiber4(ii,:) = flip(double(Spectra.RawDATA(4,:,ii)));
+  Spectra.RawFiber5(ii,:) = flip(double(Spectra.RawDATA(5,:,ii)));
   
-  Spectra.RawFiberBG1(1,:) = double(Spectra.RawBGDATA(1,:));
-  Spectra.RawFiberBG2(2,:) = double(Spectra.RawBGDATA(2,:));
-  Spectra.RawFiberBG3(3,:) = double(Spectra.RawBGDATA(3,:));
-  Spectra.RawFiberBG4(4,:) = double(Spectra.RawBGDATA(4,:));
-  Spectra.RawFiberBG5(5,:) = double(Spectra.RawBGDATA(5,:));
+  Spectra.RawFiberBG1(1,:) = mean2(flip(double(Spectra.RawBGDATA(1,10:15,8))));
+  Spectra.RawFiberBG2(2,:) = mean2(flip(double(Spectra.RawBGDATA(2,10:15,8))));
+  Spectra.RawFiberBG3(3,:) = mean2(flip(double(Spectra.RawBGDATA(3,10:15,8))));
+  Spectra.RawFiberBG4(4,:) = mean2(flip(double(Spectra.RawBGDATA(4,10:15,8))));
+  Spectra.RawFiberBG5(5,:) = mean2(flip(double(Spectra.RawBGDATA(5,10:15,8))));
   
   %Creates the backgournd subtracted files
-  Spectra.BGSub1 = Spectra.RawFiber1 - Spectra.RawFiberBG1; 
-  Spectra.BGSub2 = Spectra.RawFiber2 - Spectra.RawFiberBG2;
-  Spectra.BGSub3 = Spectra.RawFiber3 - Spectra.RawFiberBG3; 
-  Spectra.BGSub4 = Spectra.RawFiber4 - Spectra.RawFiberBG4; 
-  Spectra.BGSub5 = Spectra.RawFiber5 - Spectra.RawFiberBG5; 
+  Spectra.BGSub1 = Spectra.RawFiber1 - Spectra.RawFiberBG1(1,1); 
+  Spectra.BGSub2 = Spectra.RawFiber2 - Spectra.RawFiberBG2(2,1);
+  Spectra.BGSub3 = Spectra.RawFiber3 - Spectra.RawFiberBG3(3,:); 
+  Spectra.BGSub4 = Spectra.RawFiber4 - Spectra.RawFiberBG4(4,:); 
+  Spectra.BGSub5 = Spectra.RawFiber5 - Spectra.RawFiberBG5(5,:); 
   
   %Creates a background array from each frame on each fiber 
-  Spectra.SelfBG1(ii,1)=abs(mean2(Spectra.RawFiber1(ii,1:30)));
-  Spectra.SelfBG2(ii,1)=abs(mean2(Spectra.RawFiber2(ii,1:30)));
-  Spectra.SelfBG3(ii,1)=abs(mean2(Spectra.RawFiber3(ii,1:30)));
-  Spectra.SelfBG4(ii,1)=abs(mean2(Spectra.RawFiber4(ii,1:30)));
-  Spectra.SelfBG5(ii,1)=abs(mean2(Spectra.RawFiber5(ii,1:30)));
+  Spectra.SelfBG1(ii,1)=abs(mean2(Spectra.RawFiber1(ii,5:10)));
+  Spectra.SelfBG2(ii,1)=abs(mean2(Spectra.RawFiber2(ii,5:10)));
+  Spectra.SelfBG3(ii,1)=abs(mean2(Spectra.RawFiber3(ii,5:10)));
+  Spectra.SelfBG4(ii,1)=abs(mean2(Spectra.RawFiber4(ii,5:10)));
+  Spectra.SelfBG5(ii,1)=abs(mean2(Spectra.RawFiber5(ii,5:10)));
   
   %Creates a data array that has its self backgorund subtracted, 
   %IF A PEAK IS IN THIS BG IT WILL MESS UP FITTINGS
@@ -154,12 +175,12 @@ Spectra.Pixels=(1:512); %Creates an array of pixels to match camera pixels
 if PLOTPIXELS==1
 
 figure; %Plot corrected signal vs. pixels
-plot(Spectra.Pixels,(Spectra.SelfBGSub1(Spectra.FrameOfInterest,:)));
+plot(Spectra.Pixels,(Spectra.RawFiber1(Spectra.FrameOfInterest,:)));
 hold on;
-plot(Spectra.Pixels,(Spectra.SelfBGSub2(Spectra.FrameOfInterest,:)));
-plot(Spectra.Pixels,(Spectra.SelfBGSub3(Spectra.FrameOfInterest,:)));
-plot(Spectra.Pixels,(Spectra.SelfBGSub4(Spectra.FrameOfInterest,:)));
-plot(Spectra.Pixels,(Spectra.SelfBGSub5(Spectra.FrameOfInterest,:)));
+plot(Spectra.Pixels,(Spectra.RawFiber2(Spectra.FrameOfInterest,:)));
+plot(Spectra.Pixels,(Spectra.RawFiber3(Spectra.FrameOfInterest,:)));
+plot(Spectra.Pixels,(Spectra.RawFiber4(Spectra.FrameOfInterest,:)));
+plot(Spectra.Pixels,(Spectra.RawFiber5(Spectra.FrameOfInterest,:)));
 ax = gca;
 ax.FontSize = 13;
 title('Counts vs Corrected Pixels','FontSize',13);
@@ -189,7 +210,7 @@ end
 %Creates the wavelength (lambda) for plotting
 Spectra.Lambda(1:Spectra.P0,:) = Spectra.Lambda0 - Spectra.PixCDisp(1:Spectra.P0,:); %Conversion of pixel to wavelength
 Spectra.Lambda(Spectra.P0+1:Spectra.Length(1,2),:) = rot90(Spectra.Lambda0 + Spectra.PixCDisp(Spectra.P0+1:Spectra.Length(1,2),:)); %Conversion of pixel to wavelength
-Spectra.LambdaPlot=(rot90(Spectra.Lambda));
+Spectra.LambdaPlot=rot90((flip(Spectra.Lambda)));
 Spectra.LambdaMin=Spectra.LambdaPlot(1,512); %Used for x min and max in plots
 Spectra.LambdaMax=Spectra.LambdaPlot(1,1);
 Spectra.PixelSize=Spectra.LambdaPlot(1,1)-Spectra.LambdaPlot(1,2); %Nm/pixel 
@@ -199,43 +220,53 @@ Spectra.PixelSize=Spectra.LambdaPlot(1,1)-Spectra.LambdaPlot(1,2); %Nm/pixel
 if USEIPEAKS==1
 
 %For findpeaks
-x=Spectra.LambdaPlot;
-y=flip(Spectra.BGSub3(Spectra.FrameOfInterest,:)); %USER changes to which fiber is observed. 
+x=Spectra.Lambda;
+y=Spectra.SelfBGSub3(1,:); %USER changes to which fiber is observed. 
 SlopeThreshold=0.001;
-smoothwidth=9;
+smoothwidth=13;
 peakgroup=6;
 smoothtype=1;
 %USER inps AmpThreshold based on counts of smallest peak being looked at
-AmpThreshold=1000; %USER changes this if want to see more or less peaks depending on spectrum
+AmpThreshold=110; %USER changes this if want to see more or less peaks depending on spectrum
 
 CountsPeak=findpeaksL(x,y,SlopeThreshold,AmpThreshold,smoothwidth,peakgroup,smoothtype);
 if CountsPeak(1,2)==0
     disp('Error in AmpThreshold for Counts')
 end
 sizeP=size(CountsPeak);
-
-%%Prints peaks and their respective data
-for ii=1:512    
-   for j=1:sizeP(1,1) 
-        if CountsPeak(j,2) == correctedtable(2,ii)
-            %disp('Pixel #,Wavelength,Counts')
-            Words=['Peak#= ',num2str(j), ' CorrectedPixel#=', num2str(correctedtable(1,ii)), ' Wavelength=', num2str(correctedtable(2,ii)), ' Counts=', num2str(correctedtable(3,ii)),];
-            disp(Words)
-            %correctedtable(1,i),correctedtable(2,i),correctedtable(3,i)         
-        end
-   end 
-end
+% 
+% %%Prints peaks and their respective data
+% for ii=1:512    
+%    for j=1:sizeP(1,1) 
+%         if CountsPeak(j,2) == Spectra.LambdaPlot(ii)
+%             %disp('Pixel #,Wavelength,Counts')
+%             Words=['Peak#= ',num2str(j), ' CorrectedPixel#=', num2str(correctedtable(1,ii)), ' Wavelength=', num2str(correctedtable(2,ii)), ' Counts=', num2str(correctedtable(3,ii)),];
+%             disp(Words)
+%             %correctedtable(1,i),correctedtable(2,i),correctedtable(3,i)         
+%         end
+%    end 
+% end
 
 % Ipeak Plotting Tool
 
 %For ipeak %Not used atm, but good for visualising data the first time
 PeakD=(0.3/18);
-AmpT=2000;
+AmpT=110;
 SlopeT=0.001;
-SmoothW=9;
-FitW=10;
-DataMatrix=[x;y];
-%ipeak(DataMatrix,PeakD,AmpT,SlopeT,SmoothW,FitW)
+SmoothW=13;
+FitW=6;
+
+  %%  
+% for jj=1:Spectra.Length(1,3)
+% 
+% y=Spectra.SelfBGSub1(jj,:);       
+% DataMatrix=[x;y];   
+% [Ipeaks]=ipeak(DataMatrix,PeakD,AmpT,SlopeT,SmoothW,FitW);
+% 
+% Areas(1,jj)=max(Ipeaks(:,5));
+% 
+% end
+
 end
 
 %% Plots counts vs. wavelength
@@ -254,51 +285,54 @@ ax.FontSize = 13;
 title('Counts vs wavelength','FontSize',13);
 xlabel('Wavelength [nm]','FontSize',13);
 ylabel('Counts','FontSize',13);
-xlim([Spectra.LambdaMin Spectra.LambdaMax])
+%xlim([Spectra.LambdaMin Spectra.LambdaMax])
 ylim([0 inf]);
 hold off;
 end
 
 %% Intensity calculations
 %WL remakes CF for each wavelength looked at with single files
-%Intensity in (mW/cm2-micron) converted now to (mW/m2) for HL source
-%Intenisty in (mW/cm2-sr-nm) converted now to (mW/m2-sr) for OL source
+%Intensity in (mW/cm2-micron) converted to (mW/m2) for HL source
+%Intenisty in (mW/cm2-sr-nm) converted to (mW/m2) for OL source
+%Intensity now in Photons/s/m2
 
-%For 300nm Grating:
+%For 300nm Grating, wihich uses HL to calibrate
 
 if Spectra.Grating ==300
 for jj=1:Spectra.Length(1,3)
 for ii=1:512
 WL=Spectra.LambdaPlot(1,ii);
 Spectra.F1CF(1,ii) =(1101630822525047*WL^6)/649037107316853453566312041152512 - (7265777621430527*WL^5)/1267650600228229401496703205376 + (4967798444037317*WL^4)/618970019642690137449562112 - (7213530429423309*WL^3)/1208925819614629174706176 + (5868229780194579*WL^2)/2361183241434822606848 - (5074883106023453*WL)/9223372036854775808 + 7297156861788209/144115188075855872;
-Spectra.Intensity1(jj,ii)=((Spectra.F1CF(1,ii)*flip(Spectra.SelfBGSub1(jj,ii)))/(Spectra.ExposureTime*1000))*100^2;
+Spectra.Intensity1(jj,ii)=(((Spectra.F1CF(1,ii)*(Spectra.SelfBGSub1(jj,ii)))/(Spectra.ExposureTime*1000))*100^2)*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
 Spectra.F2CF(1,ii) =(2626695280632411*WL^6)/1298074214633706907132624082305024 - (1076220889837839*WL^5)/158456325028528675187087900672 + (5845266505055671*WL^4)/618970019642690137449562112 - (8418572225483743*WL^3)/1208925819614629174706176 + (3392225726576867*WL^2)/1180591620717411303424 - (5804480930144169*WL)/9223372036854775808 + 4122263530836521/72057594037927936;
-Spectra.Intensity2(jj,ii)=((Spectra.F2CF(1,ii)*flip(Spectra.SelfBGSub2(jj,ii)))/(Spectra.ExposureTime*1000))*100^2;
+Spectra.Intensity2(jj,ii)=(((Spectra.F2CF(1,ii)*(Spectra.SelfBGSub2(jj,ii)))/(Spectra.ExposureTime*1000))*100^2)*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
 Spectra.F3CF(1,ii) =(6685689374474273*WL^6)/5192296858534827628530496329220096 - (5538637756507167*WL^5)/1267650600228229401496703205376 + (3809644293763157*WL^4)/618970019642690137449562112 - (2786038952453225*WL^3)/604462909807314587353088 + (4572309193917549*WL^2)/2361183241434822606848 - (3994730768181719*WL)/9223372036854775808 + 5813337095729975/144115188075855872;
-Spectra.Intensity3(jj,ii)=((Spectra.F3CF(1,ii)*flip(Spectra.SelfBGSub3(jj,ii)))/(Spectra.ExposureTime*1000))*100^2;
+Spectra.Intensity3(jj,ii)=(((Spectra.F3CF(1,ii)*(Spectra.SelfBGSub3(jj,ii)))/(Spectra.ExposureTime*1000))*100^2)*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
 Spectra.F4CF(1,ii) =(7302221534579973*WL^6)/5192296858534827628530496329220096 - (1512047247641153*WL^5)/316912650057057350374175801344 + (519560686567997*WL^4)/77371252455336267181195264 - (6069351690507449*WL^3)/1208925819614629174706176 + (4967682192603545*WL^2)/2361183241434822606848 - (4324620186983531*WL)/9223372036854775808 + 6262978433970463/144115188075855872;
-Spectra.Intensity4(jj,ii)=((Spectra.F4CF(1,ii)*flip(Spectra.SelfBGSub4(jj,ii)))/(Spectra.ExposureTime*1000))*100^2;
+Spectra.Intensity4(jj,ii)=(((Spectra.F4CF(1,ii)*(Spectra.SelfBGSub4(jj,ii)))/(Spectra.ExposureTime*1000))*100^2)*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
 Spectra.F5CF(1,ii) =-(3056574429229055*WL^6)/2596148429267413814265248164610048 + (5619162961737097*WL^5)/1267650600228229401496703205376 - (4231508340035941*WL^4)/618970019642690137449562112 + (3345429297905545*WL^3)/604462909807314587353088 - (5859150790520435*WL^2)/2361183241434822606848 + (5387567721134835*WL)/9223372036854775808 - 8114035101143863/144115188075855872;
-Spectra.Intensity5(jj,ii)=((Spectra.F5CF(1,ii)*flip(Spectra.SelfBGSub5(jj,ii)))/(Spectra.ExposureTime*1000))*100^2;
+Spectra.Intensity5(jj,ii)=(((Spectra.F5CF(1,ii)*(Spectra.SelfBGSub5(jj,ii)))/(Spectra.ExposureTime*1000))*100^2)*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
 end
 end
 
-%For 1800nm Grating:
+%For 1800nm Grating, which uses OL to calibrate 
 
 elseif Spectra.Grating ==1800
 for jj=1:Spectra.Length(1,3)
 for ii=1:512
 WL=Spectra.LambdaPlot(1,ii);
-Spectra.F1CF(1,ii) = (8639858633378925*WL^6)/162259276829213363391578010288128 - (6752534369187517*WL^5)/39614081257132168796771975168 + (4371564017049417*WL^4)/19342813113834066795298816 - (1500140754751339*WL^3)/9444732965739290427392 + (1151024590460689*WL^2)/18446744073709551616 - (1872109269432241*WL)/144115188075855872 + 5042492432869085/4503599627370496;
-Spectra.Intensity1(jj,ii)=((Spectra.F1CF(1,ii)*flip(Spectra.SelfBGSub1(jj,ii)))/(Spectra.ExposureTime*1000))*100^2;
-Spectra.F2CF(1,ii) =(633581297858053*WL^6)/5070602400912917605986812821504 - (8121773701465285*WL^5)/19807040628566084398385987584 + (2690009207465985*WL^4)/4835703278458516698824704 - (7542774615408457*WL^3)/18889465931478580854784 + (2950856088803465*WL^2)/18446744073709551616 - (4887277633992995*WL)/144115188075855872 + 6693695750256497/2251799813685248;
-Spectra.Intensity2(jj,ii)=((Spectra.F2CF(1,ii)*flip(Spectra.SelfBGSub2(jj,ii)))/(Spectra.ExposureTime*1000))*100^2;
-Spectra.F3CF(1,ii) =(4558147662457993*WL^6)/40564819207303340847894502572032 - (911820085030147*WL^5)/2475880078570760549798248448 + (2413104084810979*WL^4)/4835703278458516698824704 - (6758446563225483*WL^3)/18889465931478580854784 + (5282100525926083*WL^2)/36893488147419103232 - (2184730141835485*WL)/72057594037927936 + 5978301140921691/2251799813685248;
-Spectra.Intensity3(jj,ii)=((Spectra.F3CF(1,ii)*flip(Spectra.SelfBGSub3(jj,ii)))/(Spectra.ExposureTime*1000))*100^2;
-Spectra.F4CF(1,ii) =(2612623629397875*WL^6)/20282409603651670423947251286016 - (8357945244197111*WL^5)/19807040628566084398385987584 + (172707543343351*WL^4)/302231454903657293676544 - (1933629052041071*WL^3)/4722366482869645213696 + (6040887448379897*WL^2)/36893488147419103232 - (1248386249030235*WL)/36028797018963968 + 6826993165843605/2251799813685248;
-Spectra.Intensity4(jj,ii)=((Spectra.F4CF(1,ii)*flip(Spectra.SelfBGSub4(jj,ii)))/(Spectra.ExposureTime*1000))*100^2;
-Spectra.F5CF(1,ii) =(1217788750296653*WL^6)/10141204801825835211973625643008 - (7799579479577659*WL^5)/19807040628566084398385987584 + (1290709320930039*WL^4)/2417851639229258349412352 - (7233120040344691*WL^3)/18889465931478580854784 + (5655494708893753*WL^2)/36893488147419103232 - (4680239615105187*WL)/144115188075855872 + 6406011523163739/2251799813685248;
-Spectra.Intensity5(jj,ii)=((Spectra.F5CF(1,ii)*flip(Spectra.SelfBGSub5(jj,ii)))/(Spectra.ExposureTime*1000))*100^2;
+Spectra.F1CF(1,ii) = - (3243414316440337*WL^6)/10633823966279326983230456482242756608 + (2309603620420301*WL^5)/2596148429267413814265248164610048 - (4965101537564181*WL^4)/5070602400912917605986812821504 + (579661006787533*WL^3)/1237940039285380274899124224 - (272890451144983*WL^2)/4835703278458516698824704 - (3949141763188333*WL)/151115727451828646838272 + 4030589618284611/590295810358705651712;
+Spectra.Intensity1(jj,ii)=(((Spectra.F1CF(1,ii)*(Spectra.SelfBGSub1(jj,ii))*100^2*4*pi*2*1.1)/(Spectra.ExposureTime*1000)))*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
+Spectra.F2CF(1,ii) =- (2395703957625853*WL^6)/10633823966279326983230456482242756608 + (1625869995473377*WL^5)/2596148429267413814265248164610048 - (6317357511792973*WL^4)/10141204801825835211973625643008 + (8577283721094079*WL^3)/39614081257132168796771975168 + (3175833775833093*WL^2)/77371252455336267181195264 - (6887963036818475*WL)/151115727451828646838272 + 4937937996623129/590295810358705651712;
+Spectra.Intensity2(jj,ii)=(((Spectra.F2CF(1,ii)*(Spectra.SelfBGSub2(jj,ii))*100^2*4*pi*2*1.1)/(Spectra.ExposureTime*1000)))*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
+Spectra.F3CF(1,ii) =- (8006662218097889*WL^6)/21267647932558653966460912964485513216 + (93141810256361*WL^5)/81129638414606681695789005144064 - (3448877051813151*WL^4)/2535301200456458802993406410752 + (7538698440583817*WL^3)/9903520314283042199192993792 - (217389890528869*WL^2)/1208925819614629174706176 + (1741527951873869*WL)/2417851639229258349412352 + 1326004963232429/295147905179352825856;
+Spectra.Intensity3(jj,ii)=(((Spectra.F3CF(1,ii)*(Spectra.SelfBGSub3(jj,ii))*100^2*4*pi*2*1.1)/(Spectra.ExposureTime*1000)))*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
+Spectra.F4CF(1,ii) =- (8789350527914021*WL^6)/42535295865117307932921825928971026432 + (5905492503948825*WL^5)/10384593717069655257060992658440192 - (2783491648979549*WL^4)/5070602400912917605986812821504 + (204987856063123*WL^3)/1237940039285380274899124224 + (4720037523702579*WL^2)/77371252455336267181195264 - (7531592530322833*WL)/151115727451828646838272 + 1292104971979181/147573952589676412928;
+Spectra.Intensity4(jj,ii)=(((Spectra.F4CF(1,ii)*(Spectra.SelfBGSub4(jj,ii))*100^2*4*pi*2*1.1)/(Spectra.ExposureTime*1000)))*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
+Spectra.F5CF(1,ii) =- (8128602229559119*WL^6)/5316911983139663491615228241121378304 + (6770935128186101*WL^5)/1298074214633706907132624082305024 - (4612227632479779*WL^4)/633825300114114700748351602688 + (6554231572492777*WL^3)/1237940039285380274899124224 - (5094898972821211*WL^2)/2417851639229258349412352 + (8142021870704233*WL)/18889465931478580854784 - 2567853893604121/73786976294838206464;
+Spectra.Intensity5(jj,ii)=(((Spectra.F5CF(1,ii)*(Spectra.SelfBGSub5(jj,ii))*100^2*4*pi*2*1.1)/(Spectra.ExposureTime*1000)))*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
+%Spectra.IntensityAll=Spectra.Intenisty1
+
 end
 end
 elseif Spectra.Grating ~= 300 && Spectra.Grating ~= 1800
@@ -311,18 +345,18 @@ clear WL
 
 if PLOTINTENSITY==1
 figure;
-plot(Spectra.LambdaPlot,(Spectra.Intensity1))
+plot(Spectra.LambdaPlot,(Spectra.Intensity1(Spectra.FrameOfInterest,:)))
 hold on
-plot(Spectra.LambdaPlot,(Spectra.Intensity2))
-plot(Spectra.LambdaPlot,(Spectra.Intensity3))
-plot(Spectra.LambdaPlot,(Spectra.Intensity4))
-plot(Spectra.LambdaPlot,(Spectra.Intensity5))
+plot(Spectra.LambdaPlot,(Spectra.Intensity2(Spectra.FrameOfInterest,:)))
+plot(Spectra.LambdaPlot,(Spectra.Intensity3(Spectra.FrameOfInterest,:)))
+plot(Spectra.LambdaPlot,(Spectra.Intensity4(Spectra.FrameOfInterest,:)))
+plot(Spectra.LambdaPlot,(Spectra.Intensity5(Spectra.FrameOfInterest,:)))
 ax = gca;
 ax.FontSize = 15;
 title('Intensity vs wavelength [nm]','FontSize',15);
 xlabel('Wavelength [nm]','FontSize',15);
-ylabel('Intensity [mW/m^2]','FontSize',15);
-xlim([Spectra.LambdaMin Spectra.LambdaMax])
+ylabel('Intensity [Photons/m^2/s]','FontSize',15);
+%xlim([Spectra.LambdaMin Spectra.LambdaMax])
 ylim([0 inf]);
 hold off
 end
@@ -341,8 +375,26 @@ IntensityPeak=findpeaksL(x,y,SlopeThreshold,AmpThreshold,smoothwidth,peakgroup,s
 if IntensityPeak(1,2)==0
     disp('Error in AmpThreshold for Intensity')
 end
-end
 
+PeakD=(0.3/18);
+AmpT=1E13;
+SlopeT=0.001;
+SmoothW=13;
+FitW=6;
+%[Ipeaks]=ipeak(DataMatrix,PeakD,AmpT,SlopeT,SmoothW,FitW);
+
+  %%  
+  x=Spectra.LambdaPlot;
+for jj=1:Spectra.Length(1,3)
+
+y=Spectra.Intensity5(jj,:);       
+DataMatrix=[x;y];   
+[Ipeaks]=ipeak(DataMatrix,PeakD,AmpT,SlopeT,SmoothW,FitW);
+
+Areas(1,jj)=max(Ipeaks(:,5));
+
+end
+end
 %% Gaussian Fitting, finds the FWHM of the peaks
 
 if FINDFWHM==1
@@ -408,6 +460,7 @@ bt = single(bt);
 BIN = zeros(1,5); % Initialize magnetic field input values
 
 for aa=1:5 % specify fiber(s)
+    aa
     if Fibers(:,aa)==0
     else
     [f,idx]= min(abs(zvec(1,:)-spool(:,aa)));
@@ -415,7 +468,7 @@ for aa=1:5 % specify fiber(s)
 % Adjust BIN designations depending upon magnetic geometry.
 %    BIN = 0.874;
     
-for bb = 8:9 %specify frame(s)
+for bb = 8:23 %specify frame(s)
     
 DATA.I = Spectra.RawDATA(aa,:,bb);
 
@@ -445,9 +498,10 @@ spool=(coil1+coil2)/2; % convert coils to center of spool
 [zvec, bt] = directions_field_mappingV3(B_Field); %grab magnetic flux within machine vs. axial distance
 zvec = single(zvec);
 bt = single(bt);
-  
-ii=3; %Fiber #
-for kk=9:11 %Frame being analyzed
+
+%%
+ii=4; %Fiber #
+for kk=10:10 %Frame being analyzed
     
 if Fibers(:,ii)==0
 else 
@@ -456,17 +510,17 @@ else
     
 for jj = 1:1 %# of fits on same data set
     if ii==1
-DATA.I = Spectra.SelfBGSub1(kk,:);
+DATA.I = Spectra.RawFiber1(kk,:);
     elseif ii==2
-DATA.I = Spectra.SelfBGSub2(kk,:);
+DATA.I = Spectra.RawFiber2(kk,:);
     elseif ii==3
-DATA.I = Spectra.SelfBGSub3(kk,:);
+DATA.I = Spectra.RawFiber3(kk,:);
     elseif ii==4
-DATA.I = Spectra.SelfBGSub4(kk,:); 
+DATA.I = Spectra.RawFiber4(kk,:); 
     elseif ii==5
-DATA.I = Spectra.SelfBGSub5(kk,:);
+DATA.I = Spectra.RawFiber5(kk,:);
     end
-DATA.X = flip(Spectra.LambdaPlot);
+DATA.X = (Spectra.LambdaPlot);
 [KTNarray(jj,kk), CHIarray(jj,kk)] = FIT_EXAMPLE_V3(DATA,BIN,INSFUN(:,ii),NumGauss); %Calls Elijah's code to do the ion temp fitting, USER must edit this code to work with backround location, and peak of interest location
 end
 end
@@ -543,12 +597,12 @@ Spectra.Loss5=(Spectra.Intensity5/h(:,1))*Volume(:,1);
 %in the standard way.
 
 figure;
-plot(Spectra.LambdaPlot,(Spectra.Loss1))
+plot(Spectra.Lambda,(Spectra.Loss1))
 hold on
-plot(Spectra.LambdaPlot,(Spectra.Loss2))
-plot(Spectra.LambdaPlot,(Spectra.Loss3))
-plot(Spectra.LambdaPlot,(Spectra.Loss4))
-plot(Spectra.LambdaPlot,(Spectra.Loss5))
+plot(Spectra.Lambda,(Spectra.Loss2))
+plot(Spectra.Lambda,(Spectra.Loss3))
+plot(Spectra.Lambda,(Spectra.Loss4))
+plot(Spectra.Lambda,(Spectra.Loss5))
 ax = gca;
 ax.FontSize = 15;
 title('Power Loss vs wavelength [nm]','FontSize',15);
@@ -558,4 +612,16 @@ xlim([Spectra.LambdaMin Spectra.LambdaMax])
 ylim([0 inf]);
 hold off
 end
+
+% printthis(1,:)=Spectra.LambdaPlot(:);
+% printthis(2,:)=Spectra.Intensity5(9,:);
+% printthis(3,:)=Spectra.Intensity4(9,:);
+% printthis(4,:)=Spectra.Intensity3(9,:);
+% printthis(5,:)=Spectra.Intensity2(9,:);
+% printthis(6,:)=Spectra.Intensity1(9,:);
+% printthis(7,:)=Spectra.Intensity5(13,:);
+% printthis(8,:)=Spectra.Intensity4(13,:);
+% printthis(9,:)=Spectra.Intensity3(13,:);
+% printthis(10,:)=Spectra.Intensity2(13,:);
+% printthis(11,:)=Spectra.Intensity1(13,:);
 
