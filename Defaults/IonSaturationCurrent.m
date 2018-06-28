@@ -1,6 +1,6 @@
 
-ne=2.5E19; %m^-3
-Te=4; % eV
+ne=6E19; %m^-3
+Te=2; % eV
 time=0.75; %s
 e=1.602E-19; %C/electron
 r=1.2; %mm

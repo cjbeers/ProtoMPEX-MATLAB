@@ -1,5 +1,6 @@
 %Running: magnetic field mapping + the magnetic field strength along the
 %machine length
+%V2 makes the magnetic field go from only the dump tank to the ballest tank
 
 %step 1: load proto_mpex_12coils_flat_field_highdens.mat
 load('proto_mpex_12coils_flat_field_highdens.mat');
@@ -18,10 +19,10 @@ end
 
 elseif KnownFields == 1
     
-   helicon_current = 260; %Coils 3,4 TR2
+   helicon_current = 160; %Coils 3,4 TR2
    current_A = 6400; %Coils 1,6  PS2
    current_B = 6400; %Coils 7-12 PS1
-   current_C = 000;  %Coil 2 TR1
+   current_C = 600;  %Coil 2 TR1
    skimmer = 1;
    config = 'newstandard';
    add_reflector = 1;

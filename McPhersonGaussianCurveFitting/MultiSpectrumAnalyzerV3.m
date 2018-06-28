@@ -36,8 +36,8 @@ VOLUMECALC=0; %Finds the volume of the plasma
 %prompt = 'Grating used (300 or 1800) nm? '; %Two gratings can be used
 %Grating = input(prompt);
 Spectra.Grating = 1800;  %USER chooses which Grating was used
-Spectra.Wavelength=9849;
-Spectra.FileName=('Z:\McPherson\2017_12_13\D2He_9849_30um_18471.SPE');
+Spectra.Wavelength=6518;
+Spectra.FileName=('Z:\McPherson\2018_02_09\D2Ar_6518_30um_19808.SPE');
 [Spectra.RawDATA,Spectra.ExposureTime, Spectra.Gain] = readSPE(Spectra.FileName);
     %USER Specifiy Location
 %Spectra.Wavelength=double(string(Spectra.FileName(end-21:end-17))); %USER changes to match file wavelength location on McPherson
@@ -387,7 +387,7 @@ FitW=6;
   x=Spectra.LambdaPlot;
 for jj=1:Spectra.Length(1,3)
 
-y=Spectra.Intensity5(jj,:);       
+y=Spectra.Intensity1(jj,:);       
 DataMatrix=[x;y];   
 [Ipeaks]=ipeak(DataMatrix,PeakD,AmpT,SlopeT,SmoothW,FitW);
 

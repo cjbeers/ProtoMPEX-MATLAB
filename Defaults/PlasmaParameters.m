@@ -4,8 +4,12 @@
 epsilon_0org=8.854E-12;  %F/m or C^2/J or s^2*C^2/m^3*kg
 confactor=1.602E-19; %J to eV
 epsilon_0=epsilon_0org*confactor; %C^2/eV
-Ne=4.5E19;  %1/m^3
-Te=1.75; %eV
+Ne=2.21E19;  %1/m^3
+Ne_std=7.53E17;
+
+Te=2.057; %eV
+Te_std=0.1305;
+
 Ti=Te; %eV
 %KT=10  %keV
 e=-1.602E-19;  %C
@@ -67,16 +71,19 @@ GyroRad_i= (m_D*(cs1*1000))/(-e*B) %mm
 %% Flux 
 
 Te_K=Te*11604.3;  % 11604.3 K/eV
+Te_K_std=Te_std*11604.3;
 k_b=8.6173324E-5; %eV/K
 m_i=2*((931.5E6)/(2.998E8)^2); %eV/c^2
 %For now the USER inputs Ti, eventually want code to find this Std_Ti=0; 
 Ti_K=Ti*11604.3; %Ion Temp. in K
+Ti_K_std=Te_std;
 y=3; %3 for 1D adiabatic flow, 1 for isothermal flow
 ye=5.5; %sheath transmission factor for electrons
 yt=1.5; %sheath transmission factor for ions
 %Gamma_se = Flux to sheath entrance
 
-Gamma_se=0.61*Ne.*((((k_b)*(Te+y*Ti_K))/(m_i)).^0.5) %(1/(m^2*s^1))
+Gamma_se=0.61*Ne.*((((k_b)*(Te_K+y*Ti_K))/(m_i)).^0.5) %(1/(m^2*s^1))
+Gamma_se_std=0.61*Ne.*((((k_b)*(Te_K_std+y*Ti_K_std))/(m_i)).^0.5) %(1/(m^2*s^1))
 HeatFlux=Gamma_se*4*-e*Te
 %% Equlibirum timing or relaxation time
 

@@ -42,24 +42,24 @@ left_color = [0 0 0];
 right_color = [1 0 1];
 set(fig,'defaultAxesColorOrder',[left_color; right_color]);
 yyaxis left
-scatter(4,IDL.TE_TAR(3,3),'ko','LineWidth',3);
+errorbar(4,IDL.TE_TAR(3,3),0.11,'kx','MarkerSize',5)
 hold on
-errorbar(30,2.012,0.1107,'d','MarkerSize',5)
-errorbar(0,1.497,0.06233,'x','MarkerSize',7)
-ylim([0 3]);
+errorbar(30,2.012,0.1107,'o','MarkerSize',5)
+errorbar(0,1.497,0.06233,'^','MarkerSize',5)
+ylim([0 5]);
 xlim([-1 35]);
 xlabel('Distance from Target [cm]','fontsize',15)
 ylabel('T_e [eV]','fontsize',15)
 
 yyaxis right
-scatter(4,(IDL.DEN_TAR(3,3)*1E19),'mo','LineWidth',3);
-errorbar(30,4.27E19,7.51E17,'d','MarkerSize',4)
-errorbar(0,3.23E19,8.72E17,'x','MarkerSize',4)
+errorbar(4,(IDL.DEN_TAR(3,3)*1E19),1.98e18,'mx','MarkerSize',5)
+errorbar(30,4.27E19,7.51E17,'o','MarkerSize',5)
+errorbar(0,3.23E19,8.72E17,'^','MarkerSize',5)
 legend('Thomson T_e','DLP T_e','Target T_e','Thomson n_e','DLP n_e','Target n_e','Location','north');
 ylabel('n_e [m^{-3}]','fontsize',15)
 
-ylim([0 5E19]);
+ylim([0 8E19]);
 
 hold off;
 
-Plot()
+%Plot()

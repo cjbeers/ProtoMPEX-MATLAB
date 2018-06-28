@@ -1,6 +1,6 @@
 
 cleanup
-shotlist = [19530];
+shotlist = [18452];
 DLPType='10';
 PLOTDLPsweeps=0;
 
@@ -8,7 +8,7 @@ sizeshotlist=size(shotlist);
 
 % -------------------------
 Config.tStart = 4.14; % [s]4
-Config.tEnd = 4.7;
+Config.tEnd = 4.6;
 
 % Acquiring Ne and Te data
 Stem = '\MPEX::TOP.';

@@ -47,6 +47,7 @@ function h = setPlotProp(opt, hfig)
 %   LegendBox:    bounding box of legend: 'on'/'off'; default: 'off'
 %   LegendBoxColor: color of the bounding box of legend; default: 'none'
 %   LegendTextColor: color of the legend text; default: [0,0,0]
+%   LegendEdgeColor: color of the legend edges; default: [0,0,0]
 %   LegendLoc:    'NorthEast', ..., 'SouthWest': legend location
 %   Resolution:   Resolution (dpi) for bitmapped file. Default:600.
 %   HoldLines:    true/false. true == only modify axes settings, do not touch plot lines/surfaces. Default false.
@@ -403,6 +404,12 @@ else
     set(hLegend, 'TextColor'       , [0 0 0]);
 end
 
+if isfield(opt, 'LegendEdgeColor')
+    set(hLegend, 'EdgeColor'       , opt.LegendEdgeColor);
+else
+    set(hLegend, 'EdgeColor'       , [0 0 0]);
+end
+
 if isfield(opt, 'LegendLoc')
     set(hLegend,...
         'location'  , opt.LegendLoc);
@@ -478,6 +485,8 @@ if isfield(opt, 'FileName')
         print(hfig, '-dpng', '-opengl', sprintf('-r%d',Resolution), opt.FileName);
     elseif strcmpi(fileType, 'tiff') 
         print(hfig, '-dtiff', '-opengl', sprintf('-r%d',Resolution), opt.FileName);
+    elseif strcmpi(fileType, 'emf')
+        print(hfig, '-dmeta', sprintf('-r%d',Resolution), opt.FileName); 
     else
         err = MException('', ...
             '=====> ERROR: File type %s is not supported. ', fileType);

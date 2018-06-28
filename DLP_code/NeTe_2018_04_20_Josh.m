@@ -10,13 +10,13 @@ switch ProbeLoc
     case 'A'
 % #########################################################################
 
-shotlist  = [19746];
+shotlist  = [18452];
 
 SweepType = 'iso'; % "iso" for isolated sweep, "niso" for non-isolated sweep
 AttType = 'Vx1,Ix1'; % Attenuation on the digitized signals
 DLPType = '10MP';
 Config.FitFunction = 2; 
-ChannelType = '5' ;
+ChannelType = '1' ;
 Config.tStart = 4.15; % [s]
 Config.tEnd = 4.65;
 Config.Center_V = 0; % Remove offset on V: 1 (yes) 0(no)

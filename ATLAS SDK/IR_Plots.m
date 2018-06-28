@@ -34,6 +34,19 @@ ylabel('Pixels','FontSize',13);
 % ellipse2=imellipse(gca,[80-63 80-63 63*2 63*2]);
 % mask2=createMask(ellipse2,figDeltaT);
 
+%% Plot MaxTemp
+
+figure;
+figDeltaT=imagesc(Temperature(:,:,45), 'CDataMapping','scaled');
+caxis([0 500])
+colormap jet
+c=colorbar;
+ylabel(c, 'Temp. [C]')
+ax.FontSize = 13;
+title([shotnumber,'; Temperature'],'FontSize',13);
+xticks([]);
+yticks([]);
+
 %% Create variables for Delta T plots
 
 number2compare=1;

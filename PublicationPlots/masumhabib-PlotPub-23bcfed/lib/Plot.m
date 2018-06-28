@@ -75,6 +75,7 @@ classdef Plot < handle
 %   LegendBox:    bounding box of legend: 'on'/'off'; default: 'off'
 %   LegendBoxColor: color of the bounding box of legend; default: 'none'
 %   LegendTextColor: color of the legend text; default: [0,0,0]
+%   LegendEdgeColor: color of the legend edges; default: [0,0,0]
 %   LegendLoc:    'NorthEast', ..., 'SouthWest': legend location
 %   LegendOrientation:  'horizontal' or 'vertical: 'Orientation of the legend; default: 'vertical'
 %   Title:        plot title, string
@@ -99,7 +100,7 @@ classdef Plot < handle
             plot.ShowBox         = 'on';
             plot.FontName        = 'Arial'; 
             plot.FontSize        = 20;
-            plot.LineWidth       = 1;
+            plot.LineWidth       = 1.5;
             plot.LineStyle       = '-'; 
 %             plot.Colors          = {
 %                                     [ 0.00,     0.00,    0.00 ],...
@@ -126,7 +127,7 @@ classdef Plot < handle
             plot.LegendBoxColor  = [1,1,1];
             plot.LegendTextColor = [0,0,0];
             plot.MarkerSpacing   = 5;
-            plot.Markers         = 'o';            
+            plot.Markers         = '';            
 
             plot.Resolution      = 600;
         end
@@ -462,7 +463,7 @@ classdef Plot < handle
                           'Color'           , self.colors{ii}, ...
                           'MarkerEdgeColor' , 'none',...
                           'MarkerFaceColor' , self.colors{ii}, ...
-                          'MarkerSize'      , 0.5*self.lineWidth(ii)); 
+                          'MarkerSize'      , 3*self.lineWidth(ii)); 
                     
                         if isempty(self.hfm{ii})
                             X = self.xdata{ii};
@@ -477,7 +478,7 @@ classdef Plot < handle
                           'Color'           , self.colors{ii}, ...
                           'MarkerEdgeColor' , 'none',...
                           'MarkerFaceColor' , self.colors{ii}, ...
-                          'MarkerSize'      , 0.5*self.lineWidth(ii), ...
+                          'MarkerSize'      , 3*self.lineWidth(ii), ...
                           'LineWidth'       , self.lineWidth(ii),...
                           'Visible'         , 'off');
                     end                       
@@ -506,12 +507,22 @@ classdef Plot < handle
         function set.Colors(self, Colors)
             if self.holdLines == false
                 for ii=1:self.N   
+                    
+                    % Store the colour we're about to set
                     if ii > size(Colors)
                        self.colors{ii} = Colors{end};
                     else
                        self.colors{ii} = Colors{ii};
                     end
-                    set(self.hp{ii}, 'Color', self.colors{ii});
+                    
+                    % Set the primary color
+                    if isa(self.hp{ii}, 'matlab.graphics.chart.primitive.Area')
+                        set(self.hp{ii}, 'FaceColor', self.colors{ii});
+                    else
+                        set(self.hp{ii}, 'Color', self.colors{ii});
+                    end
+                    
+                    % Set for markers too if they exist
                     if ~isempty(self.hm{ii})
                         set(self.hm{ii}, 'Color', self.colors{ii}, 'MarkerFaceColor' , self.colors{ii});
                     end
@@ -961,7 +972,3 @@ classdef Plot < handle
         end
     end
 end
-
-
-
-
