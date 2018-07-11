@@ -1,4 +1,5 @@
 function [zvec, bt] = directions_field_mappingV3(B_Field)
+%Based on V1 but for use in ion temp fitting
 
 % %Running: magnetic field mapping + the magnetic field strength along the
 % %machine lengthB

@@ -23,7 +23,7 @@ PLOTPIXELS=0; %plots counts vs. pixel number
 PLOTWAVELENGTH=1; %plots counts vs. wavelength
 PLOTINTENSITY=1; %plots the absolute intensity vs. wavelength
 USEIPEAKS=0; %uses program ipeaks to find wavelength peaks
-USEIPEAKSFORINTENSITYPEAKS=1; %uses ipeaks to find the intensity peaks
+USEIPEAKSFORINTENSITYPEAKS=0; %uses ipeaks to find the intensity peaks
 FINDFWHM=0; %not really needed anymore because ion temp can be found
 FINDFLOW=0; % used when looking up and down stream, FINDFWHM must also = 1
 FINDIONTEMP=0; %uses Elijah's code to calculate ion temperature
