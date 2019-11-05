@@ -42,7 +42,6 @@ add_reflector = 1;
 target_position = 3;   %target position 1: 7.5, 2: 11.5, 3: Off center 11.5
 sleeve = 1;
 
-
 current_in = [helicon_current, current_A,current_B, current_C];
 [fil,cur] = setup_Proto_coils(current_in,config); %will reassign cur based on shot. 
 
@@ -81,7 +80,6 @@ atg=Atg;
     bta=bt(1,:);
     bma=max(bta);
 
-
     %xloc_left=find(zvec < tube_x(1));
     xloc_left=find(zvec<1.58);
     xloc_left=max(xloc_left);
@@ -102,7 +100,6 @@ atg=Atg;
     m10_x=[z0(10),z0(10)+cl(10),z0(10)+cl(10),z0(10),z0(10)];
     m11_x=[z0(11),z0(11)+cl(11),z0(11)+cl(11),z0(11),z0(11)];
     m12_x=[z0(12),z0(12)+cl(12),z0(12)+cl(12),z0(12),z0(12)];
-
 
     m_y=[0,0,bma,bma,0];
     vals=psivals(avec,zvec,psi,zvec(bmloc),rlocs);

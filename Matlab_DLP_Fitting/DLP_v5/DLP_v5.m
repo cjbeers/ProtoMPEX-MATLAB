@@ -1,14 +1,14 @@
 
 cleanup
-shotlist = [18452];
+shotlist = [19688];
 DLPType='10';
 PLOTDLPsweeps=0;
 
 sizeshotlist=size(shotlist);
 
 % -------------------------
-Config.tStart = 4.14; % [s]4
-Config.tEnd = 4.6;
+Config.tStart = 4.14; % [s]
+Config.tEnd = 4.5;
 
 % Acquiring Ne and Te data
 Stem = '\MPEX::TOP.';
@@ -44,7 +44,7 @@ switch DLPType
     case '10'
         DLP = '10.5';
         AddressType  = 's';
-        CalType = 'niso';  
+        CalType = 'iso';  
         %Config.L_tip = 0/1000; % [m] for Flush Probe
         %Config.D_tip = 0.83/1000; % [m] for Flush Probe
         Config.L_tip = 1.8/1000; % 10.5 DLP
@@ -55,8 +55,8 @@ switch AddressType
     case 's'
 DataAddress{1} = [RootAddress,'LP_V_RAMP']; % V
 DataAddress{2} = [RootAddress,'TARGET_LP']; % I
-Config.V_Att = 2;  % Output voltage of DLP box (Voltage) = V_Att*Digitized data 
-Config.I_Att = 5;  % Output voltage of DLP box (Current) = I_att*Digitized data
+Config.V_Att = 1;  % Output voltage of DLP box (Voltage) = V_Att*Digitized data 
+Config.I_Att = 1;  % Output voltage of DLP box (Current) = I_att*Digitized data
     case 'n'
 DataAddress{1} = [RootAddress,'INT_4MM_1']; % V
 DataAddress{2} = [RootAddress,'INT_4MM_2']; % I

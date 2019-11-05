@@ -1,24 +1,24 @@
 clear all
 %close all
 
-ProbeLoc = 'A'; % DLP 10.5
+ProbeLoc = 'A'; % DLP 12.5
 FitShow = 0; 
-RawDataShow = 0;
+RawDataShow = 1;
 
 e_c=1.602E-19;
 switch ProbeLoc
     case 'A'
 % #########################################################################
 
-shotlist  = [18452];
+shotlist  = [27449];
 
 SweepType = 'iso'; % "iso" for isolated sweep, "niso" for non-isolated sweep
 AttType = 'Vx1,Ix1'; % Attenuation on the digitized signals
-DLPType = '10MP';
+DLPType = '12DLP';
 Config.FitFunction = 2; 
-ChannelType = '1' ;
+ChannelType = '6' ;
 Config.tStart = 4.15; % [s]
-Config.tEnd = 4.65;
+Config.tEnd = 5.2;
 Config.Center_V = 0; % Remove offset on V: 1 (yes) 0(no)
 Config.Center_I = 0; % Remove offset on I: 1 (yes) 0(no)
     
@@ -30,7 +30,7 @@ shotlist  = [];
 
 Config.FitFunction = 2; 
 DLPType = '1MP'; % DLP 1.5 horizontal
-ChannelType = '5' ; % "1" for TARGET_LP,LP_V_RAMP, "2" for other options
+ChannelType = '1' ; % "1" for TARGET_LP,LP_V_RAMP, "2" for other options
 Config.tStart = 4.25; % [s]
 Config.tEnd = 4.7;
 SweepType = 'iso'; % "iso" for isolated sweep, "niso" for non-isolated sweep
@@ -54,8 +54,12 @@ switch DLPType
         Config.D_tip = 0.254/1000; % [m]
     case '6'
         DLP = 6.5;
-        Config.L_tip = 1.0/1000; % 1.0 as of April 11th 2017
+        Config.L_tip = 2.0/1000; % 1.0 as of April 11th 2017, 2.0 as of June 21st 2019
         Config.D_tip = 0.254/1000; % [m]
+    case '8'
+        DLP=8.5;
+        Config.L_tip=0.002;
+        Config.D_tip=0.000254; %[m]
     case '10'
         DLP = 10.5;
         Config.L_tip = 1.2/1000;
@@ -71,8 +75,10 @@ switch DLPType
         Config.D_tip = 0.254/1000; % [m]
     case '1MP'
         DLP = 1.5;
-        Config.L_tip = 1.7/1000;
-        Config.D_tip = 0.254/1000; % [m]
+        Config.L_tip=0.0027; %As of Aug.2018
+        Config.D_tip=0.000254; %[m]      
+%         Config.L_tip = 0.27/1000;
+%         Config.D_tip = 0.254/1000; % [m]
     case 'TDLP'
         DLP = 11.5;
         Config.L_tip = 0/1000;
@@ -81,10 +87,18 @@ switch DLPType
         DLP = 11.5;
         Config.L_tip = 0/1000;
         Config.D_tip = 1/1000; % [m]
-    case '10FluxProbe';
+    case '10FluxProbe'
         DLP = 10.5;
         Config.L_tip = 0/1000;
         Config.D_tip = ((2^(1/4))*1.22)/1000; % [m]
+    case '12MP'
+        DLP=12.5;
+        Config.L_tip=0.0024;
+        Config.D_tip=0.000254; %[m]
+    case '12DLP'
+        DLP=12.5;
+        Config.L_tip=0.002;
+        Config.D_tip=0.000254; %[m]
 end
 % #########################################################################
 switch AttType
@@ -113,6 +127,9 @@ switch ChannelType
     case '5'
         DataAddress{1} = [RootAddress,'LP_V_RAMP']; % V
         DataAddress{2} = [RootAddress,'EA_CURRENT'];  % I
+    case '6'
+        DataAddress{1} = [RootAddress,'LP_V_RAMP']; % V
+        DataAddress{2} = [RootAddress,'LP_1'];  % I
 end
 % #########################################################################
 switch SweepType
@@ -153,7 +170,7 @@ DA{1} = [RootAddress,'RF_FWD_PWR'];
 % #########################################################################
 
 close all
-GasCompareALL_2018_04_20
+%GasCompareALL_2018_04_20
 C = {'k','r','bl','g','m','k:','r:','bl:','g:','m:','k','r','bl','g','m','k:','r:','bl:','g:','m:','k','r','bl','g','m','k:','r:','bl:','g:','m:','k','r','bl','g','m','k:','r:','bl:','g:','m:','k','r','bl','g','m','k:','r:','bl:','g:','m:','k','r','bl','g','m','k:','r:','bl:','g:','m:'};
 t = t_zero(shotlist);
 
@@ -163,7 +180,7 @@ TimePlotEnd = Config.tEnd;
 figure; 
 subplot(2,2,1); hold on
 for s = 1:length(shotlist)
-    GoodFits{s} = GlitchFlag{s} == 0 & StdResNorm{s}<=0.18 & Ni{s}>0 & Ni{s}<12e19 & Te{s}<=15 & Is{s}>0.01e-3;
+    GoodFits{s} = GlitchFlag{s} == 0 & StdResNorm{s}<=0.4 & Ni{s}>0 & Ni{s}<12e19 & Te{s}<=15 & Is{s}>0.01e-3;
             
     t_Ni_gf{s} = time{s}(GoodFits{s});
     Ni_gf{s} = Ni{s}(GoodFits{s});
@@ -178,7 +195,7 @@ end
 title('$ n_e $ $ [m^{-3}] $','interpreter','Latex','FontSize',13,'Rotation',0)
 legend(h,['DLP ',num2str(DLP)],'location','SouthEast')
 %set(gca,'PlotBoxAspectRatio',[1 1 1])
-ylim([0,10e19])
+ylim([0,15e19])
 xlim([TimePlotStart,TimePlotEnd])
 
 subplot(2,2,2); hold on

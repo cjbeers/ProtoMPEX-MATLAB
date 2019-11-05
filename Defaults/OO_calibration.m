@@ -1,6 +1,6 @@
 ccc
 bkg=dlmread('Z:\OceanOptics\OL 400-C Calib\bg_subtract_1s_noheader.txt','\t');
-OL=dlmread('Z:\OceanOptics\OL 400-C Calib\OL400C_1s_noheader.txt','\t');
+OL=dlmread('\\mpexserver\ProtoMPEX_Data\OceanOptics\OL 400-C Calib\OL400C_1s_noheader.txt','\t');
 HL=dlmread('Z:\OceanOptics\OL 400-C Calib\HL2000_1s_noheader.txt','\t');
 
 %Creates correct OL400-C counts

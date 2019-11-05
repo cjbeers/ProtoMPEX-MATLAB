@@ -3,20 +3,20 @@
 
 cleanup
 
+ne=5E19; %1/m3
+KT=2; %eV
 epsilon_0org=8.854E-12;  %F/m or C^2/J or s^2*C^2/m^2*kg
 confactor=1.602E-19; %J to eV
 epsilon_0=epsilon_0org*confactor; %C^2/eV
 e=-1.602E-19; %C
-ne=1E24; %1/m3
-KT=10; %eV
 k=0.6; %For spherical presheath
-r=1; %mm %USER adjusts this
+r=25; %mm %USER adjusts this
 As=pi*(r/1000)^2; %m2
 V=60; %V on probe
-u=2; %Reduced mass of plasma 1 for H, 40 for Ar, 4 or He,
+u=4; %Reduced mass of plasma 1 for H, 40 for Ar, 4 or He,
 mi_eV=2*(938.27e6); %eV
 me_eV=0.511E6; %eV
-cs=sqrt(KT/mi_eV)*(1/100); %m/s
+cs=sqrt(KT/mi_eV)*(1/100); %cm/s to m/s
 %% Debye length
 debye=7430*sqrt(KT/ne); %m
 debye1=sqrt((epsilon_0*KT)/(ne*e^2)); % m

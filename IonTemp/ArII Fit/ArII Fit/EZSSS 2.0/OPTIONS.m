@@ -79,9 +79,10 @@ NI=3;
 %***************************
 %Define the line of interest
 %***************************
-LINE{1}.ATOM='ArII';
-LINE{1}.WAVE='4806A';
-
+%LINE{1}.ATOM='ArII';
+%LINE{1}.WAVE='4806A';
+LINE{1}.ATOM='HeII';
+LINE{1}.WAVE='4685A';
 %***************************
 %Assign number of processors
 %***************************

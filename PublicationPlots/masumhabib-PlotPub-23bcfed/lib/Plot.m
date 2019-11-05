@@ -101,7 +101,7 @@ classdef Plot < handle
             plot.FontName        = 'Arial'; 
             plot.FontSize        = 20;
             plot.LineWidth       = 1.5;
-            plot.LineStyle       = '-'; 
+            %plot.LineStyle       = '-'; 
 %             plot.Colors          = {
 %                                     [ 0.00,     0.00,    0.00 ],...
 %                                     [ 1.00,     0.00,    1.00 ],...

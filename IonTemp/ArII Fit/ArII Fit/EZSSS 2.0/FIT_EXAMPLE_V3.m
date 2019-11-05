@@ -12,7 +12,9 @@ PLOTERROR=0;
 %*****************************************
 %Theortical center wavelength of transtion
 %*****************************************
-CW=4806.02;
+% CW=4806.02; %Ar
+% CW=4685.7; %He
+ CW=6560.1; %He
 
 %***********
 %Assign data
@@ -25,12 +27,17 @@ I=DATA.I;
 %******************************************
 %BD_X=[4802.3 4802.9];
 %BD_X=[4805.6 4806.4];
-BD_X=[4805.2 4806.3];
+%BD_X=[4805.5 4806.5]; %Ar
+% BD_X=[4681.0 4691.1]; %He
+BD_X=[6559.0 6561.0]; %He
+
 
 %************************************************
 %Background range of interest (based on raw data)
 %************************************************
-BD_BK=[4800 4803];
+%BD_BK=[4800 4803]; %Ar
+% BD_BK=[4795 4796]; %He
+BD_BK=[6565.0 6570.0]; %He
 
 %***************
 %Remove baseline
@@ -60,7 +67,7 @@ I=I/max(I);
 %-------------------------------------------------------------------
 
 if FINDERROR==1
-WINDOW=[4805.6 4806.3];
+WINDOW=[4805. 4806.3];
 
 NE=9;
 NR=0.1;
@@ -146,7 +153,7 @@ EXP.IEE=IE;
 INS{1}=1;         %Scalar - Number of Gaussian functions
 INS{2}=1;         %Array - I of Guassian Functions
 INS{3}=0;         %Array - LAM of Guassian Functions
-INS{4}=INSFUN/exp(1/2);      %Array - SIG of Guassian Functions, INSFUN=instrument function input
+INS{4}=INSFUN/(sqrt(log(2)*4));      %Array - SIG of Guassian Functions, INSFUN=instrument function input
 
 %************
 %Fit the data

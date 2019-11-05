@@ -703,7 +703,7 @@ elseif any(strcmpi(RAD.ATOM,HLIKE_ATOM_LIST))==1
     %********************************
     %Assign the transition parameters
     %********************************
-    RAD.FS=LINE.FS;      %Assign the fine structure logic
+    %RAD.FS=LINE.FS;      %Assign the fine structure logic
     RAD.PQN=LINE.PQN;    %Assign the principal quantum numbers
     RAD.SPIN=0.5;        %Assign the spin
     

@@ -1,6 +1,6 @@
 
 function [FWHM, Residuals, Center, XFIT, IFIT] = ElijahGaussianFit(DATA, lambda_o, lambdaplot)
-
+%
 PLOT_RAW=0;
 PLOT_AVG=0;
 PLOT_SELECT=0;
@@ -15,19 +15,20 @@ NG=1;
                                          
 WC=round((lambda_o*10),0);                                            
 
-START_POINTS=[1 WC .4 .7 WC .2 .6 WC .3];
+START_POINTS=[.1 WC .4 .7 WC .2 .6 WC .3];
 LOWER_BC=[0 WC-4 .1 0 WC-4 .1 0 WC-4 .1];
 UPPER_BC=[10 WC+4 4 10 WC+4 4 10 WC+4 4];
 
 %************************************
 %Wavelength bounds for data selection, Wavelength of Spectrum
 %************************************
-WD=[round(lambdaplot(1,512)*10,0) round(lambdaplot(1,1)*10,0)];                                     
+WD=[round(lambdaplot(1,1)*10,0) round(lambdaplot(1,512)*10,0)];                                     
 
 %********************************************
 %Wavelength bounds for background subtraction
 %********************************************
-WB=[WC-15 WC-10];                                   
+% WB=[4795 4796];                                   
+WB=[6565 6570]; 
 
 %**********
 %Axis array, Wavelengths to view in plots

@@ -6,18 +6,19 @@
 
 function [coil1,coil2] = Spool_Finder(z)% z is a 1x5 array of Fiber locations
 End1 = 0; %Dump End
-Coil1 = (0.939200000000000+0.939200000000000+0.0979000000000000)/2; %Center of Coil 1
-Coil2 = (1.24920000000000+1.24920000000000+0.0979000000000000)/2; % Center of Coil 2
-Coil3 = (1.57920000000000+1.57920000000000+0.0979000000000000)/2; % Center of Coil 3
-Coil4 = (1.81520000000000+1.81520000000000+0.0979000000000000)/2; % Center of Coil 4
-Coil5 = (2.14120000000000+2.14120000000000+0.0979000000000000)/2; % Center of Coil 5
-Coil6 = (2.33920000000000+2.33920000000000+0.0979000000000000)/2; % Center of Coil 6
-Coil7 = (2.89520000000000+2.89520000000000+0.0979000000000000)/2; % Center of Coil 7
-Coil8 = (3.17120000000000+3.17120000000000+0.0979000000000000)/2; % Center of Coil 8
-Coil9 = (3.36920000000000+3.36920000000000+0.0979000000000000)/2; % Center of Coil 9
-Coil10 = (3.68520000000000+3.68520000000000+0.0979000000000000)/2; %Center of Coil 10
-Coil11 = (3.99920000000000+3.99920000000000+0.0979000000000000)/2; % Center of Coil 11
-Coil12 = (4.31720000000000+4.31720000000000+0.0979000000000000)/2; % Center of Coil 12
+Coil1 = 0.98815; % Center of Coil 1
+Coil2 = 1.2982; % Center of Coil 2
+Coil3 = 1.6281; % Center of Coil 3
+Coil4 = 1.8641; % Center of Coil 4
+Coil5 = 2.1902; % Center of Coil 5
+Coil6 = 2.3881; % Center of Coil 6
+Coil7 = 2.9442; % Center of Coil 7
+Coil8 = 3.1092; % Center of Coil 8
+Coil9 = 3.3887; % Center of Coil 9
+Coil10 = 3.5918; % Center of Coil 10
+Coil11 = 3.7824; % Center of Coil 11
+Coil12 =3.9729; % Center of Coil 12
+Coil13=4.2903; % Center of Coil 13
 End2 = 4.420; %Target End
 for ii=1:5
 if z(:,ii,:)==0
@@ -63,7 +64,13 @@ elseif z(:,ii,:)<Coil12 & z(:,ii,:)>Coil11
     coil2(:,ii,:)=Coil12;
 elseif z(:,ii,:)<End2 & z(:,ii,:)>Coil12
     coil1(:,ii,:)=Coil12;
+    coil2(:,ii,:)=Coil13;
+elseif z(:,ii,:)<End2 & z(:,ii,:)>Coil13
+    coil1(:,ii,:)=Coil13;
     coil2(:,ii,:)=End2;
+else z(:,ii,:)>Coil13
+    coil1=Coil13;
+    coil2=Coil13;
 end
 end
 end

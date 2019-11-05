@@ -24,16 +24,16 @@ SAVEHeatFluxMovie=0; %Saves Heat Flux movie
 
 %Loads IR .seq file
 %[FILENAME, PATHNAME, FILTERINDEX] = uigetfile('*.jpg;*.seq', 'Choose IR file (jpg) or radiometric sequence (seq)');
-Shots=20984; %USER defines shot number, if not found change the PATHNAME to the correct day/file location
-IR.ColarBarMax = 50;
-IR.AbTempMax =30000;
+Shots=28071; %USER defines shot number, if not found change the PATHNAME to the correct day/file location
+IR.ColarBarMax = 56;
+IR.AbTempMax=25000;
 IR.FrameStart=1;
-IR.FrameEnd=200;
-IR.Emissivity = 0.56; %0.26 for SS 0.73 for graphite
+IR.FrameEnd=400;
+IR.Emissivity = 0.2; %0.26 for SS 0.73 for graphite
 
 %% Code Start
-IR.FILENAME = ['Shot-0' ,num2str(Shots),'.seq'];
-IR.PATHNAME = 'Z:\IR_Camera\2018_04_06\';
+IR.FILENAME = ['Shot ' ,num2str(Shots),'.seq'];
+IR.PATHNAME = '\\mpexserver\ProtoMPEX_Data\IR_Camera\2019_10_04\'; %USER edits the date of the shot number
 FILTERINDEX = 1;
 
 IR.videoFileName=[IR.PATHNAME IR.FILENAME];
@@ -57,7 +57,7 @@ if(seq.Count > 1)
     while(seq.Next())
         IR.img = seq.ThermalImage.ImageProcessing.GetPixelsArray;
         IR.im = double(IR.img);
-        images(:,:,i)=fliplr(IR.im); %Does not let me place into IR.images
+        images(:,:,i)=(IR.im); %Does not let me place into IR.images
         i=i+1;
     end
 end

@@ -1,6 +1,6 @@
 %% Plots of SS and SiC Thomson and DLP ne and Te
 
-clear all
+%clear all
 
 %% TS data from 5/1/18(SiC) and 2/14/18(SS) and 08/02/17 (C)
 TS_275_SiC075_ne=1.04E19; %-2.75 cm for target %r=-0.75
@@ -20,10 +20,32 @@ TS_4_SS025_te=1.716;
 TS_4_SS025_stdte=0.103;
 TS_4=4;
 
-TS_4_SS05_ne=4.3719;  %r=-0.5
+TS_4_SS05_ne=4.37E19;  %r=-0.5
 TS_4_SS05_stdne=9.87E17;
 TS_4_SS05_te=1.94;
 TS_4_SS05_stdte=0.06;
+
+TS_2_SS025_ne=1.29E+19; %-2 cm for target %r=-0.25
+TS_2_SS025_stdne=2.37E+18;
+TS_2_SS025_te=2.768805092;
+TS_2_SS025_stdte=1.77462554;
+TS_2=2;
+
+TS_2_SS05_ne=1.97E+19;  %r=-0.5
+TS_2_SS05_stdne=6.05E+17;
+TS_2_SS05_te=2.134282721;
+TS_2_SS05_stdte=0.23669929;
+
+TS_175_SS025_ne=3.57E+19; %-1.75 cm for target %r=+0.25
+TS_175_SS025_stdne=5.44E+18;
+TS_175_SS025_te=1.263257773;
+TS_175_SS025_stdte=0.3509144;
+TS_175=1.75;
+
+TS_175_SS05_ne=3.07E+19;  %r=-0.5
+TS_175_SS05_stdne=8.06E+17;
+TS_175_SS05_te=1.652321232;
+TS_175_SS05_stdte=0.11453515;
 
 TS_15_SS025_ne=4.90E19; %-1.5 cm for target %r=+0.25
 TS_15_SS025_stdne=1.98E18;
@@ -32,7 +54,7 @@ TS_15_SS025_stdte=0.0789;
 TS_15=1.5;
 
 TS_15_SS05_ne=4.01E19;  %r=-0.5
-TS_15_SS05_stdne=1.98e18;
+TS_15_SS05_stdne=1.98E18;
 TS_15_SS05_te=1.897;
 TS_15_SS05_stdte=0.11;
 
@@ -56,10 +78,11 @@ DLP_SS_te=2.726;
 DLP_SS_stdte=0.4636;
 DLP_30=30;
 
-DLP_SiC_ne=2.90E19;
-DLP_SiC_stdne=1.92E18;
-DLP_SiC_te=4.396;
-DLP_SiC_stdte=1.29;
+% Target=4 cm 
+DLP_SiC_ne=3.89E19;
+DLP_SiC_stdne=3.99E18;
+DLP_SiC_te=1.8246;
+DLP_SiC_stdte=0.3024;
 
 %DLP Target Scan
 
@@ -68,7 +91,6 @@ DLP_4_SS_stdne=2.58E18;
 DLP_4_SS_te=1.95;
 DLP_4_SS_stdte=0.233;
 DLP_4=4;
-
 
 DLP_15_SS_ne=6.97E19; %DLP at 11.5 with target -1.5 cm
 DLP_15_SS_stdne=2.61E18;
@@ -100,24 +122,50 @@ Flux_C_err(1,1)=FP_0_C_flux_std;
 Flux_C_err(1,2)=TS_4_C_flux_std;
 Flux_C_err(1,3)=DLP_30_C_flux_std;
 
-DLP_30_SS_flux=9.657E23;
+DLP_30_SS_flux=9.657E23; %r=0.25
 DLP_30_SS_flux_std=1.9908E23;
-TS_15_SS_flux=5.1175E23;
-TS_15_SS_flux_std=5.4935E22;
+TS_15_SS025_flux=5.1175E23;
+TS_15_SS025_flux_std=5.8323E22;
+TS_175_SS025_flux=3.3957E23;
+TS_175_SS025_flux_std=8.9612E22;
+TS_2_SS025_flux=1.817E23;
+TS_2_SS025_flux_std=7.2725E22;
+TS_4_SS025_flux=3.4744E23;
+TS_4_SS025_flux_std=4.263E22;
 
-Flux_SS_x(1,1)=1.5;
-Flux_SS_x(1,2)=30;
-Flux_SS_y(1,1)=TS_15_SS_flux;
-Flux_SS_y(1,2)=DLP_30_SS_flux;
-Flux_SS_err(1,1)=TS_15_SS_flux_std;
-Flux_SS_err(1,2)=DLP_30_SS_flux_std;
+TS_15_SS05_flux=4.6801E23; %-0.5
+TS_15_SS05_flux_std=5.6408E22;
+TS_175_SS05_flux=3.344E23;
+TS_175_SS05_flux_std=4.4020E22;
+TS_2_SS05_flux=2.4386E23;
+TS_2_SS05_flux_std=4.0605E22;
+TS_4_SS05_flux=5.1578E23;
+TS_4_SS05_flux_std=4.6109E22;
 
-DLP_30_SiC_flux=5.1524E23;
-DLP_30_SiC_flux_std=1.3957E23;
+Flux_SS_x(1,1)=1.5; %r=0.5
+Flux_SS_x(1,2)=1.75;
+Flux_SS_x(1,3)=2;
+Flux_SS_x(1,4)=4;
+Flux_SS_x(1,5)=30;
+
+Flux_SS_y(1,1)=TS_15_SS05_flux;
+Flux_SS_y(1,2)=TS_175_SS05_flux;
+Flux_SS_y(1,3)=TS_2_SS05_flux;
+Flux_SS_y(1,4)=TS_4_SS05_flux;
+Flux_SS_y(1,5)=DLP_30_SS_flux;
+
+Flux_SS_err(1,1)=TS_15_SS05_flux_std;
+Flux_SS_err(1,2)=TS_175_SS05_flux_std;
+Flux_SS_err(1,3)=TS_2_SS05_flux_std;
+Flux_SS_err(1,4)=TS_4_SS05_flux_std;
+Flux_SS_err(1,5)=DLP_30_SS_flux_std;
+
+DLP_30_SiC_flux=4.4526E23;
+DLP_30_SiC_flux_std=9.064E22;
 TS_15_SiC_flux=2.6859E23;
 TS_15_SiC_flux_std=3.830E22;
 
-Flux_SiC_x(1,1)=1.5;
+Flux_SiC_x(1,1)=2.75; %r=0
 Flux_SiC_x(1,2)=30;
 Flux_SiC_y(1,1)=TS_15_SiC_flux;
 Flux_SiC_y(1,2)=DLP_30_SiC_flux;
@@ -165,7 +213,7 @@ hold on
 h3=errorbar(TS_15,TS_15_SS025_te,TS_15_SS025_stdte,'x','MarkerSize',5);
 %errorbar(DLP_4,DLP_4_SS_te,DLP_4_SS_stdte,'o','MarkerSize',5);
 %h4=errorbar(DLP_15,DLP_15_SS_te,DLP_15_SS_stdte,'o','MarkerSize',5);
-ylim([0 5]);
+ylim([0 4]);
 xlim([-1 35]);
 xlabel('Distance from Target [cm]','fontsize',15)
 ylabel('T_e [eV]','fontsize',15)
@@ -192,12 +240,12 @@ h2=errorbar(4,TS_4_C_flux,TS_4_C_flux_std,'ok');
 h3=errorbar(0,FP_0_C_flux,FP_0_C_flux_std,'ok');
 
 h4=errorbar(30,DLP_30_SS_flux,DLP_30_SS_flux_std,'xm');
-h5=errorbar(1.5,TS_15_SS_flux,TS_15_SS_flux_std,'xm');
+h5=errorbar(1.5,TS_15_SS05_flux,TS_15_SS05_flux_std,'xm');
 
 h6=errorbar(30,DLP_30_SiC_flux,DLP_30_SiC_flux_std,'^c');
 h7=errorbar(1.5,TS_15_SiC_flux,TS_15_SiC_flux_std,'^c');
 
-ylim([1E23 10E23]);
+ylim([1E23 8E23]);
 xlim([-1 35]);
 ylabel('Ion Flux [m^{-2}s^{-1}]','fontsize',15)
 ylabel('Distance from target [cm]','fontsize',15)
@@ -207,10 +255,10 @@ hold off;
 %%
 %all data as lines
 figure;
-h1=errorbar(-Flux_C_x,Flux_C_y,Flux_C_err,'-ok');
+h1=errorbar(-Flux_C_x,Flux_C_y,Flux_C_err,'--ok');
 hold on
-h2=errorbar(-Flux_SS_x,Flux_SS_y,Flux_SS_err,'-xm');
-h3=errorbar(-Flux_SiC_x,Flux_SiC_y,Flux_SiC_err,'-^c');
+h2=errorbar(-Flux_SS_x,Flux_SS_y,Flux_SS_err,':xm');
+h3=errorbar(-Flux_SiC_x,Flux_SiC_y,Flux_SiC_err,'-.^c');
 h4=errorbar(0,5E23,2.5E23,'-sr');
 xlim([-35 1]);
 ylim([1E23 10E23]);
@@ -222,12 +270,12 @@ hold off;
 %% Plots ne only
 
 figure;
-h1=errorbar([-DLP_30 -4 0],[DLP_30_C_ne TS_4_C0_ne CFP_0_C0_ne],[DLP_30_C_stdne TS_4_C0_stdne CFP_0_C0_stdne], '-ko');
+h1=errorbar([-DLP_30 -4 0],[DLP_30_C_ne TS_4_C0_ne CFP_0_C0_ne],[DLP_30_C_stdne TS_4_C0_stdne CFP_0_C0_stdne], '--ko');
 hold on
-h2=errorbar([-DLP_30 -1.5],[DLP_SS_ne TS_15_SS025_ne],[DLP_SS_stdne TS_15_SS025_stdne],'-mx');
-h3=errorbar([-DLP_30 -2.75],[DLP_SiC_ne TS_275_SiC0_ne],[DLP_SiC_stdne TS_275_SiC0_stdne],'-c^');
-ylim([1E19 10E19]);
-xlim([-31 1]);
+h2=errorbar([-DLP_30 -4 -2 -1.75 -1.5],[DLP_SS_ne TS_4_SS05_ne TS_2_SS05_ne TS_175_SS05_ne TS_15_SS05_ne],[DLP_SS_stdne TS_4_SS05_stdne TS_2_SS05_stdne TS_175_SS05_stdne TS_15_SS05_stdne],':mx');
+h3=errorbar([-DLP_30 -2.75],[DLP_SiC_ne TS_275_SiC0_ne],[DLP_SiC_stdne TS_275_SiC0_stdne],'-.c^');
+ylim([1E19 8E19]);
+xlim([-35 1]);
 xlabel('Distance from Target [cm]','fontsize',15)
 ylabel('n_e [m^{-3}]','fontsize',15)
 legend([h1 h2 h3],'Graphite Target','SS Target','SiC Target')
@@ -236,12 +284,12 @@ hold off
 %% Plots Te only
 
 figure;
-h1=errorbar([-DLP_30 -4 0],[DLP_30_C_te TS_4_C0_te CFP_0_C0_te],[DLP_30_C_stdte TS_4_C0_stdte CFP_0_C0_stdte], '-ko');
+h1=errorbar([-DLP_30 -4 0],[DLP_30_C_te TS_4_C0_te CFP_0_C0_te],[DLP_30_C_stdte TS_4_C0_stdte CFP_0_C0_stdte], '--ko');
 hold on
-h2=errorbar([-DLP_30 -1.5],[DLP_SS_te TS_15_SS025_te],[DLP_SS_stdte TS_15_SS025_stdte],'-mx');
-h3=errorbar([-DLP_30 -2.75],[DLP_SiC_te TS_275_SiC0_te],[DLP_SiC_stdte TS_275_SiC0_stdte],'-c^');
-ylim([0 5]);
-xlim([-31 1]);
+h2=errorbar([-DLP_30 -4 -2 -1.75 -1.5],[DLP_SS_te TS_4_SS05_te TS_2_SS05_te TS_175_SS05_te TS_15_SS05_te],[DLP_SS_stdte TS_4_SS05_stdte TS_2_SS05_stdte TS_175_SS05_stdte TS_15_SS05_stdte],':mx');
+h3=errorbar([-DLP_30 -2.75],[DLP_SiC_te TS_275_SiC0_te],[DLP_SiC_stdte TS_275_SiC0_stdte],'-.c^');
+ylim([0 4]);
+xlim([-35 1]);
 xlabel('Distance from Target [cm]','fontsize',15)
 ylabel('T_e [eV]','fontsize',15)
 legend([h1 h2 h3],'Graphite Target','SS Target','SiC Target')

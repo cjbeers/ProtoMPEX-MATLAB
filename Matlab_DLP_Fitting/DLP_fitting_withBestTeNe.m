@@ -8,8 +8,8 @@
 mdsconnect('mpexserver');
 
 %Extract data:
-Spool = 9.5;
-Shots = [14311 14345]
+Spool = 10.5;
+Shots = [17236];
 %Shots =  9300+ [78:-1:76 74:-1:70 68:-1:66 62 32:33 37:38 43:52 55];
 %Shots = 8900+[82:83];
 %Shots = 9695;

@@ -25,10 +25,10 @@ PLOTWAVELENGTH=0; %plots counts vs. wavelength
 PLOTINTENSITY=0; %plots the absolute intensity vs. wavelength
 USEIPEAKS=0; %uses program ipeaks to find wavelength peaks
 USEIPEAKSFORINTENSITYPEAKS=0; %uses ipeaks to find the intensity peaks
-FINDFWHM=0; %not really needed anymore because ion temp can be found
-FINDFLOW=0; % used when looking up and down stream, FINDFWHM must also = 1
+FINDFWHM=1; %not really needed anymore because ion temp can be found
+FINDFLOW=1; % used when looking up and down stream, FINDFWHM must also = 1
 FINDIONTEMP=0; %uses Elijah's code to calculate ion temperature
-IONTEMPSINGLEFRAME=1; %looks at single frame to fit ion temp
+IONTEMPSINGLEFRAME=0; %looks at single frame to fit ion temp
 
 %% Read in file of interest
 
@@ -37,10 +37,10 @@ IONTEMPSINGLEFRAME=1; %looks at single frame to fit ion temp
 Spectra.Grating = 1800;  %USER chooses which Grating was used
 
 Spectra.Wavelength=(7217); %USER changes to match file wavelength location on McPherson
-[Spectra.RawDATA,Spectra.ExposureTime] = readSPE('Z:\McPherson\2017_12_15\D2Ar_7217_30um_18651.SPE');...
+[Spectra.RawDATA,Spectra.ExposureTime] = readSPE('\\mpexserver\ProtoMPEX_Data\McPherson\2018_10_26\Shot24013.SPE');...
     %USER Specifiy Location
 Spectra.Length = size(Spectra.RawDATA);
-Spectra.RawBGDATA = readSPE('Z:\McPherson\calibration\cal_2017_03_06\Bkgtest_7298_30um_1.SPE');...
+Spectra.RawBGDATA = readSPE('\\mpexserver\ProtoMPEX_Data\McPherson\calibration\cal_2017_03_06\Bkgtest_7298_30um_1.SPE');...
     %USER Specify Location OR use the same BG spectrum each time
 
 if length(Spectra.Length)==2
@@ -62,6 +62,7 @@ elseif Spectra.Length(1,3) ==40
 elseif Spectra.Length(1,3) == 50
     Spectra.FrameOfInterest=27;
 else
+    Spectra.FrameOfInterest=20;
     disp('Spectra frames used are wierd fix FrameOfInterest');
 end
 
@@ -331,9 +332,9 @@ Gaussian.FWHMarray=zeros(Spectra.Length(1,1),1,Spectra.Length(1,3));
 Gaussian.Residuals=zeros(Spectra.Length(1,1),1,Spectra.Length(1,3));
 Gaussian.GuassCenter=zeros(Spectra.Length(1,1),1,Spectra.Length(1,3));
 
-DATA.X=flip(Spectra.LambdaPlot);
+DATA.X=(Spectra.LambdaPlot);
 
-for aa=1:Spectra.Length(1,3)
+for aa=1:20
 for bb=1:Spectra.Length(1,1) %1:5
 
 DATA.I=Spectra.RawDATA(bb,:,aa);
