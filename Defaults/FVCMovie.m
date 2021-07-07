@@ -7,11 +7,11 @@
 % greyscale and producing a movie with time stamps
 
 cleanup; %fclose all, close all, clear all, clc
-
+save=1; %0=no 1=yes
 %% Load Data
 
-PATHNAME=('\\mpexserver\ProtoMPEX_Data\Visible_Cameras\2018_02_09c\');
-FILENAME1=('slomo_1518201607_09_1-40-22.mov');
+PATHNAME=('C:\Users\cxe\Documents\Proto-MPEX\Analyzed Data\2021_02_11\');
+FILENAME1=('slomo_1613067228.mov');
 
 Data.VideoFileLoc=[PATHNAME FILENAME1];
 Data.RawCameraData=importdata(Data.VideoFileLoc);
@@ -20,7 +20,8 @@ if PATHNAME(1,end-1)=='c'
     Data.RawCameraData=rot90(Data.RawCameraData,2);
 end
 
-FILENAME2=('slomo_1518201607_09_1-40-08.txt');
+%FILENAME2=('slomo_1604501279.txt');
+FILENAME2=strcat(FILENAME1(1:end-4),'.txt');
 Data.TextData=table2array(readtable([PATHNAME FILENAME2])); %To get Text data into proper cells
 Data.TextData=strrep(Data.TextData(:,:),'"',''); %Removes the quotations marks about the cell entries
 
@@ -34,7 +35,8 @@ Data.Duration=Data.TextData(8,2);
 Data.Duration=cell2mat(Data.Duration);
 Data.Duration=str2double(Data.Duration);
 
-Data.FrameTime=(0:(1/Data.Hz):Data.Duration)+4;
+TimeStart=4; %Timing box starting %s
+Data.FrameTime=(0:(1/Data.Hz):Data.Duration)+TimeStart;
 
 %% Full Movie 
 tic
@@ -56,5 +58,13 @@ close figure 1
 Data.Video=implay(Data.TimeVideo, 10); %Creates full color movie at 10 fps
     
 toc\60
-
-
+%%
+if save==1
+v = VideoWriter('Plasma Shutter Shot 31560 Movie.avi','Motion JPEG AVI');
+v.Quality = 85;
+open(v)
+for ii=1:size(Data.TimeVideo,4)
+writeVideo(v,Data.TimeVideo(:,:,:,ii))
+end
+close(v)
+end

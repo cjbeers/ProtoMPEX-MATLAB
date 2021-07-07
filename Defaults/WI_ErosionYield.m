@@ -17,7 +17,7 @@ PLOTSXB=0;
 PLOTEYIELD=1;
 PLOTSYIELD=1;
 
-Shot=26300; %USER changes this to desired Shot
+Shot=28742; %USER changes this to desired Shot
 
 PATHNAME=['WI_',num2str(Shot),'.mat'];
 FILENAME=['C:\Users\cxe\Documents\Proto-MPEX\Filterscopes\W I Filters\'];

@@ -112,7 +112,10 @@ end
 % Get the image dimensions:
 stripDim = getData(fd, '2A', 'uint16');     %first dim
 pixelDim = getData(fd, '290', 'uint16');    %second dim
-nDim = getData(fd, '5A6', 'uint32');        %third dim
+nDim = getData(fd, '5A6', 'uint32');        %third dim\
+
+%Get test variables
+Test=getData(fd,'2E','float');
 
 %Gets and outputs exposure time
 exposure=getData(fd, '0A','float');

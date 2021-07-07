@@ -11,17 +11,17 @@
 %Search for "USER" to find locations that need to be changed
 %% Start Code
 
-clear all
+%clear all
 fclose all
-close all
+%close all
 format shortG; 
 format compact;
 tic %starts timing the code
 %Turns on=1/off=0 program sections
 
-PLOTPIXELS=1; %plots counts vs. pixel number
+PLOTPIXELS=0; %plots counts vs. pixel number
 PLOTWAVELENGTH=1; %plots counts vs. wavelength
-PLOTINTENSITY=1; %plots the absolute intensity vs. wavelength
+PLOTINTENSITY=0; %plots the absolute intensity vs. wavelength
 USEIPEAKS=0; %uses program ipeaks to find wavelength peaks
 USEIPEAKSFORINTENSITYPEAKS=0; %uses ipeaks to find the intensity peaks
 FINDFWHM=0; %not really needed anymore because ion temp can be found
@@ -31,20 +31,26 @@ IONTEMPSINGLEFRAME=0; %looks at single frame to fit ion temp
 POWERLOSS=0; %uses the intensity to find the power loss for a single spectra from each fiber
 VOLUMECALC=0; %Finds the volume of the plasma
 
-%% Read in file of interest80p
+%% Read in file of interest
 
 %prompt = 'Grating used (300 or 1800) nm? '; %Two gratings can be used
 %Grating = input(prompt);
 Spectra.Grating = 1800;  %USER chooses which Grating was used
-Spectra.McPherLoc=7065;
-Spectra.FileName=('\\mpexserver\ProtoMPEX_Data\McPherson\calibration\cal_2017_07_06\Ar_7065_30um_F5.SPE');
+Spectra.McPherLoc=7575;
+Spectra.FileName=('\\mpexserver\ProtoMPEX_Data\McPherson\2021_01_12\Shot_  31434.SPE');
 [Spectra.RawDATA,Spectra.ExposureTime,Spectra.Gain] = readSPE(Spectra.FileName); %USER Specifiy Location
+try
+[Camera.data, Camera.wavelengths, Camera.params]=loadSPE(Spectra.FileName); %If using the PIMAX3 Camera
+disp('PIMAX3 Used')
+end
 %Spectra.McPherLoc=double(string(Spectra.FileName(end-23:end-17))); %USER changes to match file wavelength location on McPherson
 %Spectra.RawDATA=flip(Spectra.RawDATA);
 Spectra.Length = size(Spectra.RawDATA);
 Spectra.RawBGDATA=zeros(512); %readSPE('\\mpexserver\ProtoMPEX_Data\McPherson\calibration\cal_2018_08_03\abs_cal_45.SPE');
 %Spectra.RawBGDATA = readSPE('\\mpexserver\ProtoMPEX_Data\McPherson\2018_04_30\D2_6480_30um_21730.SPE');...
 %USER Specify Location OR use the same BG spectrum each time
+
+
 
 c=299792458; %m/s
 h=6.2607E-34; %Js
@@ -54,10 +60,23 @@ if Spectra.Gain==1
     Spectra.RawDATA=Spectra.RawDATA*1.89;
 elseif Spectra.Gain==3
     Spectra.RawDATA=Spectra.RawDATA/1.9;
-elseif Spectra.Gain==2
-    
+elseif Spectra.Gain==2 
+elseif Spectra.Gain ==0
+    disp('Gain setting was 0, must be using PIMAX3')
+    Spectra.Gain=0;
 else
     disp('Error in Gain')
+end
+
+if exist('Camera')
+Spectra.Gain=double(convertCharsToStrings(Camera.params.SpeFormat.DataHistories.DataHistory.Origin.Experiment.Devices.Cameras.Camera.Intensifier.Gain.Text));
+Spectra.ReadOutTime=double(convertCharsToStrings(Camera.params.SpeFormat.DataHistories.DataHistory.Origin.Experiment.Devices.Cameras.Camera.ReadoutControl.Time.Text));
+Spectra.Delaytime=double(convertCharsToStrings(Camera.params.SpeFormat.DataHistories.DataHistory.Origin.Experiment.Devices.Cameras.Camera.Intensifier.PhosphorDecayDelay.Text));
+Spectra.AnalogGain=convertCharsToStrings(Camera.params.SpeFormat.DataHistories.DataHistory.Origin.Experiment.Devices.Cameras.Camera.Adc.AnalogGain.Text);
+Spectra.ExposureTime=(double(convertCharsToStrings(Camera.params.SpeFormat.DataHistories.DataHistory.Origin.Experiment.Devices.Cameras.Camera.Gating.RepetitiveGate.Pulse.Attributes.width)))/1e9;
+
+GainMultiplier=((112.31*Spectra.Gain)+655.7)/768.01;
+Spectra.RawDATA=Spectra.RawDATA./GainMultiplier;
 end
 
 B_Field = [330 2300 3500 540 3750]; %USER inputs in order: helicon current, current_A, current_B, current_C, current_D in Amps
@@ -81,7 +100,7 @@ Spool11 = 3.8776;
 Spool12=4.1316;
 
 %Fiber in opposite order of Physcial Fiber
-Fibers= [Spool12 Spool12 Spool12 Spool12 Spool12];%USER enters all fiber locations for Fibers 1-5 left to right (0 indicates Fiber not in use)
+Fibers= [Spool12 Spool8 Spool10 Spool12 Spool12];%USER enters all fiber locations for Fibers 1-5 left to right (0 indicates Fiber not in use)
 
 if length(Spectra.Length)==2
     Spectra.Length(1,3)=1;
@@ -89,6 +108,8 @@ end
 
 if Spectra.Length(1,3) == 1
     Spectra.FrameOfInterest = 1;
+elseif Spectra.Length(1,3) == 2
+    Spectra.FrameOfInterest = 2;
 elseif Spectra.Length(1,3) == 13
     Spectra.FrameOfInterest = 8;
 elseif Spectra.Length(1,3) == 37
@@ -100,12 +121,12 @@ elseif Spectra.Length(1,3) == 40
 elseif Spectra.Length(1,3) == 60
     Spectra.FrameOfInterest = 9;
 elseif Spectra.Length(1,3) ==20
-    Spectra.FrameOfInterest=13;
+    Spectra.FrameOfInterest=6;
 else
-    Spectra.FrameOfInterest = 13;
+    Spectra.FrameOfInterest = 5;
     %disp('Spectra frames used are weird fix FrameOfInterest');
 end
-%Spectra.FrameOfInterest = 6;
+Spectra.FrameOfInterest = 11;
 
 if Spectra.Grating==300
 Spectra.Lambda0 = (Spectra.McPherLoc*.4); %What you tunned the Mcpherson to in nanometers!
@@ -115,16 +136,17 @@ Spectra.Lambda0 = (Spectra.McPherLoc/15); %USER uses this one if not centering t
 %Spectra.Lambda0=480.6; %For looking at the Ar II line for ion temperatures
 %Spectra.Lambda0=468.55; %For looking at He II ion temps.
 %Spectra.Lambda0=656.01; %He II
-%Spectra.Lambda0=504.8;-
-%or when centering the McPherson peak of interest
+%Spectra.Lambda0=504.8;-IONTEMPSINGLEFRAME
+%for when centering the McPherson peak of interest
 end
 
 if Spectra.Grating == 300
 %Spectra.P0 = 180; %USER put peaklocation here!!! peak location can change it is not the same each time
-Spectra.P0 = 249; % 210 for 300nm Grating, 180 for 1800nm Grating, ~230 when centering McPher
+Spectra.P0 = 210; % 210 for 300nm Grating, 180 for 1800nm Grating, ~230 when centering McPher
 elseif Spectra.Grating == 1800
-    Spectra.P0= 163; %USER can look at the ipeaks to find the location of their peak of interest
-    %Spectra.P0=230; %For when not centering the McPherson
+    Spectra.P0= 162; %USER can look at the ipeaks to find the location of their peak of interest
+    %Spectra.P0=230; %For when not cetering the McPherson
+    %Spectra.P0=275; %For when not cetering the McPherson
 end
 
 %Creates a matrix to be filled with raw data
@@ -142,17 +164,17 @@ Spectra.RawFiberBG4=zeros(Spectra.Length(:,3),Spectra.Length(:,2));
 Spectra.RawFiberBG5=zeros(Spectra.Length(:,3),Spectra.Length(:,2));
         
 for ii = 1:Spectra.Length(:,3) %Breaks raw data into individual fibers
-  Spectra.RawFiber1(ii,:) = flip(double(Spectra.RawDATA(1,:,ii)));
-  Spectra.RawFiber2(ii,:) = flip(double(Spectra.RawDATA(2,:,ii)));
-  Spectra.RawFiber3(ii,:) = flip(double(Spectra.RawDATA(3,:,ii)));
-  Spectra.RawFiber4(ii,:) = flip(double(Spectra.RawDATA(4,:,ii)));
-  Spectra.RawFiber5(ii,:) = flip(double(Spectra.RawDATA(5,:,ii)));
+  Spectra.RawFiber1(ii,:) = (double(Spectra.RawDATA(1,:,ii)));
+  Spectra.RawFiber2(ii,:) = (double(Spectra.RawDATA(2,:,ii)));
+  Spectra.RawFiber3(ii,:) = (double(Spectra.RawDATA(3,:,ii)));
+  Spectra.RawFiber4(ii,:) = (double(Spectra.RawDATA(4,:,ii)));
+  Spectra.RawFiber5(ii,:) = (double(Spectra.RawDATA(5,:,ii)));
   
-  Spectra.RawFiberBG1(1,:) = mean2(flip(double(Spectra.RawBGDATA(1,10:15,1))));
-  Spectra.RawFiberBG2(1,:) = mean2(flip(double(Spectra.RawBGDATA(2,10:15,1))));
-  Spectra.RawFiberBG3(1,:) = mean2(flip(double(Spectra.RawBGDATA(3,10:15,1))));
-  Spectra.RawFiberBG4(1,:) = mean2(flip(double(Spectra.RawBGDATA(4,10:15,1))));
-  Spectra.RawFiberBG5(1,:) = mean2(flip(double(Spectra.RawBGDATA(5,10:15,1))));
+  Spectra.RawFiberBG1(1,:) = mean2((double(Spectra.RawBGDATA(1,10:15,1))));
+  Spectra.RawFiberBG2(1,:) = mean2((double(Spectra.RawBGDATA(2,10:15,1))));
+  Spectra.RawFiberBG3(1,:) = mean2((double(Spectra.RawBGDATA(3,10:15,1))));
+  Spectra.RawFiberBG4(1,:) = mean2((double(Spectra.RawBGDATA(4,10:15,1))));
+  Spectra.RawFiberBG5(1,:) = mean2((double(Spectra.RawBGDATA(5,10:15,1))));
   
   %Creates the backgournd subtracted files
   Spectra.BGSub1 = Spectra.RawFiber1 - Spectra.RawFiberBG1(1,:); 
@@ -197,6 +219,7 @@ xlabel('Pixel','FontSize',13);
 ylabel('Counts','FontSize',13);
 xlim([0 512]);
 ylim([0 inf]);
+set(gcf,'color','w')
 hold off;
 end
 
@@ -212,7 +235,7 @@ for ii=1:512
       if Spectra.Grating ==300
       Spectra.Disper = -0.055; %For 300nm Grating
       elseif Spectra.Grating==1800
-      Spectra.Disper= -(0.09354-3.8264E-6*Spectra.Lambda0*10+8.7181E-11*(Spectra.Lambda0*10)^2-1.0366E-14*(Spectra.Lambda0*10)^3-2.5001E-18*(Spectra.Lambda0*10)^4)/10; %For 1800nm Grating, this Grating has been working for everything atm
+      Spectra.Disper= 25.6/16*(-(0.09354-3.8264E-6*Spectra.Lambda0*10+8.7181E-11*(Spectra.Lambda0*10)^2-1.0366E-14*(Spectra.Lambda0*10)^3-2.5001E-18*(Spectra.Lambda0*10)^4)/10); %For 1800nm Grating, this Grating has been working for everything atm
      end
     Spectra.PixCDisp(ii,1) = Spectra.PixelsC(ii,1)*Spectra.Disper; %The entire file times the dispersion coeff.
 end
@@ -297,6 +320,7 @@ xlabel('Wavelength [nm]','FontSize',13);
 ylabel('Counts','FontSize',13);
 %xlim([Spectra.LambdaMin Spectra.LambdaMax])
 ylim([0 inf]);
+set(gcf,'color','w')
 hold off;
 end
 
@@ -336,16 +360,26 @@ for jj=1:Spectra.Length(1,3)
 for ii=1:512
 WL=Spectra.LambdaPlot(1,ii);
 PolTrans=((0.007568*WL^2+38.71*WL+-1.655E4)/(WL+-391.3))/100; %Transmission of the Polarizer
-Spectra.F1CF(1,ii) = -(3243414316440337*WL^6)/10633823966279326983230456482242756608 + (2309603620420301*WL^5)/2596148429267413814265248164610048 - (4965101537564181*WL^4)/5070602400912917605986812821504 + (579661006787533*WL^3)/1237940039285380274899124224 - (272890451144983*WL^2)/4835703278458516698824704 - (3949141763188333*WL)/151115727451828646838272 + 4030589618284611/590295810358705651712;
-Spectra.Intensity1(jj,ii)=(((Spectra.F1CF(1,ii)*(Spectra.SelfBGSub1(jj,ii))*100^2*4*pi/PolTrans/0.816)/(Spectra.ExposureTime*1000)))*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
-Spectra.F2CF(1,ii) = -(2395703957625853*WL^6)/10633823966279326983230456482242756608 + (1625869995473377*WL^5)/2596148429267413814265248164610048 - (6317357511792973*WL^4)/10141204801825835211973625643008 + (8577283721094079*WL^3)/39614081257132168796771975168 + (3175833775833093*WL^2)/77371252455336267181195264 - (6887963036818475*WL)/151115727451828646838272 + 4937937996623129/590295810358705651712;
-Spectra.Intensity2(jj,ii)=(((Spectra.F2CF(1,ii)*(Spectra.SelfBGSub2(jj,ii))*100^2*4*pi/PolTrans/0.816)/(Spectra.ExposureTime*1000)))*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
-Spectra.F3CF(1,ii) = -(8006662218097889*WL^6)/21267647932558653966460912964485513216 + (93141810256361*WL^5)/81129638414606681695789005144064 - (3448877051813151*WL^4)/2535301200456458802993406410752 + (7538698440583817*WL^3)/9903520314283042199192993792 - (217389890528869*WL^2)/1208925819614629174706176 + (1741527951873869*WL)/2417851639229258349412352 + 1326004963232429/295147905179352825856;
-Spectra.Intensity3(jj,ii)=(((Spectra.F3CF(1,ii)*(Spectra.SelfBGSub3(jj,ii))*100^2*4*pi/PolTrans/0.816)/(Spectra.ExposureTime*1000)))*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
-Spectra.F4CF(1,ii) = -(8789350527914021*WL^6)/42535295865117307932921825928971026432 + (5905492503948825*WL^5)/10384593717069655257060992658440192 - (2783491648979549*WL^4)/5070602400912917605986812821504 + (204987856063123*WL^3)/1237940039285380274899124224 + (4720037523702579*WL^2)/77371252455336267181195264 - (7531592530322833*WL)/151115727451828646838272 + 1292104971979181/147573952589676412928;
-Spectra.Intensity4(jj,ii)=(((Spectra.F4CF(1,ii)*(Spectra.SelfBGSub4(jj,ii))*100^2*4*pi/PolTrans/0.816)/(Spectra.ExposureTime*1000)))*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
-Spectra.F5CF(1,ii) = -(8128602229559119*WL^6)/5316911983139663491615228241121378304 + (6770935128186101*WL^5)/1298074214633706907132624082305024 - (4612227632479779*WL^4)/633825300114114700748351602688 + (6554231572492777*WL^3)/1237940039285380274899124224 - (5094898972821211*WL^2)/2417851639229258349412352 + (8142021870704233*WL)/18889465931478580854784 - 2567853893604121/73786976294838206464;
-Spectra.Intensity5(jj,ii)=(((Spectra.F5CF(1,ii)*(Spectra.SelfBGSub5(jj,ii))*100^2*4*pi/PolTrans/0.816)/(Spectra.ExposureTime*1000)))*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
+%Spectra.F1CF(1,ii) = -(3243414316440337*WL^6)/10633823966279326983230456482242756608 + (2309603620420301*WL^5)/2596148429267413814265248164610048 - (4965101537564181*WL^4)/5070602400912917605986812821504 + (579661006787533*WL^3)/1237940039285380274899124224 - (272890451144983*WL^2)/4835703278458516698824704 - (3949141763188333*WL)/151115727451828646838272 + 4030589618284611/590295810358705651712;
+%Spectra.F1CF(1,ii) = - (1626700260090919*WL^6)/1329227995784915872903807060280344576 + (634948170428757*WL^5)/162259276829213363391578010288128 - (815199951640841*WL^4)/158456325028528675187087900672 + (4402000169273163*WL^3)/1237940039285380274899124224 - (6582553675103433*WL^2)/4835703278458516698824704 + (2581296679043863*WL)/9444732965739290427392 - 1656625345829241/73786976294838206464;
+Spectra.F1CF(1,ii) = - (6308936983919491*WL^6)/340282366920938463463374607431768211456 + (3024227450130393*WL^5)/41538374868278621028243970633760768 - (4658155776337057*WL^4)/40564819207303340847894502572032 + (29134831418587*WL^3)/309485009821345068724781056 - (3292259569256441*WL^2)/77371252455336267181195264 + (1524120561927007*WL)/151115727451828646838272 - 2310488757253001/2361183241434822606848;
+Spectra.Intensity1(jj,ii)=(((Spectra.F1CF(1,ii)*(Spectra.SelfBGSub1(jj,ii))*100^2*4*pi/PolTrans/0.816)/(Spectra.ExposureTime)))*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
+%Spectra.F2CF(1,ii) = -(2395703957625853*WL^6)/10633823966279326983230456482242756608 + (1625869995473377*WL^5)/2596148429267413814265248164610048 - (6317357511792973*WL^4)/10141204801825835211973625643008 + (8577283721094079*WL^3)/39614081257132168796771975168 + (3175833775833093*WL^2)/77371252455336267181195264 - (6887963036818475*WL)/151115727451828646838272 + 4937937996623129/590295810358705651712;
+%Spectra.F2CF(1,ii) = - (3023945156908499*WL^6)/2658455991569831745807614120560689152 + (2357778374029259*WL^5)/649037107316853453566312041152512 - (1512169445406641*WL^4)/316912650057057350374175801344 + (1020099380095967*WL^3)/309485009821345068724781056 - (3050167543427729*WL^2)/2417851639229258349412352 + (4785371494504773*WL)/18889465931478580854784 - 6146557317718281/295147905179352825856;
+Spectra.F2CF(1,ii) = - (3218994720546037*WL^6)/42535295865117307932921825928971026432 + (5235105452134931*WL^5)/20769187434139310514121985316880384 - (3530981884010797*WL^4)/10141204801825835211973625643008 + (5059892675007901*WL^3)/19807040628566084398385987584 - (2031104944870275*WL^2)/19342813113834066795298816 + (1731743414777697*WL)/75557863725914323419136 - 4891400421602593/2361183241434822606848;
+Spectra.Intensity2(jj,ii)=(((Spectra.F2CF(1,ii)*(Spectra.SelfBGSub2(jj,ii))*100^2*4*pi/PolTrans/0.816)/(Spectra.ExposureTime)))*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
+%Spectra.F3CF(1,ii) = -(8006662218097889*WL^6)/21267647932558653966460912964485513216 + (93141810256361*WL^5)/81129638414606681695789005144064 - (3448877051813151*WL^4)/2535301200456458802993406410752 + (7538698440583817*WL^3)/9903520314283042199192993792 - (217389890528869*WL^2)/1208925819614629174706176 + (1741527951873869*WL)/2417851639229258349412352 + 1326004963232429/295147905179352825856;
+%Spectra.F3CF(1,ii) = - (1765656053182801*WL^6)/1329227995784915872903807060280344576 + (5518894603634123*WL^5)/1298074214633706907132624082305024 - (443587723375963*WL^4)/79228162514264337593543950336 + (4802604591038225*WL^3)/1237940039285380274899124224 - (1801707046935033*WL^2)/1208925819614629174706176 + (88736857234489*WL)/295147905179352825856 - 1833956193745033/73786976294838206464;
+Spectra.F3CF(1,ii) = - (2088251208937885*WL^6)/21267647932558653966460912964485513216 + (6620698810601923*WL^5)/20769187434139310514121985316880384 - (2177678135120253*WL^4)/5070602400912917605986812821504 + (3045834615508699*WL^3)/9903520314283042199192993792 - (4778133644256543*WL^2)/38685626227668133590597632 + (3985826836592293*WL)/151115727451828646838272 - 5518043243643893/2361183241434822606848;
+Spectra.Intensity3(jj,ii)=(((Spectra.F3CF(1,ii)*(Spectra.SelfBGSub3(jj,ii))*100^2*4*pi/PolTrans/0.816)/(Spectra.ExposureTime)))*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
+%Spectra.F4CF(1,ii) = -(8789350527914021*WL^6)/42535295865117307932921825928971026432 + (5905492503948825*WL^5)/10384593717069655257060992658440192 - (2783491648979549*WL^4)/5070602400912917605986812821504 + (204987856063123*WL^3)/1237940039285380274899124224 + (4720037523702579*WL^2)/77371252455336267181195264 - (7531592530322833*WL)/151115727451828646838272 + 1292104971979181/147573952589676412928;
+%Spectra.F4CF(1,ii) = - (6831167903460459*WL^6)/5316911983139663491615228241121378304 + (2661610492119359*WL^5)/649037107316853453566312041152512 - (6827733130064633*WL^4)/1267650600228229401496703205376 + (4608390215663531*WL^3)/1237940039285380274899124224 - (6898105029406207*WL^2)/4835703278458516698824704 + (84721503390903*WL)/295147905179352825856 - 3492766303211563/147573952589676412928;
+Spectra.F4CF(1,ii) = - (3220915010346721*WL^6)/42535295865117307932921825928971026432 + (5278260314045411*WL^5)/20769187434139310514121985316880384 - (7169347616763475*WL^4)/20282409603651670423947251286016 + (5169049141385233*WL^3)/19807040628566084398385987584 - (4173585398321467*WL^2)/38685626227668133590597632 + (3577125449972917*WL)/151115727451828646838272 - 1269132194609933/590295810358705651712;
+Spectra.Intensity4(jj,ii)=(((Spectra.F4CF(1,ii)*(Spectra.SelfBGSub4(jj,ii))*100^2*4*pi/PolTrans/0.816)/(Spectra.ExposureTime)))*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
+%Spectra.F5CF(1,ii) = -(8128602229559119*WL^6)/5316911983139663491615228241121378304 + (6770935128186101*WL^5)/1298074214633706907132624082305024 - (4612227632479779*WL^4)/633825300114114700748351602688 + (6554231572492777*WL^3)/1237940039285380274899124224 - (5094898972821211*WL^2)/2417851639229258349412352 + (8142021870704233*WL)/18889465931478580854784 - 2567853893604121/73786976294838206464;
+%Spectra.F5CF(1,ii) = - (3711672098962431*WL^6)/1329227995784915872903807060280344576 + (361952161365543*WL^5)/40564819207303340847894502572032 - (7444087705847317*WL^4)/633825300114114700748351602688 + (5041086950209335*WL^3)/618970019642690137449562112 - (7580959031549187*WL^2)/2417851639229258349412352 + (2998061427153507*WL)/4722366482869645213696 - 7787992640024419/147573952589676412928;
+Spectra.F5CF(1,ii) = - (6975981277116395*WL^6)/5444517870735015415413993718908291383296 - (8592458623468417*WL^5)/1329227995784915872903807060280344576 + (3449447725407881*WL^4)/162259276829213363391578010288128 - (7197672690592913*WL^3)/316912650057057350374175801344 + (7097492200999303*WL^2)/618970019642690137449562112 - (6768005508421565*WL)/2417851639229258349412352 + 2533024960140057/9444732965739290427392;
+Spectra.Intensity5(jj,ii)=(((Spectra.F5CF(1,ii)*(Spectra.SelfBGSub5(jj,ii))*100^2*4*pi/PolTrans/0.816)/(Spectra.ExposureTime)))*(1/1000)*((Spectra.LambdaPlot(ii)*1E-9)/(h*c));
 %Spectra.IntensityAll=Spectra.Intenisty1
 
 end
@@ -371,6 +405,7 @@ ax.FontSize = 15;
 title('Intensity vs wavelength [nm]','FontSize',15);
 xlabel('Wavelength [nm]','FontSize',15);
 ylabel('Intensity [Photons/m^2/s]','FontSize',15);
+set(gcf,'color','w')
 %xlim([Spectra.LambdaMin Spectra.LambdaMax])
 ylim([0 inf]);
 hold off
@@ -627,35 +662,180 @@ xlabel('Wavelength [nm]','FontSize',15);
 ylabel('Power [mW]','FontSize',15);
 xlim([Spectra.LambdaMin Spectra.LambdaMax])
 ylim([0 inf]);
+set(gcf,'color','w')
 hold off
 end
 
 %% Testing purposes
-% printthis(1,:)=Spectra.LambdaPlot(:);
-% printthis(2,:)=Spectra.Intensity5(9,:);
-% printthis(3,:)=Spectra.Intensity4(9,:);
-% printthis(4,:)=Spectra.Intensity3(9,:);
-% printthis(5,:)=Spectra.Intensity2(9,:);
-% printthis(6,:)=Spectra.Intensity1(9,:);
-% printthis(7,:)=Spectra.Intensity5(13,:);
-% printthis(8,:)=Spectra.Intensity4(13,:);
-% printthis(9,:)=Spectra.Intensity3(13,:);
-% printthis(10,:)=Spectra.Intensity2(13,:);
-% printthis(11,:)=Spectra.Intensity1(13,:);
-
-% close all
-% Data=idk-Spectra.BGSub3;
-% %plot(Spectra.LambdaPlot,Data)
-% mean(Spectra.BGSub3./idk)
-% std(Spectra.BGSub3./idk)
-
-% plot(Spectra.LambdaPlot,Spectra.SelfBGSub3(12,:));
+% % printthis(1,:)=Spectra.LambdaPlot(:);
+% % printthis(2,:)=Spectra.Intensity5(9,:);
+% % printthis(3,:)=Spectra.Intensity4(9,:);
+% % printthis(4,:)=Spectra.Intensity3(9,:);
+% % printthis(5,:)=Spectra.Intensity2(9,:);
+% % printthis(6,:)=Spectra.Intensity1(9,:);
+% % printthis(7,:)=Spectra.Intensity5(13,:);
+% % printthis(8,:)=Spectra.Intensity4(13,:);
+% % printthis(9,:)=Spectra.Intensity3(13,:);
+% % printthis(10,:)=Spectra.Intensity2(13,:);
+% % printthis(11,:)=Spectra.Intensity1(13,:);
+% 
+% % close all
+% % Data=idk-Spectra.BGSub3;
+% % %plot(Spectra.LambdaPlot,Data)
+% % mean(Spectra.BGSub3./idk)
+% % std(Spectra.BGSub3./idk)
+% 
+% Data.Y=Spectra.SelfBGSub2(:,221); %47 O II, 221 N II
+% Data.X=linspace(3.97,(3.97+0.01*120),120);
+% Data.X=Data.X';
+% 
+% figure;
+% scatter(Data.X,Data.Y,'k');
 % ax = gca;
 % ax.FontSize = 13;
-% title('Counts vs wavelength','FontSize',13);
-% xlabel('Wavelength [nm]','FontSize',13);
+% title('O II signal vs time','FontSize',13);
+% xlabel('Time (s)','FontSize',13);
 % ylabel('Counts','FontSize',13);
+% legend('Shot 30091');
 % %xlim([Spectra.LambdaMin Spectra.LambdaMax])
 % ylim([0 inf]);
-% hold off;
+% xlim([4.1 4.8])
+% set(gcf,'color','w')
+% %Plot()
+% 
+% Data.Hstarty=Data.Y(24:29);
+% Data.Hstartx=Data.X(24:29);
+% 
+% Data.Hmidy=Data.Y(29:54);
+% Data.Hmidx=Data.X(29:54);
+% 
+% Data.Ey=Data.Y(57:61);
+% Data.Ex=Data.X(57:61);
+% 
+% Data.Hendy=Data.Y(62:67);
+% Data.Hendx=Data.X(62:67);
+% 
+% Data.Hallx=Data.X([29:55 62:67]);
+% Data.Hally=Data.Y([29:55 62:67]);
+% 
+% Data.p1=polyfit(Data.Hstartx,Data.Hstarty,1);
+% Data.f1=polyval(Data.p1,Data.Hstartx);
+% Data.p1(1)
+% 
+% Data.p2=polyfit(Data.Hmidx,Data.Hmidy,1);
+% Data.f2=polyval(Data.p2,Data.Hmidx);
+% Data.p2(1)
+% 
+% Data.p3=polyfit(Data.Ex,Data.Ey,1);
+% Data.f3=polyval(Data.p3,Data.Ex);
+% Data.p3(1)
+% 
+% Data.p4=polyfit(Data.Hendx,Data.Hendy,1);
+% Data.f4=polyval(Data.p4,Data.Hendx);
+% Data.p4(1)
+% 
+% Data.f5=polyval(Data.p2,Data.Hallx);
+% 
+% Data.E2H=Data.f5(28)-Data.Hendy(1);
+% Data.E2H(1)
+% 
+% % figure;
+% % scatter(Data.X,Data.Y,'k');
+% % hold on
+% % plot(Data.Hstartx,Data.f1,'-k','LineWidth',4)
+% % plot(Data.Hmidx,Data.f2,'-m','LineWidth',4)
+% % plot(Data.Ex,Data.f3,'-blue','LineWidth',4)
+% % plot(Data.Hendx,Data.f4,'-cyan','LineWidth',4)
+% % plot(Data.Hallx,Data.f5,'--r','LineWidth',4)
+% % ax = gca;
+% % ax.FontSize = 13;
+% % title('O II signal vs time','FontSize',13);
+% % xlabel('Time (s)','FontSize',13);
+% % ylabel('Counts','FontSize',13);
+% % legend('Shot 30091');
+% % %xlim([Spectra.LambdaMin Spectra.LambdaMax])
+% % ylim([0 inf]);
+% % xlim([4.1 4.8])
+% % set(gcf,'color','w')
+% % %Plot()
+% % hold off
+% 
+% 
+% 
+% 
+% %Data.Hslope=(Data.Y(54)-Data.Y(29))/(Data.X(54)-Data.X(29));
+% %Data.Eslope=(Data.Y(61)-Data.Y(58))/(Data.X(61)-Data.X(58));
+% 
+% Data.ShotNumber=[30077
+% 30078
+% 30079
+% 30080
+% 30081
+% 30082
+% 30083
+% 30084
+% 30086
+% 30088
+% 30089
+% 30090
+% 30091];
+% 
+% % Data.Hvalues=[214.2
+% % -58
+% % -97.183
+% % 82.639
+% % -59.5
+% % 417.16
+% % 337.83
+% % 116.36
+% % 208.91
+% % 110.41
+% % 58.839
+% % -314.03
+% % 96.52
+% % 48.26
+% % -273.7
+% % 40.328
+% % -271.06
+% % -360.31
+% % 380.8
+% % -379.48];
+% % 
+% % Data.Evalues=[-886.99
+% % 93.657
+% % 121.2
+% % -572.96
+% % -490.32
+% % 5498.2
+% % 2071.5
+% % -10897
+% % -27309
+% % -26086
+% % -43027
+% % -53726
+% % -50454
+% % -1526
+% % -18203
+% % 391.16
+% % -22070
+% % -22726
+% % -34543
+% % -29133];
+% 
+% % Data.dxdy=gradient(Data.X)./gradient(Data.Y);
+% % 
+% % figure
+% % plot(Data.ShotNumber,Data.Hvalues,'k');
+% % hold on
+% % plot(Data.ShotNumber,Data.Evalues,'m')
+% % ax = gca;
+% % ax.FontSize = 13;
+% % title('O II rate of change slope','FontSize',13);
+% % xlabel('Shot number','FontSize',13);
+% % ylabel('Rate of change','FontSize',13);
+% % legend('Helicon only','With ECH');
+% % ylim([-inf inf]);
+% % %xlim([4.1 4.8])
+% % set(gcf,'color','w')
+% % Plot()
 

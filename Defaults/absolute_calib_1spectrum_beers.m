@@ -24,17 +24,17 @@ spoolnum=struct('SpoolNumber',{'10.5S_C'});
 spoolcell=struct2cell(spoolnum);
 size1 = size(spoolcell);
 spoolcell = reshape(spoolcell, size1(1), []);
-lambdanum=[400:10:760]; %USER defines wavelengths
+lambdanum=[400:5:700]; %USER defines wavelengths
 size2=size(lambdanum);
 size2=size2(1,2);
 
-file = dir('Z:\McPherson\calibration\cal_2018_04_13\*.SPE');...
+file = dir('\\mpexserver\ProtoMPEX_Data\McPherson\calibration\Calib_2020_01_21\*.SPE');...
     %USER Specifiy Location
-file_length =37; %length(file); %Using known number of files to be read.
+file_length =61; %length(file); %Using known number of files to be read.
 Data = cell(file_length,1);
 
 %Makes the path a character so readSPE works
-dirpath=char('Z:\McPherson\calibration\cal_2016_08_04\*.SPE');
+dirpath=char('\\mpexserver\McPherson\calibration\cal_2016_08_04\*.SPE');
 
 %sorts(file(#).name) with sort_nat(from Mathworks exchange);
 filefields = fieldnames(file);
@@ -49,19 +49,25 @@ filecell = sort_nat(filecell(:,1),'ascend');
 %Puts the names in order for the readSPE.m to read them
 for i=1:file_length
     file(i).name=char(filecell(i,:));
+    file(i).Filename=strcat(file(1).folder,'\',file(1).name);
 end
 
 %%
 %Starts the loop to read in and manipulate data
-for t = 1:37
+for t = 1:file_length
     
-    Data{t} = readSPE('Z:\McPherson\calibration\cal_2018_04_13\',file(t).name);
+    Data{t} = readSPE('\\mpexserver\ProtoMPEX_Data\McPherson\calibration\Calib_2020_01_21\',file(t).name);
   
  Raw_data = cell2mat(Data(t,:,:)); %= readSPE('Z:\McPherson\calibration\abscal_2016_06_21\abs_calib_20um_500ms_1.SPE');...
-    %USER Specifiy Location
+ 
+[Camera.data, Camera.wavelengths, Camera.params]=loadSPE(file(t).Filename); %If using the PIMAX3 Camera
+Spectra.Gain=double(convertCharsToStrings(Camera.params.SpeFormat.DataHistories.DataHistory.Origin.Experiment.Devices.Cameras.Camera.Intensifier.Gain.Text));
+Spectra.ExposureTime=(double(convertCharsToStrings(Camera.params.SpeFormat.DataHistories.DataHistory.Origin.Experiment.Devices.Cameras.Camera.Gating.RepetitiveGate.Pulse.Attributes.width)))/1e9;
+  
+ %USER Specifiy Location
 length = size(Raw_data);
-Raw_data_bg = readSPE('Z:\McPherson\calibration\cal_2016_08_04\ROIs\abs_calib_20um_1s_bg_1.SPE');...
-%Raw_data_bg = zeros(5, 512);
+%Raw_data_bg = readSPE('\\mpexserver\ProtoMPEX_Data\McPherson\Calib_2019_12_13\Target650C_try2_  18.SPE');...
+Raw_data_bg = zeros(5, 512);
 %Raw_data_bg(:,:)=1000;
 %USER Specify Location4
 
@@ -103,11 +109,11 @@ end
 %there is only 1 hence there is no need for the for loop. 
 
 %}
-Fiber1 = double(Raw_data(1,:));
-Fiber2 = double(Raw_data(2,:));
-Fiber3 = double(Raw_data(3,:));
-Fiber4 = double(Raw_data(4,:));
-Fiber5 = double(Raw_data(5,:));
+Fiber1 = double(Raw_data(1,:))./(Spectra.ExposureTime);
+Fiber2 = double(Raw_data(2,:))./(Spectra.ExposureTime);
+Fiber3 = double(Raw_data(3,:))./(Spectra.ExposureTime);
+Fiber4 = double(Raw_data(4,:))./(Spectra.ExposureTime);
+Fiber5 = double(Raw_data(5,:))./(Spectra.ExposureTime);
 
 Fiber1bg = double(Raw_data_bg(1,:));
 Fiber2bg = double(Raw_data_bg(2,:));
@@ -187,7 +193,7 @@ hold off;
 %Disper = ((487-492)/(314-196)); 
 
 
-P_o = 180; %USER put peaklocation here!!! peak location can change it is not the same each time
+P_o = 168; %USER put peaklocation here!!! peak location can change it is not the same each time
 %lambda_o = 400; %USER put wavelength here, what you tunned the Mcpherson to in nanometers!!!
 
    if l>size2
@@ -203,11 +209,15 @@ pixels_c(P_o+1:length(1,2),:) = (1:1:(length(1,2)-P_o))'; %From Peak of Interest
 for bb=1:512
     if i>=P_o
       %Disper = -0.055; %For 300nm Grating
-      Disper= -(0.09354-3.8264E-6*Lambda0*10+8.7181E-11*(Lambda0*10)^2-1.0366E-14*(Lambda0*10)^3-2.5001E-18*(Lambda0*10)^4)/10; %For 1800nm Grating, this Grating has been working for everything atm
+      %Disper= -(0.09354-3.8264E-6*Lambda0*10+8.7181E-11*(Lambda0*10)^2-1.0366E-14*(Lambda0*10)^3-2.5001E-18*(Lambda0*10)^4)/10; %For 1800nm Grating, this Grating has been working for everything atm
+      Disper= 26/16*(-(0.09354-3.8264E-6*Lambda0*10+8.7181E-11*(Lambda0*10)^2-1.0366E-14*(Lambda0*10)^3-2.5001E-18*(Lambda0*10)^4)/10); %For 1800nm Grating, this Grating has been working for everything atm
 
+      
     else
       %Disper = -0.04; %For 300nm Grating
-      Disper= -(0.09354-3.8264E-6*(Lambda0*10)+8.7181E-11*(Lambda0*10)^2-1.0366E-14*(Lambda0*10)^3-2.5001E-18*(Lambda0*10)^4)/10; %For 1800nm Grating, this Grating has been working for everything atm
+      %Disper= -(0.09354-3.8264E-6*(Lambda0*10)+8.7181E-11*(Lambda0*10)^2-1.0366E-14*(Lambda0*10)^3-2.5001E-18*(Lambda0*10)^4)/10; %For 1800nm Grating, this Grating has been working for everything atm
+      Disper= 26/16*(-(0.09354-3.8264E-6*Lambda0*10+8.7181E-11*(Lambda0*10)^2-1.0366E-14*(Lambda0*10)^3-2.5001E-18*(Lambda0*10)^4)/10); %For 1800nm Grating, this Grating has been working for everything atm
+
     end
     pix_c_dis(bb,1) = pixels_c(bb,1)*Disper; %The entire file times the dispersion coeff.    
 end

@@ -1,15 +1,15 @@
 % close all
 % clear all
-
+shotlist=[29450];
 mdsconnect('mpexserver')
 
 PressureInPascal = 0;
 RemoveOffsetStartRF = 1;
 
-address{1} = '\MPEX::TOP.MACHOPS1:PG1'; % PG9.5
-address{2} = '\MPEX::TOP.MACHOPS1:PG2'; % PG2.5
-address{3} = '\MPEX::TOP.MACHOPS1:PG3'; % PG6.5
-address{4} = '\MPEX::TOP.MACHOPS1:PG4'; % PG4.5
+address{1} = '\MPEX::TOP.MACHOPS1:PG1'; % PG12.5
+address{2} = '\MPEX::TOP.MACHOPS1:PG2'; % PG8.5
+address{3} = '\MPEX::TOP.MACHOPS1:PG3'; % PG4.5
+address{4} = '\MPEX::TOP.MACHOPS1:PG4'; % PG2.5
 
 if strcmp(address{1},'\MPEX::TOP.MACHOPS1:PG3')
      f = 2;
@@ -75,7 +75,7 @@ for s = 1 :length(shotlist)
     P{4}{s} = ( PG4{s}(1:Ldata)-PG4cal{1}(1:Ldata) )*10*fctr;
     
 end
-T = {'9.5','2.5','6.5','4.5'};
+T = {'12.5','8.5','6.5','2.5'};
 
 for p = 1:4
 subplot(2,2,p); hold on

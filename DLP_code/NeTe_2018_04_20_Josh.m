@@ -2,15 +2,16 @@ clear all
 %close all
 
 ProbeLoc = 'A'; % DLP 12.5
-FitShow = 0; 
+FitShow =0; 
 RawDataShow = 1;
+FindFlux = 1;
 
 e_c=1.602E-19;
 switch ProbeLoc
     case 'A'
 % #########################################################################
 
-shotlist  = [27449];
+shotlist  = [29375];
 
 SweepType = 'iso'; % "iso" for isolated sweep, "niso" for non-isolated sweep
 AttType = 'Vx1,Ix1'; % Attenuation on the digitized signals
@@ -18,7 +19,7 @@ DLPType = '12DLP';
 Config.FitFunction = 2; 
 ChannelType = '6' ;
 Config.tStart = 4.15; % [s]
-Config.tEnd = 5.2;
+Config.tEnd = 4.7;
 Config.Center_V = 0; % Remove offset on V: 1 (yes) 0(no)
 Config.Center_I = 0; % Remove offset on I: 1 (yes) 0(no)
     
@@ -29,7 +30,7 @@ case 'B'
 shotlist  = [];
 
 Config.FitFunction = 2; 
-DLPType = '1MP'; % DLP 1.5 horizontal
+DLPType = '12DLP'; % DLP 1.5 horizontal
 ChannelType = '1' ; % "1" for TARGET_LP,LP_V_RAMP, "2" for other options
 Config.tStart = 4.25; % [s]
 Config.tEnd = 4.7;
@@ -147,6 +148,13 @@ Config.SGF = 11;
 Config.TimeMode = 2; % Effective time of sweep, (1) start of ramp or (2) mean time of ramp
 Config.AMU = 2; % Ion mass in AMU
 Config.AreaType = 1; % 1: Cylindrical + cap
+
+Sawtooth_freq=200; %Hz
+Sawtooth_Tri_num=200; %Number of triangles
+Sawtooth_time = Sawtooth_Tri_num*(1/Sawtooth_freq); %sample rate
+Sawtooth_fs = 100000;
+Sawtooth_t = 3.97+(0:1/Sawtooth_fs:Sawtooth_time-1/Sawtooth_fs);
+Sawtooth_x = (sawtooth(2*pi*Sawtooth_freq*Sawtooth_t,1/2))*30;
 % #########################################################################
 % [ni,Te,time,Ifit,Ip,Vp,tm,Vsweep,Isweep,GlitchFlag,SSQres] = DLP_fit_V5_2(Config,shotlist,DataAddress);
 [ni,Te,Isat,time,Ifit,Ip,Vp,tm,Vsweep,Isweep,GlitchFlag,SSQres,StdRes,StdResNorm] = DLP_fit_V5_6(Config,shotlist,DataAddress);
@@ -187,15 +195,16 @@ for s = 1:length(shotlist)
     
     h(s) = plot(t_Ni_gf{s},Ni_gf{s},C{s},'lineWidth',2);
 
-    hold on
-    plot(t_ech{s}(1:length(ECH{s})),ECH{s}*0.1e19,C{s},'lineWidth',0.5)
-    plot(t_rf{s}(1:length(RF{s})),(RF{s}.^2)*1e19,C{s},'lineWidth',0.5)
+%     hold on
+%     plot(t_ech{s}(1:length(ECH{s})),ECH{s}*0.1e19,C{s},'lineWidth',0.5)
+%     plot(t_rf{s}(1:length(RF{s})),(RF{s}.^2)*1e19,C{s},'lineWidth',0.5)
 
 end
 title('$ n_e $ $ [m^{-3}] $','interpreter','Latex','FontSize',13,'Rotation',0)
 legend(h,['DLP ',num2str(DLP)],'location','SouthEast')
 %set(gca,'PlotBoxAspectRatio',[1 1 1])
-ylim([0,15e19])
+ylim([0,5e19])
+xlabel('Time [s]')
 xlim([TimePlotStart,TimePlotEnd])
 
 subplot(2,2,2); hold on
@@ -206,11 +215,12 @@ for s = 1:length(shotlist)
         h(s) = plot(t_Te_gf{s},Te_gf{s},C{s},'lineWidth',2);
         
         L{s} = [num2str(shotlist(s)),' ,t=',num2str(t{s}(10:14))];
-        plot(t_ech{s}(1:length(ECH{s})),2*ECH{s},C{s},'lineWidth',0.5)
+        %plot(t_ech{s}(1:length(ECH{s})),2*ECH{s},C{s},'lineWidth',0.5)
 
 end
 legend(h,L,'location','NorthEast')
 title('$ T_e $ $ [eV] $','interpreter','Latex','FontSize',13,'Rotation',0)
+xlabel('Time [s]')
 ylim([0,10])
 xlim([TimePlotStart,TimePlotEnd])
 
@@ -219,9 +229,21 @@ for s = 1:length(shotlist)
     Pe_gf{s} = e_c.*Ni_gf{s}.*Te_gf{s};
     plot(t_Ni_gf{s},Pe_gf{s},C{s},'lineWidth',2)
 end
-ylim([0,30])
+ylim([0,inf])
 xlim([TimePlotStart,TimePlotEnd])
+xlabel('Time [s]')
 title('$ P_e $ $ [Pa] $','interpreter','Latex','FontSize',13,'Rotation',0)
+
+subplot(2,2,4); hold on
+for s = 1:length(shotlist)
+    plot(t_ech{s}(1:length(ECH{s})),ECH{s},C{s},'lineWidth',0.5)
+    plot(t_rf{s}(1:length(RF{s})),(RF{s}.^2),C{s},'lineWidth',0.5)
+end
+ylim([0,inf])
+xlim([TimePlotStart,TimePlotEnd])
+xlabel('Time [s]')
+title('$ Power Traces $ $ [Arb. Units] $','interpreter','Latex','FontSize',13,'Rotation',0)
+%legend('Helicon','ECH')
 
 set(findobj('-Property','YTick'),'box','on')
 set(gcf,'color','w')
@@ -248,7 +270,7 @@ if 0
         G = [t_Ni_gf{s}',Ni_gf{s}',Te_gf{s}'];
         F = {'time [s]','ne[m^-3]','Te[eV]'};
         FileName = ['Shot_',num2str(shotlist(s)),'_NeTe_Spool_10_5.xlsx']
-        xlswrite(FileName,[F;num2cell(G)]);
+        %xlswrite(FileName,[F;num2cell(G)]);
     end
 end
 
@@ -292,10 +314,10 @@ end
 % close all
 
 for s = 1:length(shotlist)
-    rngT{1} = [time{s}>=4.20 & time{s}<=4.23]; 
-    rngT{2} = [time{s}>=4.44 & time{s}<=4.48];  
-    rngT{3} = [time{s}>=4.65 & time{s}<=4.75]; 
-for p = 1:3
+    rngT{1} = [time{s}>=4.39 & time{s}<=4.4]; 
+    rngT{2} = [time{s}>=4.41 & time{s}<=4.6];  
+    %rngT{3} = [time{s}>=4.65 & time{s}<=4.75]; 
+for p = 1:length(rngT)
         nes{p}(s)    = mean(Ni{s}(rngT{p} & GoodFits{s}));
         dnes{p}(s)   = std(Ni{s}(rngT{p} & GoodFits{s}),1,2);
         Tes{p}(s)    = mean(Te{s}(rngT{p} & GoodFits{s}));
@@ -307,9 +329,31 @@ end
 %% Convert data into Excel
 % Save data to Excel spreadsheet:
 % Create table to export to EXCEL
-if 0
-G = [shotlist(b)',nes{p}(b)',dnes{p}(b)',Tes{p}(b)',dTes{p}(b)'];
+if 1
+G = [shotlist',nes{p}',dnes{p}',Tes{p}',dTes{p}'];
 F = {'Shot','ne[m^-3]','dne','Te[eV]','dTe'};
-FileName = 'NeTe_Spool_10_5_2018_04_20.xlsx';
-xlswrite(FileName,[F;num2cell(G)]);
+FileName = 'NeTe_Spool_12_5_2019_11_22.xlsx';
+%xlswrite(FileName,[F;num2cell(G)]);
+end
+
+%% Flux and Fluence
+
+if FindFlux==1
+   N_e=Ni{1,1}(61:100); %(20:175) for regular shot %(38:175) for shutter XP
+   T_e_eV=Te{1,1}(61:100);
+   T_i_eV=T_e_eV; %eV %Plasma ion temperature
+   y_e=1; %3 for 1D adiabatic flow, 1 for isothermal flow %Adiabatic index (1+2n) where n is the degree of freedom
+   y_i=3; %ions adiabatic and electrons isothermal
+   m_p=938.27e6/(3.0E8)^2; %eV %Mass of proton
+   m_D=2*m_p; %eV %Mass of D ion
+   
+   c_s= sqrt(((y_e*T_e_eV)+(y_i*T_i_eV))/m_D); %m/s %Sound speed from Chen2015 4.41
+   Gamma_se=0.61*N_e.*c_s; %(1/(m^2*s^1))
+   AvgFlux=mean(Gamma_se)
+   %AvgFlux2=sum(Gamma_se)*(time{1,1}(2)-time{1,1}(1))
+   AvgTe=mean(T_e_eV)
+   Avgne=mean(N_e)
+   deltaTime=time{1,1}(2)-time{1,1}(1);
+   Gamma_se_Time=Gamma_se*deltaTime;
+   TotalFluence=sum(Gamma_se_Time)
 end
