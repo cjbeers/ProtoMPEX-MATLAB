@@ -1,0 +1,255 @@
+
+netwrite=0;
+netwrite_source=0;
+
+ne_min=1e16; %3e17;
+ne_max=1.5e19; %1.5e18;
+
+lengthB=4;
+
+b=logspace(-1,3,lengthB);
+x=linspace(0,1,1000);
+y=zeros(1000,lengthB);
+
+for ii=1:lengthB
+y(:,ii)=ne_max.*(1-x.^2).^(b(ii))'+ne_min;
+end
+
+%
+xImpurity=[0,1/6,2/6];
+xImpurity=[0.00 0.01 0.02];
+xImpurity1=xImpurity;
+yImpurity=[40 20 8];
+yImpurity1=yImpurity*3e18;
+%
+
+DLPdata=[-6.002919032	1.70787E+18
+-4.988764045	1.86517E+18
+-3.999976833	2.3764E+18
+-3.012301633	3.51685E+18
+-2.042557628	1.48034E+19
+-1.026804124	1.40562E+19
+-0.039476428	1.53933E+19
+0.927418047	1.42921E+19
+2.016425345	1.40955E+19
+2.895053863	6.9382E+18
+3.941457199	2.84831E+18
+4.955820688	2.88764E+18
+5.971296189	2.29775E+18];
+
+DLPdata2=[-1.9887283410276395 1554349781161943000
+-1.4905370026180629 2632052281311822000
+-0.9670843575753931 11033335331854418000
+-0.4680936107280598 58292163798788900000
+0.0393708655594871 58070927513639910000
+0.5569878290065366 57849991006655080000
+1.0582968603233622 63534084777264830000
+1.5634430521414169 59887583188440556000
+2.05188160761037 46555548893818580000
+2.514179507164699 9600695485340844000
+2.9989407838199726 5835481743509791000
+3.504726502388235 3133880928113189000];
+
+
+
+%DLPdata(:,1)=DLPdata(:,1)./max(DLPdata(:,1));
+%DLPdata2(:,1)=DLPdata2(:,1)./max(DLPdata2(:,1));
+%DLPdata(:,1)=(DLPdata(:,1)*0.01)/0.0625;
+%DLPdata2(:,1)=(DLPdata2(:,1)*0.01)/0.0625;
+
+% plots
+figure
+for ii=1:lengthB
+plot(x,y(:,ii))
+hold on
+end
+plot(xImpurity,yImpurity1,'--o')
+plot(DLPdata(7:13,1),DLPdata(7:13,2),'--k');
+title('Modeled density cases for y=n_{e,max}*(1-x^2)^b')
+xlabel('Normalized Radius');
+ylabel('Density [m^{-3}]');
+legend('b=0.1','b=2.15','b=46.42','b=1000','Impurity Layer Thickness x4e17','Target DLP')
+set(gcf,'color','w')
+xlim([0 inf])
+ax = gca;
+ax.FontSize = 13;
+hold off
+
+%
+yImpurityFit=ne_max.*(1-x.^2.2).^(30)'+ne_min;
+figure
+plot(xImpurity,yImpurity,'--o')
+hold on
+plot(x,yImpurityFit,'k')
+legend('Fit with x^{2.2} and b=30','Impurity Layer Thickness x4e17')
+
+Grad_y=gradient(y(:,3));
+
+Gradterm=Grad_y./y(:,3);
+
+%figure
+%semilogy(x,Grad_y)
+
+figure
+plot(xImpurity,yImpurity,'--ok')
+xlabel('Radius [m]');
+ylabel({'Impurity Layer thickness [nm]'});
+set(gcf,'color','w')
+ax = gca;
+ax.FontSize = 13;
+
+% figure
+% plot(Data(:,1),Data(:,2),'--ok')
+% xlabel('Deuterium Fluence [@/m^2]')
+% ylabel({'Impurity Layer thickness [nm]'});
+% set(gcf,'color','w')
+% ax = gca;
+% ax.FontSize = 13;
+
+%% run helicon_processing first to compare density, impurity profile, and 
+%GITR profile
+
+figure
+%plot(centers(11:20)/max(centers(11:20)),radialprofile(11:20)/max(radialprofile(11:20)),'--k')
+plot(gridR(36:end)/0.02,RadialDensity1(35,36:end)/max(RadialDensity1(35,36:end)),'-k')
+hold on
+%plot(xflux(1:end-1)/0.02,DownstreamRadialFlux/max(DownstreamRadialFlux),'-c')
+plot(xImpurity/0.02,yImpurity/max(yImpurity),'--om');
+%plot((DLPdata(7:13,1)*0.01)/0.02,DLPdata(7:13,2)/max(DLPdata(7:13,2)),'--om');
+%plot((DLPdata2(5:end,1)*0.01)/0.02,DLPdata2(5:end,2)/max(DLPdata2(5:end,2)),'--om');
+%plot(YY(:,4100)/0.02,HighDensityFullDevicePlasmaNe(:,4100)/max(HighDensityFullDevicePlasmaNe(:,4100)),'-b');
+%plot(YY(:,1500)/0.06,HighDensityFullDevicePlasmaNe(:,1500)/max(HighDensityFullDevicePlasmaNe(:,1500)),'o');
+%plot(newrlocs(1:end-1)/max(newrlocs(1:end-1)),density_y/max(density_y),'-b')
+%legend('GITR Impurity Density [m^{-3}]','GITR Impurity Flux [m^{-2}s^{-1}]','Impurity Layer Thickness [nm]','Experimental Density [m^{-3}]','GITR Input Density [m^{-3}]')
+legend('GITR Impurity Density [m^{-3}]','Experimental Impurity Layer Thickness [nm]')
+xlabel('Normalized Radius');
+%xlabel('Radius at Target [m]');
+ylabel({'Normalized Impurity Profiles'});
+%ylabel({'Normalized Impurity';'and Density Profile'});
+set(gcf,'color','w')
+xlim([0 3])
+ax = gca;
+ax.FontSize = 13;
+hold off
+
+
+
+%% write netcdf
+
+%y=ne_max.*(1-x.^2).^0.5;
+%plot(x,y)
+%%
+nz=4;
+Z=linspace(-1000,1000,4);
+Density=repmat(y(:,4),[1 nz]);
+
+%%
+if netwrite==1;
+    
+ncid = netcdf.create(['./profilesHelicon4.nc'],'NC_WRITE')
+
+dimR = netcdf.defDim(ncid,'nX',length(x));
+% dimY = netcdf.defDim(ncid,'nY',nY);
+dimZ = netcdf.defDim(ncid,'nZ',4);
+
+gridRnc = netcdf.defVar(ncid,'x','float',dimR);
+% gridYnc = netcdf.defVar(ncid,'y','float',dimY);
+gridZnc = netcdf.defVar(ncid,'z','float',dimZ);
+Ne2Dnc = netcdf.defVar(ncid,'Density','float',[dimR dimZ]);
+%Te2Dnc = netcdf.defVar(ncid,'te','float',[dimR dimZ]);
+% % vrnc = netcdf.defVar(ncid,'vr','float',[dimR dimZ]);
+% % vtnc = netcdf.defVar(ncid,'vt','float',[dimR dimZ]);
+% % vznc = netcdf.defVar(ncid,'vz','float',[dimR dimZ]);
+% brnc = netcdf.defVar(ncid,'br','float',[dimR dimZ]);
+% btnc = netcdf.defVar(ncid,'bt','float',[dimR dimZ]);
+% bznc = netcdf.defVar(ncid,'bz','float',[dimR dimZ]);
+% % ernc = netcdf.defVar(ncid,'Er','float',[dimR dimZ]);
+% % eznc = netcdf.defVar(ncid,'Ez','float',[dimR dimZ]);
+% % etnc = netcdf.defVar(ncid,'Et','float',[dimR dimZ]);
+% % gtirnc = netcdf.defVar(ncid,'gradTir','float',[dimR dimZ]);
+% % gtiznc = netcdf.defVar(ncid,'gradTiz','float',[dimR dimZ]);
+% % gtiync = netcdf.defVar(ncid,'gradTiy','float',[dimR dimZ]);
+% % gternc = netcdf.defVar(ncid,'gradTer','float',[dimR dimZ]);
+% % gteznc = netcdf.defVar(ncid,'gradTez','float',[dimR dimZ]);
+% % gteync = netcdf.defVar(ncid,'gradTey','float',[dimR dimZ]);
+% 
+% 
+% 
+% %neVar = netcdf.defVar(ncid, 'Ne2', 'double',dimR);
+% %teVar = netcdf.defVar(ncid, 'Te', 'double',dimR);
+netcdf.endDef(ncid);
+% 
+netcdf.putVar(ncid,gridRnc,(0.065*x));
+netcdf.putVar(ncid,gridZnc,Z);
+netcdf.putVar(ncid,Ne2Dnc,Density);
+%netcdf.putVar(ncid,Ni2Dnc,ne_interp');
+%netcdf.putVar(ncid,Te2Dnc,te_interp');
+%netcdf.putVar(ncid,Ti2Dnc,ti_interp');
+% 
+% % netcdf.putVar(ncid,vrnc,vrTotal');
+% % netcdf.putVar(ncid,vtnc,vpTotal');
+% % netcdf.putVar(ncid,vznc,vzTotal');
+% 
+% netcdf.putVar(ncid,brnc,br_interp');
+% netcdf.putVar(ncid,btnc,bt_interp');
+% netcdf.putVar(ncid,bznc,bz_interp');
+% 
+% % netcdf.putVar(ncid,ernc,Epara');
+% % netcdf.putVar(ncid,eznc,Eperp');
+% % netcdf.putVar(ncid,etnc,(0*Epara)');
+% % 
+% % netcdf.putVar(ncid,gtirnc,gradTir');
+% % netcdf.putVar(ncid,gtiznc,gradTiz');
+% % netcdf.putVar(ncid,gtiync,gradTiy');
+% % netcdf.putVar(ncid,gternc,gradTer');
+% % netcdf.putVar(ncid,gteznc,gradTez');
+% % netcdf.putVar(ncid,gteync,gradTey');
+% 
+% %netcdf.putVar(ncid, neVar, Ne2);
+% %netcdf.putVar(ncid, teVar, Te);
+netcdf.close(ncid);
+end
+
+%% create particle source.nc file
+nP=1000;
+R=0.06;
+
+FirstRand=rand(1,nP);
+r=0.04; %R.*sqrt(FirstRand);
+theta=rand(1,nP).*2*pi;
+
+x=r.*cos(theta);
+y=r.*sin(theta);
+
+figure
+scatter(x,y,'filled')
+
+vx_sample=0*(x+1000); %10000*rand(1,nP);
+vy_sample=0*(x+1000); %10000*rand(1,nP);
+vz_sample=1000+(x.*0); %10000*rand(1,nP);
+
+%%
+if netwrite_source==1
+
+ncid = netcdf.create(['./particleSource2.nc'],'NC_WRITE')
+ 
+dimP = netcdf.defDim(ncid,'nP',nP);
+
+xVar = netcdf.defVar(ncid,'x','double',[dimP]);
+yVar = netcdf.defVar(ncid,'y','double',[dimP]);
+zVar = netcdf.defVar(ncid,'z','double',[dimP]);
+vxVar = netcdf.defVar(ncid,'vx','double',[dimP]);
+vyVar = netcdf.defVar(ncid,'vy','double',[dimP]);
+vzVar = netcdf.defVar(ncid,'vz','double',[dimP]);
+
+netcdf.endDef(ncid);
+ 
+netcdf.putVar(ncid, xVar, x);
+netcdf.putVar(ncid, yVar, y);
+netcdf.putVar(ncid, zVar, 0*x);
+netcdf.putVar(ncid, vxVar, vx_sample);
+netcdf.putVar(ncid, vyVar, vy_sample);
+netcdf.putVar(ncid, vzVar, vz_sample);
+
+netcdf.close(ncid);
+end

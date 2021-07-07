@@ -1,0 +1,14 @@
+%% Initialize Variables
+
+Flux=3e23;
+Area=(8/1000)^2*2;
+Yield=0.005;
+AvNum=6.022e23;
+MassSi=40.11;
+Fluence=1e25;
+
+%% Calculate Number of shots needed
+
+SputteredAtoms=Flux*Yield*Area;
+
+Moles=SputteredAtoms/AvNum;
